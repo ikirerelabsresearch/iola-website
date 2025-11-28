@@ -53,7 +53,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.9 }}
-              className="text-5xl md:text-7xl lg:text-8xl font-heading font-black tracking-wider mb-6 leading-tight"
+              className="text-5xl md:text-6xl lg:text-7xl font-heading font-black tracking-wider mb-4 leading-tight"
             >
               <span className="text-orbital">Africa's Access</span>
               <br />
@@ -65,7 +65,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.1 }}
-              className="text-xl md:text-2xl text-orbital/80 font-body mb-12 max-w-2xl leading-relaxed"
+              className="text-lg md:text-xl lg:text-2xl text-orbital/80 font-body mb-8 max-w-2xl leading-relaxed"
             >
               The sovereign infrastructure for the next generation of orbital research.
               <span className="text-teal"> Deterministic safety</span> in a chaotic orbit.
@@ -104,7 +104,7 @@ export default function Hero() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 1.5 }}
-              className="mt-16 grid grid-cols-3 gap-8 max-w-2xl"
+              className="mt-10 lg:mt-12 grid grid-cols-3 gap-6 lg:gap-8 max-w-2xl"
             >
               <div className="border-l-2 border-teal pl-4">
                 <div className="text-3xl font-heading font-bold text-teal">32+</div>

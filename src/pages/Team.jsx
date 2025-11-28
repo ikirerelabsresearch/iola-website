@@ -5,29 +5,29 @@ export default function Team() {
   const team = [
     {
       name: 'Jason Quist',
-      role: 'Founder & CEO',
-      bio: 'Building the foundational infrastructure for the African space age. Previously worked on satellite systems and AI safety.',
+      role: 'Research Scientist',
+      bio: 'Leading research on deterministic safety guarantees for satellite constellation coordination. Previously worked on satellite systems and AI safety.',
       linkedin: 'https://www.linkedin.com/in/jason-quist',
       email: 'jason@ikirere.com'
     },
     {
       name: 'Jessica Randall',
-      role: 'Software Engineer',
-      bio: 'Developing mission-critical software systems for satellite operations and ground station control.',
+      role: 'Research Engineer - Statistics & Mathematical Modeling',
+      bio: 'Developing statistical models and mathematical frameworks for orbital mechanics simulation and collision probability analysis.',
       linkedin: 'https://www.linkedin.com/in/jessica-randall-293ab9205/',
       email: 'jessica@ikirere.com'
     },
     {
       name: 'Gideon Salami',
-      role: 'Software Engineer (ML)',
-      bio: 'Building reinforcement learning algorithms for constellation coordination and collision avoidance.',
+      role: 'Tech Lead - ML & Software',
+      bio: 'Leading development of reinforcement learning systems and software infrastructure for IkirereMesh constellation coordinator.',
       linkedin: 'https://www.linkedin.com/in/gideon-salami-44a206209/',
       email: 'gideon@ikirere.com'
     },
     {
       name: 'Ignatius Balayo',
-      role: 'AI MSc Student, Busitema University',
-      bio: 'Researching multi-agent systems and safety-constrained optimization for orbital operations.',
+      role: 'Researcher',
+      bio: 'Researching multi-agent systems and safety-constrained optimization for orbital operations. AI MSc Student, Busitema University.',
       linkedin: 'https://www.linkedin.com/in/ignatius-balayo-16a40637/',
       email: 'ignatius@ikirere.com'
     },
@@ -87,7 +87,7 @@ export default function Team() {
             Meet the <span className="text-teal">Team</span>
           </h1>
           <p className="text-xl md:text-2xl text-orbital/70 max-w-3xl mx-auto leading-relaxed">
-            Builders, researchers, and operators making orbital operations accessible to Africa
+            Researchers advancing safe, autonomous satellite systems for Africa
           </p>
         </motion.div>
 
@@ -174,10 +174,10 @@ export default function Team() {
           className="bg-black/40 border border-amber/30 rounded-xl p-12 text-center"
         >
           <div className="text-5xl mb-6">🚀</div>
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-4">We're Growing</h2>
+          <h2 className="text-3xl font-heading font-bold text-orbital mb-4">Join Our Research Lab</h2>
           <p className="text-xl text-orbital/70 mb-8 max-w-2xl mx-auto">
-            Building a world-class team of engineers, researchers, and operators. Join us in making
-            space accessible across Africa.
+            Building a world-class research team. Join us in advancing orbital safety research
+            and making space accessible across Africa.
           </p>
           <div className="mb-8">
             <h3 className="text-xl font-heading font-bold text-teal mb-4">Open Positions</h3>
@@ -207,38 +207,38 @@ export default function Team() {
           transition={{ duration: 0.8, delay: 1.2 }}
           className="mt-20"
         >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">Our Culture</h2>
+          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">Research Lab Values</h2>
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-black/40 border border-teal/20 rounded-xl p-8">
-              <div className="text-4xl mb-4">🌍</div>
-              <h3 className="text-xl font-heading font-bold text-teal mb-3">Africa-First Mindset</h3>
+              <div className="text-4xl mb-4">🔬</div>
+              <h3 className="text-xl font-heading font-bold text-teal mb-3">Rigorous Research</h3>
               <p className="text-orbital/60">
-                We're building infrastructure that serves African institutions first. Our success
-                is measured by the number of African satellites we put in orbit.
+                Mathematical proofs and formal verification underpin all our work.
+                We publish findings and contribute to the scientific community.
               </p>
             </div>
             <div className="bg-black/40 border border-teal/20 rounded-xl p-8">
-              <div className="text-4xl mb-4">⚡</div>
-              <h3 className="text-xl font-heading font-bold text-teal mb-3">Move Fast, Stay Safe</h3>
+              <div className="text-4xl mb-4">🌍</div>
+              <h3 className="text-xl font-heading font-bold text-teal mb-3">Africa-Focused</h3>
               <p className="text-orbital/60">
-                Rapid iteration on hardware and software, but never compromise on safety.
-                Deterministic guarantees in everything we ship to orbit.
+                Our research directly addresses challenges facing African space programs.
+                Training the next generation of African space researchers.
               </p>
             </div>
             <div className="bg-black/40 border border-teal/20 rounded-xl p-8">
               <div className="text-4xl mb-4">🔓</div>
-              <h3 className="text-xl font-heading font-bold text-teal mb-3">Open Knowledge</h3>
+              <h3 className="text-xl font-heading font-bold text-teal mb-3">Open Science</h3>
               <p className="text-orbital/60">
-                We publish our research, share our learnings, and train the next generation
-                of African space engineers.
+                We publish papers, share code, and collaborate openly with universities
+                and research institutions across Africa.
               </p>
             </div>
             <div className="bg-black/40 border border-teal/20 rounded-xl p-8">
-              <div className="text-4xl mb-4">🎯</div>
-              <h3 className="text-xl font-heading font-bold text-teal mb-3">Mission-Driven</h3>
+              <div className="text-4xl mb-4">🛡️</div>
+              <h3 className="text-xl font-heading font-bold text-teal mb-3">Safety First</h3>
               <p className="text-orbital/60">
-                Every decision is evaluated against our mission: making orbital operations
-                accessible and sustainable for Africa.
+                Deterministic safety guarantees through formal methods.
+                Every algorithm we develop prioritizes collision-free operations.
               </p>
             </div>
           </div>
