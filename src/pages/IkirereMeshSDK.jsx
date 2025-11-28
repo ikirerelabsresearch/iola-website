@@ -202,7 +202,7 @@ print(f"Mission success: {safe_plan.is_safe()}")
             View Documentation
           </Link>
           <p className="text-orbital/60 mt-4">
-            Beta access available Q3 2025
+            Beta access available Q3 2026
           </p>
         </motion.div>
       </section>

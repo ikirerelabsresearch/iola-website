@@ -22,9 +22,9 @@ export default function RoadmapPage() {
     },
     {
       phase: 'Phase 2',
-      status: 'Q1 2026',
+      status: 'Q1 2027',
       title: 'Real Orbital Data',
-      period: 'Q1 2026',
+      period: 'Q1 2027',
       description: 'Integration with ESA DRAMA and NASA CARA databases for real-time conjunction analysis.',
       deliverables: [
         'Live TLE feed integration',
@@ -39,9 +39,9 @@ export default function RoadmapPage() {
     },
     {
       phase: 'Phase 3',
-      status: 'Q2 2026',
+      status: 'Q2 2027',
       title: 'CubeSat Onboard Profile',
-      period: 'Q2 2026',
+      period: 'Q2 2027',
       description: 'Deploy IkirereMesh to flight-ready CubeSat hardware with onboard decision-making.',
       deliverables: [
         'Embedded Linux port',
@@ -56,9 +56,9 @@ export default function RoadmapPage() {
     },
     {
       phase: 'Phase 4',
-      status: 'Q3-Q4 2026',
+      status: 'Q3-Q4 2027',
       title: 'Launch & Operations',
-      period: 'Q3-Q4 2026',
+      period: 'Q3-Q4 2027',
       description: 'First Ikirere satellites deployed via SpaceX. On-orbit validation of IkirereMesh.',
       deliverables: [
         'SpaceX rideshare integration',
@@ -75,27 +75,27 @@ export default function RoadmapPage() {
 
   const milestones = [
     {
-      date: 'Q4 2025',
+      date: 'Q4 2026',
       title: 'IkirereMesh SDK Beta',
       description: 'First beta release to partner universities'
     },
     {
-      date: 'Q1 2026',
+      date: 'Q1 2027',
       title: 'First CubeSat Orders',
       description: 'Begin accepting pre-orders for 3U and 6U kits'
     },
     {
-      date: 'Q2 2026',
+      date: 'Q2 2027',
       title: 'Training Workshops',
       description: 'Launch technical training program across Africa'
     },
     {
-      date: 'Q3 2026',
+      date: 'Q3 2027',
       title: 'First Launch',
       description: 'Maiden flight via SpaceX rideshare mission'
     },
     {
-      date: 'Q4 2026',
+      date: 'Q4 2027',
       title: 'Constellation Operational',
       description: 'Full constellation with IkirereMesh coordination'
     }

@@ -4,22 +4,22 @@ import PageSEO, { pageSEO } from '../components/PageSEO'
 export default function About() {
   const milestones = [
     {
-      year: '2024',
+      year: '2025',
       title: 'Foundation',
-      description: 'Ikirere Orbital Labs Africa founded in Accra, Ghana'
+      description: 'Ikirere Orbital Labs Africa founded in Kigali, Rwanda'
     },
     {
-      year: '2025 Q2',
+      year: '2026 Q2',
       title: 'First Prototype',
       description: 'IkirereMesh SDK alpha release to partner institutions'
     },
     {
-      year: '2025 Q4',
+      year: '2026 Q4',
       title: 'CubeSat Production',
       description: 'First 3U CubeSat kits delivered to African universities'
     },
     {
-      year: '2026 Q2',
+      year: '2027 Q2',
       title: 'Launch',
       description: 'First Ikirere satellites deployed via SpaceX rideshare'
     }
@@ -220,16 +220,16 @@ export default function About() {
           transition={{ duration: 0.8, delay: 2.0 }}
           className="mt-20 text-center"
         >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-4">Based in Accra, Ghana</h2>
+          <h2 className="text-3xl font-heading font-bold text-orbital mb-4">Based in Kigali, Rwanda</h2>
           <p className="text-orbital/70 mb-6">
             Building space infrastructure at the intersection of innovation and opportunity
           </p>
           <div className="inline-block px-6 py-3 bg-black/40 border border-teal/20 rounded-lg">
             <a
-              href="mailto:ikirerelabs.research@gmail.com"
+              href="mailto:team@ikirere.com"
               className="text-teal hover:text-teal/80 transition-colors"
             >
-              ikirerelabs.research@gmail.com
+              team@ikirere.com
             </a>
           </div>
         </motion.div>

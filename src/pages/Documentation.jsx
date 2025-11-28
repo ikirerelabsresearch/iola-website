@@ -184,14 +184,14 @@ export default function Documentation() {
         >
           <div className="text-amber text-5xl mb-4">📚</div>
           <h2 className="text-2xl font-heading font-bold text-orbital mb-4">
-            Full Documentation Coming Q3 2025
+            Full Documentation Coming Q3 2026
           </h2>
           <p className="text-orbital/70 max-w-2xl mx-auto mb-6">
             We're building comprehensive technical documentation, video tutorials, and interactive
-            examples. Early access customers will receive draft documentation starting Q2 2025.
+            examples. Early access customers will receive draft documentation starting Q2 2026.
           </p>
           <a
-            href="mailto:ikirerelabs.research@gmail.com?subject=Documentation%20Early%20Access"
+            href="mailto:team@ikirere.com?subject=Documentation%20Early%20Access"
             className="inline-block px-6 py-3 bg-amber text-black font-semibold rounded-lg hover:bg-amber/90 transition-all"
           >
             Request Early Access
