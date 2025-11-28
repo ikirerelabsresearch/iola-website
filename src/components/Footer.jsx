@@ -1,24 +1,25 @@
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 
 export default function Footer() {
   const links = {
     Product: [
-      { name: 'CubeSat Kits', href: '#product' },
-      { name: 'IkirereMesh SDK', href: '#sdk' },
-      { name: 'Pricing', href: '#pricing' },
-      { name: 'Documentation', href: '#docs' },
+      { name: 'CubeSat Kits', href: '/cubesat-kits', internal: true },
+      { name: 'IkirereMesh SDK', href: '/ikirere-mesh-sdk', internal: true },
+      { name: 'Pricing', href: '/pricing', internal: true },
+      { name: 'Documentation', href: '/documentation', internal: true },
     ],
     Company: [
-      { name: 'About', href: '#about' },
-      { name: 'Roadmap', href: '#roadmap' },
-      { name: 'Team', href: '#team' },
-      { name: 'Careers', href: '#careers' },
+      { name: 'About', href: '/about', internal: true },
+      { name: 'Roadmap', href: '/roadmap', internal: true },
+      { name: 'Team', href: '/team', internal: true },
+      { name: 'Careers', href: '/careers', internal: true },
     ],
     Resources: [
-      { name: 'GitHub', href: 'https://github.com' },
-      { name: 'Research Paper', href: '#research' },
-      { name: 'API Reference', href: '#api' },
-      { name: 'Blog', href: '#blog' },
+      { name: 'GitHub', href: 'https://github.com', internal: false },
+      { name: 'Research Paper', href: '#research', internal: false },
+      { name: 'API Reference', href: '#api', internal: false },
+      { name: 'Blog', href: '#blog', internal: false },
     ],
     Connect: [
       { name: 'LinkedIn', href: 'https://www.linkedin.com/company/ikirere-orbital-labs-africa' },
@@ -59,12 +60,21 @@ export default function Footer() {
               <ul className="space-y-3">
                 {items.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      className="text-orbital/60 hover:text-teal transition-colors text-sm"
-                    >
-                      {link.name}
-                    </a>
+                    {link.internal ? (
+                      <Link
+                        to={link.href}
+                        className="text-orbital/60 hover:text-teal transition-colors text-sm"
+                      >
+                        {link.name}
+                      </Link>
+                    ) : (
+                      <a
+                        href={link.href}
+                        className="text-orbital/60 hover:text-teal transition-colors text-sm"
+                      >
+                        {link.name}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

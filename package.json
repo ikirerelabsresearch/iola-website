@@ -17,6 +17,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-intersection-observer": "^9",
+    "react-router-dom": "^7.9.6",
     "three": "^0.160"
   },
   "devDependencies": {

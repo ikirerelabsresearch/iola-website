@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Link } from 'react-router-dom'
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false)
@@ -14,10 +15,11 @@ export default function Navigation() {
   }, [])
 
   const navLinks = [
-    { name: 'The Mission', href: '#mission' },
-    { name: 'Product', href: '#product' },
-    { name: 'Roadmap', href: '#roadmap' },
-    { name: 'Documentation', href: '#docs' },
+    { name: 'Home', href: '/' },
+    { name: 'Products', href: '/cubesat-kits' },
+    { name: 'SDK', href: '/ikirere-mesh-sdk' },
+    { name: 'Roadmap', href: '/roadmap' },
+    { name: 'About', href: '/about' },
   ]
 
   return (
@@ -31,7 +33,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10">
               <img
                 src="/iola-logo.png"
@@ -45,29 +47,29 @@ export default function Navigation() {
               </div>
               <div className="text-xs text-orbital/60 tracking-wide">Orbital Labs Africa</div>
             </div>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
+                to={link.href}
                 className="text-orbital/80 hover:text-teal transition-colors text-sm font-medium tracking-wide"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
           </div>
 
           {/* CTA Button */}
           <div className="hidden md:flex items-center gap-4">
-            <a
-              href="#waitlist"
+            <Link
+              to="/pricing"
               className="px-6 py-2.5 bg-amber text-stratosphere font-semibold text-sm tracking-wide rounded-md hover:bg-amber/90 transition-all glow-amber"
             >
-              Join Sandbox
-            </a>
+              Get Started
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -97,22 +99,22 @@ export default function Navigation() {
           >
             <div className="px-6 py-4 space-y-4">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
-                  href={link.href}
+                  to={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className="block text-orbital/80 hover:text-teal transition-colors text-sm font-medium"
                 >
                   {link.name}
-                </a>
+                </Link>
               ))}
-              <a
-                href="#waitlist"
+              <Link
+                to="/pricing"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block w-full px-6 py-2.5 bg-amber text-stratosphere font-semibold text-sm text-center rounded-md"
               >
-                Join Sandbox
-              </a>
+                Get Started
+              </Link>
             </div>
           </motion.div>
         )}
