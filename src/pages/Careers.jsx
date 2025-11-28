@@ -5,7 +5,7 @@ export default function Careers() {
   const positions = [
     {
       title: 'Flight Software Engineer',
-      location: 'Accra, Ghana',
+      location: 'Kigali, Rwanda',
       type: 'Full-time',
       description: 'Build embedded Linux systems for CubeSats. Work on ADCS, communications, and onboard autonomy.',
       requirements: [
@@ -17,7 +17,7 @@ export default function Careers() {
     },
     {
       title: 'Hardware Engineer (CubeSat)',
-      location: 'Accra, Ghana',
+      location: 'Kigali, Rwanda',
       type: 'Full-time',
       description: 'Design and integrate CubeSat subsystems. Work with power, ADCS, comms, and payload modules.',
       requirements: [
@@ -29,7 +29,7 @@ export default function Careers() {
     },
     {
       title: 'ML Research Engineer',
-      location: 'Remote / Accra',
+      location: 'Remote / Kigali',
       type: 'Full-time',
       description: 'Develop reinforcement learning algorithms for constellation coordination and collision avoidance.',
       requirements: [
@@ -41,7 +41,7 @@ export default function Careers() {
     },
     {
       title: 'Mission Operations Specialist',
-      location: 'Accra, Ghana',
+      location: 'Kigali, Rwanda',
       type: 'Full-time',
       description: 'Operate satellite constellations. Manage ground station networks and respond to orbital events.',
       requirements: [
@@ -144,7 +144,7 @@ export default function Careers() {
                     </div>
                   </div>
                   <a
-                    href={`mailto:ikirerelabs.research@gmail.com?subject=Application:%20${position.title}`}
+                    href={`mailto:team@ikirere.com?subject=Application:%20${position.title}`}
                     className="mt-4 md:mt-0 px-6 py-3 bg-teal text-black font-semibold rounded-lg hover:bg-teal/90 transition-all inline-block text-center"
                   >
                     Apply Now
@@ -240,7 +240,7 @@ export default function Careers() {
             and building foundational infrastructure, we want to hear from you.
           </p>
           <a
-            href="mailto:ikirerelabs.research@gmail.com?subject=General%20Application"
+            href="mailto:team@ikirere.com?subject=General%20Application"
             className="inline-block px-8 py-4 bg-amber text-black font-semibold rounded-lg hover:bg-amber/90 transition-all"
           >
             Send General Application

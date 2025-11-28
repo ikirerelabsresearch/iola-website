@@ -338,7 +338,7 @@ Complete documentation available:
 ## 📞 Support & Maintenance
 
 **For issues or questions**:
-- Email: ikirerelabs.research@gmail.com
+- Email: team@ikirere.com
 - LinkedIn: [Ikirere Orbital Labs Africa](https://www.linkedin.com/company/ikirere-orbital-labs-africa)
 
 **Regular maintenance**:
@@ -370,6 +370,6 @@ vercel --prod
 
 ---
 
-**Built in Accra. Deployed to Orbit.** 🌍✨🛰️
+**Built in Kigali. Deployed to Orbit.** 🌍✨🛰️
 
 *// Deterministic Safety in a Chaotic Orbit*

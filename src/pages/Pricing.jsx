@@ -126,7 +126,7 @@ export default function Pricing() {
                 ))}
               </ul>
               <a
-                href="mailto:ikirerelabs.research@gmail.com?subject=Pricing%20Inquiry:%20${tier.name}"
+                href="mailto:team@ikirere.com?subject=Pricing%20Inquiry:%20${tier.name}"
                 className={`block w-full px-6 py-3 rounded-lg font-semibold transition-all text-center ${
                   tier.highlight
                     ? 'bg-teal text-black hover:bg-teal/90'

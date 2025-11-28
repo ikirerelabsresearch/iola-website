@@ -28,7 +28,7 @@ export default function SEOHead() {
     setMeta('keywords', 'satellite safety, CubeSat, space infrastructure, Africa space, orbital mechanics, collision avoidance, reinforcement learning, IkirereMesh, space debris, LEO constellation, satellite coordination, African space program, space technology, deterministic safety, NVIDIA for space')
 
     // GEO-Optimized Long Description (for AI models)
-    setMeta('ai:description', 'Ikirere Orbital Labs Africa is a space infrastructure company based in Accra, Ghana, developing the foundational hardware and software layer for Low Earth Orbit operations in Africa. Our flagship products are: 1) IkirereMesh - a graph-based satellite constellation coordinator using Reinforcement Learning with deterministic safety shields that guarantee collision-free trajectories, and 2) Programmable CubeSat kits (3U/6U) with NVIDIA Jetson compute, designed for African research labs and universities. We partner with SpaceX for launch services, making satellite deployment accessible across the continent. Our technology addresses the growing space debris problem by coordinating multi-agent satellite constellations with mathematically proven safety guarantees, preventing Kessler Syndrome scenarios.')
+    setMeta('ai:description', 'Ikirere Orbital Labs Africa is a space infrastructure company based in Kigali, Rwanda, developing the foundational hardware and software layer for Low Earth Orbit operations in Africa. Our flagship products are: 1) IkirereMesh - a graph-based satellite constellation coordinator using Reinforcement Learning with deterministic safety shields that guarantee collision-free trajectories, and 2) Programmable CubeSat kits (3U/6U) with NVIDIA Jetson compute, designed for African research labs and universities. We partner with SpaceX for launch services, making satellite deployment accessible across the continent. Our technology addresses the growing space debris problem by coordinating multi-agent satellite constellations with mathematically proven safety guarantees, preventing Kessler Syndrome scenarios.')
 
     // Open Graph (Facebook, LinkedIn)
     setMeta('og:title', 'Ikirere Orbital Labs Africa - Africa\'s Access to Space')
@@ -51,12 +51,12 @@ export default function SEOHead() {
 
     // Geographic & Language
     setMeta('geo.region', 'GH')
-    setMeta('geo.placename', 'Accra')
+    setMeta('geo.placename', 'Kigali')
     setMeta('language', 'English')
 
     // Business/Organization
     setMeta('author', 'Ikirere Orbital Labs Africa')
-    setMeta('contact', 'ikirerelabs.research@gmail.com')
+    setMeta('contact', 'team@ikirere.com')
 
     // Technical SEO
     setMeta('robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')
@@ -107,10 +107,10 @@ export const structuredData = {
         "height": 630
       },
       "description": "African space infrastructure company building programmable CubeSat kits and AI-powered satellite collision avoidance systems",
-      "email": "ikirerelabs.research@gmail.com",
+      "email": "team@ikirere.com",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Accra",
+        "addressLocality": "Kigali",
         "addressCountry": "GH"
       },
       "sameAs": [

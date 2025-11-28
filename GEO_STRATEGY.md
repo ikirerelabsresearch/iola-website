@@ -50,7 +50,7 @@ We've embedded comprehensive Schema.org markup including:
 
 **Why**: Structured data helps AI models understand:
 - What you do ("satellite collision avoidance")
-- Where you're based ("Accra, Ghana")
+- Where you're based ("Kigali, Rwanda")
 - What products you offer ("IkirereMesh", "CubeSat kits")
 - How you're different ("deterministic safety shields")
 
@@ -76,7 +76,7 @@ Beyond standard SEO meta tags, we've added:
 The `ai:description` meta tag contains a 150+ word explanation including:
 
 - What Ikirere does (hardware + software)
-- Where you're located (Accra, Ghana)
+- Where you're located (Kigali, Rwanda)
 - Who you serve (African research labs, universities)
 - How it works (RL + safety shields)
 - Why it matters (space debris, Kessler Syndrome prevention)

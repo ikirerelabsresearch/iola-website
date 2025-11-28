@@ -194,7 +194,7 @@ This website implements the complete Ikirere brand identity:
 
 Internal team only. For questions or suggestions:
 
-- **Email**: ikirerelabs.research@gmail.com
+- **Email**: team@ikirere.com
 - **LinkedIn**: [Ikirere Orbital Labs Africa](https://www.linkedin.com/company/ikirere-orbital-labs-africa)
 
 ## License
@@ -203,6 +203,6 @@ Internal team only. For questions or suggestions:
 
 ---
 
-**Built in Accra. Deployed to Orbit.**
+**Built in Kigali. Deployed to Orbit.**
 
 *// Deterministic Safety in a Chaotic Orbit*

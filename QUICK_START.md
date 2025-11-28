@@ -152,9 +152,9 @@ pnpm install
 ## Support
 
 Questions or issues? Contact the team:
-- Email: ikirerelabs.research@gmail.com
+- Email: team@ikirere.com
 - LinkedIn: [Ikirere Orbital Labs Africa](https://www.linkedin.com/company/ikirere-orbital-labs-africa)
 
 ---
 
-**Built in Accra. Deployed to Orbit.**
+**Built in Kigali. Deployed to Orbit.**
