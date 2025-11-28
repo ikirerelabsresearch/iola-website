@@ -14,6 +14,7 @@ export default function Footer() {
       { name: 'Roadmap', href: '/roadmap', internal: true },
       { name: 'Team', href: '/team', internal: true },
       { name: 'Careers', href: '/careers', internal: true },
+      { name: 'Partnerships', href: '/partnerships', internal: true },
     ],
     Resources: [
       { name: 'GitHub', href: 'https://github.com', internal: false },
@@ -24,7 +25,7 @@ export default function Footer() {
     Connect: [
       { name: 'LinkedIn', href: 'https://www.linkedin.com/company/ikirere-orbital-labs-africa' },
       { name: 'Twitter', href: '#twitter' },
-      { name: 'Contact', href: 'mailto:ikirerelabs.research@gmail.com' },
+      { name: 'Contact', href: 'mailto:team@ikirere.com' },
     ],
   }
 
@@ -90,7 +91,7 @@ export default function Footer() {
 
           {/* Copyright */}
           <div className="text-sm text-orbital/40">
-            <p>© 2025 Ikirere Orbital Labs Africa. Built in Accra. Deployed to Orbit.</p>
+            <p>© 2025 Ikirere Orbital Labs Africa. Built in Kigali. Deployed to Orbit.</p>
           </div>
 
           {/* Stats */}
@@ -132,7 +133,7 @@ export default function Footer() {
               </svg>
             </a>
             <a
-              href="mailto:ikirerelabs.research@gmail.com"
+              href="mailto:team@ikirere.com"
               className="w-10 h-10 rounded-full border border-amber/30 flex items-center justify-center text-amber hover:bg-amber/10 transition-all"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

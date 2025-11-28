@@ -15,6 +15,7 @@ import About from './pages/About'
 import RoadmapPage from './pages/RoadmapPage'
 import Team from './pages/Team'
 import Careers from './pages/Careers'
+import Partnerships from './pages/Partnerships'
 
 function App() {
   useEffect(() => {
@@ -52,6 +53,7 @@ function App() {
             <Route path="/roadmap" element={<RoadmapPage />} />
             <Route path="/team" element={<Team />} />
             <Route path="/careers" element={<Careers />} />
+            <Route path="/partnerships" element={<Partnerships />} />
           </Routes>
         </Suspense>
 

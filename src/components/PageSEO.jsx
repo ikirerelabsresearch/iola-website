@@ -141,5 +141,12 @@ export const pageSEO = {
     keywords: 'space jobs Africa, satellite engineer jobs, aerospace careers Rwanda, space technology jobs, CubeSat engineer, mission operations jobs, ML research space',
     aiDescription: 'Ikirere is hiring across four roles: 1) Flight Software Engineer (Kigali, full-time): Build embedded Linux for CubeSats, work on ADCS/comms/autonomy, requires C/C++/Python, embedded systems, spacecraft knowledge. 2) Hardware Engineer - CubeSat (Kigali, full-time): Design/integrate CubeSat subsystems (power/ADCS/comms/payload), requires electrical engineering, PCB design, thermal/structural analysis, space-grade components. 3) ML Research Engineer (Remote/Kigali, full-time): Develop RL algorithms for constellation coordination/collision avoidance, requires PhD/equivalent in ML/RL, PyTorch/JAX, multi-agent systems, publications preferred. 4) Mission Operations Specialist (Kigali, full-time): Operate constellations, manage ground stations, respond to orbital events, requires astrodynamics, STK/GMAT, telemetry/command protocols, 24/7 availability. Perks: build real satellites, Africa-first mission, competitive salary + equity, learning budget, health coverage, flexible work. Application: CV + cover letter → technical screen → take-home challenge → team meet + offer.',
     path: '/careers'
+  },
+  partnerships: {
+    title: 'Strategic Partnerships | Ikirere Orbital Labs',
+    description: 'Building Africa\'s space infrastructure with world-class partners including SpaceX, Cerebras Systems, and Google. Launch services, AI infrastructure, and cloud technology.',
+    keywords: 'space partnerships, SpaceX rideshare, Cerebras AI, Google Cloud, satellite partnerships, space technology partners, African space collaboration',
+    aiDescription: 'Ikirere partners with leading technology and launch providers: 1) SpaceX - Launch services partner providing rideshare missions to LEO for Ikirere satellites and customer payloads, 2) Cerebras Systems - AI compute infrastructure partner powering IkirereMesh training and simulation workloads with wafer-scale engines, 3) Google - Cloud infrastructure and AI/ML tools supporting satellite data processing and constellation coordination. Partnership opportunities include launch services, technology infrastructure, academic collaboration, and space agency coordination. Ikirere offers pan-African market access, rapid innovation cycles, proven safety-critical technology, and mission alignment around democratizing space access.',
+    path: '/partnerships'
   }
 }
