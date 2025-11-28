@@ -33,8 +33,11 @@ export default function SEOHead() {
     // Open Graph (Facebook, LinkedIn)
     setMeta('og:title', 'Ikirere Orbital Labs Africa - Africa\'s Access to Space')
     setMeta('og:description', 'The NVIDIA for Space. Building sovereign orbital infrastructure with programmable CubeSats and AI-powered collision avoidance.')
-    setMeta('og:image', 'https://ikirere.com/iola-visionimage.png')
-    setMeta('og:url', 'https://ikirere.com')
+    setMeta('og:image', 'https://www.ikirere.com/iola-visionimage.png')
+    setMeta('og:image:width', '1200')
+    setMeta('og:image:height', '630')
+    setMeta('og:image:type', 'image/png')
+    setMeta('og:url', 'https://www.ikirere.com')
     setMeta('og:type', 'website')
     setMeta('og:site_name', 'Ikirere Orbital Labs Africa')
     setMeta('og:locale', 'en_US')
@@ -43,7 +46,8 @@ export default function SEOHead() {
     setMeta('twitter:card', 'summary_large_image')
     setMeta('twitter:title', 'Ikirere Orbital Labs Africa - Africa\'s Access to Space')
     setMeta('twitter:description', 'Building the foundational hardware and software layer for the African space age. Deterministic safety in a chaotic orbit.')
-    setMeta('twitter:image', 'https://ikirere.com/iola-visionimage.png')
+    setMeta('twitter:image', 'https://www.ikirere.com/iola-visionimage.png')
+    setMeta('twitter:image:alt', 'Ikirere Orbital Labs Africa - Satellite constellation visualization')
 
     // Geographic & Language
     setMeta('geo.region', 'GH')
@@ -85,16 +89,22 @@ export const structuredData = {
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://ikirere.com/#organization",
+      "@id": "https://www.ikirere.com/#organization",
       "name": "Ikirere Orbital Labs Africa",
       "legalName": "Ikirere Orbital Labs Africa",
       "alternateName": "IOLA",
-      "url": "https://ikirere.com",
+      "url": "https://www.ikirere.com",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://ikirere.com/iola-logo.png",
+        "url": "https://www.ikirere.com/iola-logo.png",
         "width": 512,
         "height": 512
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://www.ikirere.com/iola-visionimage.png",
+        "width": 1200,
+        "height": 630
       },
       "description": "African space infrastructure company building programmable CubeSat kits and AI-powered satellite collision avoidance systems",
       "email": "ikirerelabs.research@gmail.com",
@@ -125,48 +135,48 @@ export const structuredData = {
     },
     {
       "@type": "WebSite",
-      "@id": "https://ikirere.com/#website",
-      "url": "https://ikirere.com",
+      "@id": "https://www.ikirere.com/#website",
+      "url": "https://www.ikirere.com",
       "name": "Ikirere Orbital Labs Africa",
       "description": "Africa's Access to Space - The sovereign infrastructure for the African space age",
       "publisher": {
-        "@id": "https://ikirere.com/#organization"
+        "@id": "https://www.ikirere.com/#organization"
       },
       "inLanguage": "en-US"
     },
     {
       "@type": "Product",
-      "@id": "https://ikirere.com/#product-ikirere-mesh",
+      "@id": "https://www.ikirere.com/#product-ikirere-mesh",
       "name": "IkirereMesh",
       "description": "Graph-based satellite constellation coordinator using Reinforcement Learning with deterministic safety shields for collision avoidance",
       "brand": {
-        "@id": "https://ikirere.com/#organization"
+        "@id": "https://www.ikirere.com/#organization"
       },
       "category": "Space Software",
       "offers": {
         "@type": "Offer",
         "availability": "https://schema.org/PreOrder",
-        "url": "https://ikirere.com/#product"
+        "url": "https://www.ikirere.com/#product"
       }
     },
     {
       "@type": "Product",
-      "@id": "https://ikirere.com/#product-cubesat",
+      "@id": "https://www.ikirere.com/#product-cubesat",
       "name": "Ikirere CubeSat Kit",
       "description": "Programmable 3U/6U CubeSat kits with NVIDIA Jetson compute, designed for African research institutions",
       "brand": {
-        "@id": "https://ikirere.com/#organization"
+        "@id": "https://www.ikirere.com/#organization"
       },
       "category": "Space Hardware",
       "offers": {
         "@type": "Offer",
         "availability": "https://schema.org/PreOrder",
-        "url": "https://ikirere.com/#product"
+        "url": "https://www.ikirere.com/#product"
       }
     },
     {
       "@type": "FAQPage",
-      "@id": "https://ikirere.com/#faq",
+      "@id": "https://www.ikirere.com/#faq",
       "mainEntity": [
         {
           "@type": "Question",
