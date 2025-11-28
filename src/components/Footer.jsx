@@ -80,7 +80,7 @@ export default function Footer() {
 
           {/* Copyright */}
           <div className="text-sm text-orbital/40">
-            <p>© 2024 Ikirere Orbital Labs Africa. Built in Accra. Deployed to Orbit.</p>
+            <p>© 2025 Ikirere Orbital Labs Africa. Built in Accra. Deployed to Orbit.</p>
           </div>
 
           {/* Stats */}

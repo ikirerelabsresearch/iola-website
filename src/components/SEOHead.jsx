@@ -116,7 +116,7 @@ export const structuredData = {
       "sameAs": [
         "https://www.linkedin.com/company/ikirere-orbital-labs-africa"
       ],
-      "foundingDate": "2024",
+      "foundingDate": "2025",
       "founders": [
         {
           "@type": "Person",

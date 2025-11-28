@@ -199,7 +199,7 @@ Internal team only. For questions or suggestions:
 
 ## License
 
-© 2024 Ikirere Orbital Labs Africa. All rights reserved.
+© 2025 Ikirere Orbital Labs Africa. All rights reserved.
 
 ---
 

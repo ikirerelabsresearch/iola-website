@@ -21,7 +21,7 @@ export default function Roadmap() {
     },
     {
       phase: 'Phase 2',
-      status: 'Q1 2025',
+      status: 'Q1 2026',
       title: 'Real Orbital Data',
       period: 'Next',
       description: 'Integration with ESA DRAMA and NASA CARA databases for real-time conjunction analysis.',
@@ -35,7 +35,7 @@ export default function Roadmap() {
     },
     {
       phase: 'Phase 3',
-      status: 'Q2 2025',
+      status: 'Q2 2026',
       title: 'CubeSat Onboard Profile',
       period: 'Planned',
       description: 'Deploy IkirereMesh to flight-ready CubeSat hardware with onboard decision-making.',
@@ -49,7 +49,7 @@ export default function Roadmap() {
     },
     {
       phase: 'Phase 4',
-      status: 'Q4 2025',
+      status: 'Q4 2026',
       title: 'Inter-Operator Protocol',
       period: 'Vision',
       description: 'Standardized mesh coordination protocol for multi-operator constellations (ISO compliance).',
@@ -213,7 +213,7 @@ export default function Roadmap() {
             </form>
 
             <p className="text-xs text-orbital/40 mt-4">
-              Early access opens Q1 2025. No spam, ever.
+              Early access opens Q1 2026. No spam, ever.
             </p>
           </div>
         </motion.div>
