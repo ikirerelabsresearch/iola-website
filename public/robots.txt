@@ -33,7 +33,7 @@ User-agent: YouBot
 Allow: /
 
 # Sitemap location
-Sitemap: https://ikirere.com/sitemap.xml
+Sitemap: https://www.ikirere.com/sitemap.xml
 
 # Crawl-delay (be polite)
 Crawl-delay: 1

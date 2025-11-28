@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import PageSEO, { pageSEO } from '../components/PageSEO'
 
 export default function Careers() {
   const positions = [
@@ -87,6 +88,7 @@ export default function Careers() {
 
   return (
     <div className="min-h-screen bg-stratosphere pt-24">
+      <PageSEO {...pageSEO.careers} />
       <section className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
         {/* Hero */}
         <motion.div
