@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import OrbitalScene from './3d/OrbitalScene'
 
@@ -75,28 +76,20 @@ export default function Hero() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.3 }}
-              className="flex flex-wrap gap-4"
+              transition={{ duration: 0.8, delay: 1 }}
+              className="flex flex-wrap gap-6 mt-12"
             >
-              <a
-                href="#waitlist"
-                className="group relative px-8 py-4 bg-amber text-stratosphere font-bold text-lg tracking-wide rounded-lg overflow-hidden transition-all hover:scale-105 glow-amber"
+              <Link
+                to="/sandbox"
+                className="group relative px-8 py-4 bg-teal/10 hover:bg-teal/20 border border-teal/50 text-teal font-mono text-sm tracking-widest uppercase transition-all overflow-hidden inline-block"
               >
-                <span className="relative z-10">Join the Sandbox</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-amber to-yellow-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </a>
+                <span className="relative z-10 group-hover:tracking-[0.25em] transition-all duration-300">Launch Sandbox</span>
+                <div className="absolute bottom-0 left-0 h-[2px] w-full bg-teal transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+              </Link>
 
-              <a
-                href="#roadmap"
-                className="group px-8 py-4 bg-transparent border-2 border-teal text-teal font-bold text-lg tracking-wide rounded-lg hover:bg-teal/10 transition-all"
-              >
-                <span className="flex items-center gap-2">
-                  View Roadmap
-                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </span>
-              </a>
+              <button className="group relative px-8 py-4 bg-transparent hover:bg-white/5 border border-white/20 text-white font-mono text-sm tracking-widest uppercase transition-all">
+                <span className="group-hover:text-teal transition-colors">Documentation</span>
+              </button>
             </motion.div>
 
             {/* Stats */}

@@ -7,6 +7,7 @@ import { initAnalytics } from './lib/analytics'
 
 // Pages
 import Home from './pages/Home'
+import Sandbox from './pages/Sandbox'
 import CubeSatKits from './pages/CubeSatKits'
 import IkirereMeshSDK from './pages/IkirereMeshSDK'
 import Pricing from './pages/Pricing'
@@ -45,6 +46,7 @@ function App() {
         }>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/sandbox" element={<Sandbox />} />
             <Route path="/cubesat-kits" element={<CubeSatKits />} />
             <Route path="/ikirere-mesh-sdk" element={<IkirereMeshSDK />} />
             <Route path="/pricing" element={<Pricing />} />

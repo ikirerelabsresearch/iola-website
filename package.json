@@ -12,13 +12,18 @@
   "dependencies": {
     "@react-three/drei": "^9",
     "@react-three/fiber": "^8",
+    "@react-three/postprocessing": "^3.0.4",
+    "cesium": "^1.137.0",
     "framer-motion": "^11",
     "leva": "^0.9",
+    "postprocessing": "^6.38.2",
     "react": "^18",
     "react-dom": "^18",
     "react-intersection-observer": "^9",
     "react-router-dom": "^7.9.6",
-    "three": "^0.160"
+    "resium": "^1.19.2",
+    "three": "^0.160",
+    "vite-plugin-cesium": "^1.2.23"
   },
   "devDependencies": {
     "@types/react": "^18",
