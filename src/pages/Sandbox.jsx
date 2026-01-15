@@ -1,25 +1,68 @@
 import { Canvas } from '@react-three/fiber'
-import { Suspense, useState, useCallback } from 'react'
+import { Suspense, useState, useCallback, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { useControls, Leva, button } from 'leva'
 import EarthScene from '../components/3d/EarthScene'
+import ConstellationControlPanel from '../components/ui/ConstellationControlPanel'
+import SatelliteInfoPanel from '../components/ui/SatelliteInfoPanel'
+import { getConstellationColor } from '../components/3d/Constellation'
+
+// Generate unique ID
+const generateId = () => `const-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+
+// Default constellation config
+const createConstellation = (index) => ({
+    id: generateId(),
+    name: ['Ikirere Alpha', 'Beta Network', 'Gamma Array', 'Delta Mesh', 'Epsilon Grid', 'Zeta Cluster'][index % 6],
+    color: getConstellationColor(index),
+    satelliteCount: 200,
+    altitude: 1.2 + (index * 0.3),
+    inclination: 0.8,
+    speed: 0.5,
+    coordinated: true,
+    visible: true,
+    zombieCount: 0
+})
 
 export default function Sandbox() {
-    const [riskIndex, setRiskIndex] = useState(0)
+    // Constellation state
+    const [constellations, setConstellations] = useState([
+        createConstellation(0)
+    ])
+    const [selectedSatellite, setSelectedSatellite] = useState(null)
 
-    const { satelliteCount, altitude, speed, inclination } = useControls('Orbital Parameters', {
-        satelliteCount: { value: 500, min: 100, max: 5000, step: 100 },
-        altitude: { value: 1.5, min: 0.5, max: 5, step: 0.1 },
-        speed: { value: 0.5, min: 0, max: 5, step: 0.1 },
-        inclination: { value: 1, min: 0.1, max: Math.PI, step: 0.1, label: 'Orbital Inclination' }
-    })
+    // Compute global metrics
+    const globalMetrics = useMemo(() => {
+        const totalSats = constellations.reduce((sum, c) => sum + c.satelliteCount + (c.zombieCount || 0), 0)
+        const zombieTotal = constellations.reduce((sum, c) => sum + (c.zombieCount || 0), 0)
+        const uncoordinated = constellations.filter(c => !c.coordinated && c.visible).length
 
-    const { coordinated } = useControls('Coordination', {
-        coordinated: { value: false, label: 'Coordinated Constellation' }
-    })
+        // Simple risk calculation
+        const baseRisk = 0.02
+        const densityRisk = Math.min(totalSats / 5000, 0.3)
+        const zombieRisk = (zombieTotal / Math.max(totalSats, 1)) * 0.4
+        const uncoordRisk = (uncoordinated / Math.max(constellations.length, 1)) * 0.25
 
-    const handleRiskUpdate = useCallback((risk) => {
-        setRiskIndex(risk)
+        return {
+            totalSatellites: totalSats,
+            totalZombies: zombieTotal,
+            constellationCount: constellations.length,
+            risk: Math.min(baseRisk + densityRisk + zombieRisk + uncoordRisk, 1.0)
+        }
+    }, [constellations])
+
+    // Add new constellation
+    const handleAddConstellation = useCallback(() => {
+        setConstellations(prev => [...prev, createConstellation(prev.length)])
+    }, [])
+
+    // Handle satellite selection
+    const handleSelectSatellite = useCallback((satellite) => {
+        setSelectedSatellite(satellite)
+    }, [])
+
+    // Close satellite panel
+    const handleCloseSatellitePanel = useCallback(() => {
+        setSelectedSatellite(null)
     }, [])
 
     return (
@@ -37,40 +80,64 @@ export default function Sandbox() {
                 </Link>
             </div>
 
-            {/* Info Panel */}
-            <div className="absolute bottom-10 left-10 z-10 pointer-events-none">
-                <h1 className="text-4xl font-bold text-white mb-2 tracking-tighter">SANDBOX <span className="text-teal">MODE</span></h1>
-                <p className="text-white/50 max-w-sm text-sm font-mono">
-                    Interactive simulation of Ikirere Mesh Network coverage. Toggle coordination to observe collective behavior under load.
+            {/* Title */}
+            <div className="absolute bottom-6 left-6 z-10 pointer-events-none">
+                <h1 className="text-3xl font-bold text-white mb-1 tracking-tighter">
+                    COMMAND <span className="text-teal">CENTER</span>
+                </h1>
+                <p className="text-white/40 max-w-xs text-xs font-mono">
+                    Multi-constellation simulation. Click satellites for metadata. Toggle coordination to observe collective behavior.
                 </p>
             </div>
 
-            {/* Risk Metric - Subtle floating display */}
-            <div className="absolute bottom-10 right-10 z-10 pointer-events-none">
-                <div className="backdrop-blur-md bg-black/30 border border-white/10 rounded-lg px-4 py-3">
-                    <div className="text-white/40 text-xs font-mono tracking-widest mb-1">CONJUNCTION RISK</div>
-                    <div
-                        className="font-mono text-2xl tracking-tight transition-colors duration-300"
-                        style={{
-                            color: riskIndex < 0.2 ? '#00F0FF' : riskIndex < 0.5 ? '#FFB800' : '#FF4444',
-                            textShadow: `0 0 20px ${riskIndex < 0.2 ? 'rgba(0,240,255,0.5)' : riskIndex < 0.5 ? 'rgba(255,184,0,0.5)' : 'rgba(255,68,68,0.5)'}`
-                        }}
-                    >
-                        {riskIndex.toFixed(2)}
+            {/* Global Metrics Bar */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+                <div className="backdrop-blur-md bg-black/40 border border-white/10 rounded-lg px-6 py-2 flex items-center gap-8">
+                    <div className="text-center">
+                        <div className="text-white/40 text-[10px] font-mono tracking-widest">SATELLITES</div>
+                        <div className="text-white font-mono text-lg">{globalMetrics.totalSatellites}</div>
+                    </div>
+                    <div className="w-px h-8 bg-white/10" />
+                    <div className="text-center">
+                        <div className="text-white/40 text-[10px] font-mono tracking-widest">CONSTELLATIONS</div>
+                        <div className="text-white font-mono text-lg">{globalMetrics.constellationCount}</div>
+                    </div>
+                    <div className="w-px h-8 bg-white/10" />
+                    <div className="text-center">
+                        <div className="text-white/40 text-[10px] font-mono tracking-widest">ZOMBIES</div>
+                        <div className={`font-mono text-lg ${globalMetrics.totalZombies > 0 ? 'text-red-400' : 'text-white'}`}>
+                            {globalMetrics.totalZombies}
+                        </div>
+                    </div>
+                    <div className="w-px h-8 bg-white/10" />
+                    <div className="text-center">
+                        <div className="text-white/40 text-[10px] font-mono tracking-widest">CONJUNCTION RISK</div>
+                        <div
+                            className="font-mono text-lg transition-colors"
+                            style={{
+                                color: globalMetrics.risk < 0.2 ? '#00F0FF' : globalMetrics.risk < 0.5 ? '#FFB800' : '#FF4444'
+                            }}
+                        >
+                            {globalMetrics.risk.toFixed(2)}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <Leva theme={{
-                colors: {
-                    accent: '#00F0FF',
-                    bg: '#0B1E3D',
-                    fg: '#ffffff',
-                    active: '#00F0FF',
-                    hover: '#1E4064'
-                }
-            }} />
+            {/* Constellation Control Panel */}
+            <ConstellationControlPanel
+                constellations={constellations}
+                onChange={setConstellations}
+                onAdd={handleAddConstellation}
+            />
 
+            {/* Satellite Info Panel */}
+            <SatelliteInfoPanel
+                satellite={selectedSatellite}
+                onClose={handleCloseSatellitePanel}
+            />
+
+            {/* 3D Canvas */}
             <Canvas
                 camera={{ position: [0, 0, 8], fov: 45 }}
                 gl={{ antialias: false, powerPreference: 'high-performance' }}
@@ -78,12 +145,9 @@ export default function Sandbox() {
             >
                 <Suspense fallback={null}>
                     <EarthScene
-                        satelliteCount={satelliteCount}
-                        orbitalAltitude={altitude}
-                        orbitSpeed={speed}
-                        swarmSpread={inclination}
-                        coordinated={coordinated}
-                        onRiskUpdate={handleRiskUpdate}
+                        constellations={constellations}
+                        onSelectSatellite={handleSelectSatellite}
+                        selectedSatelliteId={selectedSatellite?.id}
                     />
                 </Suspense>
             </Canvas>

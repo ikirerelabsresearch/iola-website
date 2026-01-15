@@ -1,15 +1,11 @@
 import { OrbitControls, Stars } from '@react-three/drei'
-// import { EffectComposer, Bloom, Noise } from '@react-three/postprocessing'
 import Earth from './Earth'
-import SatelliteSwarm from './SatelliteSwarm'
+import ConstellationManager from './ConstellationManager'
 
 export default function EarthScene({
-    satelliteCount,
-    orbitalAltitude,
-    orbitSpeed,
-    swarmSpread,
-    coordinated = false,
-    onRiskUpdate = null
+    constellations,
+    onSelectSatellite,
+    selectedSatelliteId
 }) {
     return (
         <>
@@ -22,13 +18,11 @@ export default function EarthScene({
             <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={0.5} />
 
             <Earth />
-            <SatelliteSwarm
-                count={satelliteCount}
-                altitude={orbitalAltitude}
-                speed={orbitSpeed}
-                spread={swarmSpread}
-                coordinated={coordinated}
-                onRiskUpdate={onRiskUpdate}
+
+            <ConstellationManager
+                constellations={constellations}
+                onSelectSatellite={onSelectSatellite}
+                selectedSatelliteId={selectedSatelliteId}
             />
 
             <OrbitControls
@@ -38,11 +32,6 @@ export default function EarthScene({
                 autoRotate
                 autoRotateSpeed={0.2}
             />
-
-            {/* <EffectComposer disableNormalPass>
-                <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1} radius={0.5} />
-                <Noise opacity={0.05} />
-            </EffectComposer> */}
         </>
     )
 }
