@@ -21,6 +21,33 @@ export function getConstellationColor(index) {
     return CONSTELLATION_COLORS[index % CONSTELLATION_COLORS.length]
 }
 
+// Generate realistic satellite metadata
+const generateSatelliteData = (id, index, isZombie, constellationId) => {
+    const launchYear = 2020 + Math.floor(Math.random() * 6)
+    const launchMonth = Math.floor(Math.random() * 12) + 1
+    const models = ['NanoSat v4', 'Bus-X', 'CommsLink Mk1', 'Obs-7']
+
+    // Telemetry generation
+    const battery = isZombie ? Math.random() * 30 : 85 + Math.random() * 15
+    const temp = isZombie ? (Math.random() > 0.5 ? -40 : 80) + Math.random() * 20 : 25 + Math.random() * 10
+    const signal = isZombie ? -110 - Math.random() * 20 : -65 - Math.random() * 15
+    const solarOutput = isZombie ? Math.random() * 100 : 450 + Math.random() * 50
+
+    return {
+        designator: `IK-${launchYear}-${(index + 1).toString().padStart(3, '0')}`,
+        model: models[index % models.length],
+        launchDate: `${launchYear}-${launchMonth.toString().padStart(2, '0')}-${Math.floor(Math.random() * 28) + 1}`,
+        telemetry: {
+            battery: battery,
+            temp: temp,
+            signal: signal,
+            solar: solarOutput,
+            latency: isZombie ? 999 : 20 + Math.random() * 40,
+            cpuLoad: isZombie ? 0 : 30 + Math.random() * 40
+        }
+    }
+}
+
 export default function Constellation({
     config,
     onSatelliteClick,
@@ -34,16 +61,17 @@ export default function Constellation({
     const { camera, raycaster, pointer } = useThree()
     const dummy = useMemo(() => new THREE.Object3D(), [])
 
-    // Generate satellites with zombie support
+    // Generate satellites with zombie support and rich metadata
     const satellites = useMemo(() => {
         const sats = []
         const totalSats = satelliteCount + zombieCount
 
         for (let i = 0; i < totalSats; i++) {
             const isZombie = i >= satelliteCount
+            const metadata = generateSatelliteData(id, i, isZombie, id)
 
             if (coordinated && !isZombie) {
-                // Coordinated: even distribution
+                // Coordinated logic
                 const numShells = Math.max(1, Math.ceil(satelliteCount / 50))
                 const satsPerShell = Math.ceil(satelliteCount / numShells)
                 const shellIndex = Math.floor(i / satsPerShell)
@@ -57,10 +85,11 @@ export default function Constellation({
                     phi: ((shellIndex % 3 - 1) * 0.3) * Math.min(inclination, 0.5),
                     radiusOffset: (shellIndex / numShells) * 0.3 - 0.15,
                     speedOffset: 1.0,
-                    isZombie: false
+                    isZombie: false,
+                    ...metadata
                 })
             } else {
-                // Uncoordinated or zombie: random distribution
+                // Uncoordinated/Zombie logic
                 sats.push({
                     id: `${id}-sat-${i}`,
                     constellationId: id,
@@ -68,7 +97,8 @@ export default function Constellation({
                     phi: (Math.random() - 0.5) * inclination,
                     radiusOffset: (Math.random() - 0.5) * 0.2,
                     speedOffset: isZombie ? (Math.random() * 0.3 + 0.1) : (Math.random() * 0.5 + 0.5),
-                    isZombie
+                    isZombie,
+                    ...metadata
                 })
             }
         }
@@ -112,10 +142,13 @@ export default function Constellation({
             geo.setAttribute('aOffset', new THREE.BufferAttribute(trailGeometry.trailOffsets, 1))
             geo.computeBoundingSphere()
         }
+
     }, [trailGeometry])
 
     // Store positions for collision detection
     const positionsRef = useRef([])
+
+    const highlightRef = useRef()
 
     useFrame((state) => {
         if (!visible) return
@@ -123,10 +156,10 @@ export default function Constellation({
         const t = state.clock.getElapsedTime()
         const earthRadius = 2
         const positions = []
+        let selectedFound = false
 
         if (meshRef.current) {
             satellites.forEach((sat, i) => {
-                // Zombies have erratic motion
                 const zombieWobble = sat.isZombie ? Math.sin(t * 2 + i) * 0.1 : 0
                 const angle = sat.theta + t * speed * sat.speedOffset * 0.1 + zombieWobble
                 const r = earthRadius + altitude + sat.radiusOffset
@@ -142,14 +175,25 @@ export default function Constellation({
                 meshRef.current.setMatrixAt(i, dummy.matrix)
 
                 positions.push({ ...sat, position: { x, y, z } })
+
+                // Update highlight if this is the selected satellite
+                if (sat.id === selectedSatelliteId && highlightRef.current) {
+                    highlightRef.current.position.set(x, y, z)
+                    highlightRef.current.visible = true
+                    selectedFound = true
+                }
             })
             meshRef.current.instanceMatrix.needsUpdate = true
+        }
+
+        // Hide highlight if not found in this constellation (or if no selection)
+        if (!selectedFound && highlightRef.current) {
+            highlightRef.current.visible = false
         }
 
         positionsRef.current = positions
         if (onPositionsUpdate) onPositionsUpdate(id, positions)
 
-        // Update trail uniforms
         if (trailsRef.current?.material) {
             const mat = trailsRef.current.material
             mat.uniforms.uTime.value = t
@@ -159,7 +203,6 @@ export default function Constellation({
         }
     })
 
-    // Handle click on satellites
     const handleClick = useCallback((e) => {
         if (!meshRef.current || !onSatelliteClick) return
         e.stopPropagation()
@@ -182,15 +225,12 @@ export default function Constellation({
         uTrailLength: { value: TRAIL_LENGTH }
     }), [])
 
-    // Parse color for materials
     const threeColor = useMemo(() => new THREE.Color(color), [color])
-    const zombieColor = useMemo(() => new THREE.Color('#666666'), [])
 
     if (!visible) return null
 
     return (
         <group>
-            {/* Active Satellites */}
             <instancedMesh
                 ref={meshRef}
                 args={[null, null, satellites.length]}
@@ -205,7 +245,20 @@ export default function Constellation({
                 />
             </instancedMesh>
 
-            {/* Orbital Trails */}
+            {/* Selection Highlight */}
+            <mesh ref={highlightRef} visible={false}>
+                <sphereGeometry args={[0.08, 16, 16]} />
+                <meshBasicMaterial
+                    color="#ffffff"
+                    wireframe
+                    transparent
+                    opacity={0.6}
+                    depthTest={false}
+                />
+            </mesh>
+
+
+
             <lineSegments ref={trailsRef} frustumCulled={false}>
                 <bufferGeometry />
                 <shaderMaterial

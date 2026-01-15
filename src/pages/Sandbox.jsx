@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import EarthScene from '../components/3d/EarthScene'
 import ConstellationControlPanel from '../components/ui/ConstellationControlPanel'
 import SatelliteInfoPanel from '../components/ui/SatelliteInfoPanel'
+import MusicPlayer from '../components/ui/MusicPlayer'
 import { getConstellationColor } from '../components/3d/Constellation'
 
 // Generate unique ID
@@ -136,6 +137,9 @@ export default function Sandbox() {
                 satellite={selectedSatellite}
                 onClose={handleCloseSatellitePanel}
             />
+
+            {/* Ambient Music */}
+            <MusicPlayer />
 
             {/* 3D Canvas */}
             <Canvas
