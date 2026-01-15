@@ -1,57 +1,94 @@
-import { useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
-import { Sphere, useTexture } from '@react-three/drei'
+import { useRef, useMemo } from 'react'
+import { useFrame, useLoader } from '@react-three/fiber'
 import * as THREE from 'three'
+import { getFresnelMat } from './shaders/getFresnelMat'
 
-export default function Earth() {
+export default function Earth({ radius = 2 }) {
     const earthRef = useRef()
+    const lightsRef = useRef()
     const cloudsRef = useRef()
+    const glowRef = useRef()
 
+    // Load all Earth textures
+    const [
+        earthMap,
+        earthBump,
+        earthSpec,
+        earthLights,
+        cloudMap,
+        cloudAlpha
+    ] = useLoader(THREE.TextureLoader, [
+        '/textures/earth/00_earthmap1k.jpg',
+        '/textures/earth/01_earthbump1k.jpg',
+        '/textures/earth/02_earthspec1k.jpg',
+        '/textures/earth/03_earthlights1k.jpg',
+        '/textures/earth/04_earthcloudmap.jpg',
+        '/textures/earth/05_earthcloudmaptrans.jpg'
+    ])
+
+    // Create Fresnel glow material (memoized)
+    const fresnelMat = useMemo(() => getFresnelMat({ rimHex: 0x00aaff, facingHex: 0x000000 }), [])
+
+    // Rotation animation
     useFrame((state) => {
         const t = state.clock.getElapsedTime()
+        const rotationSpeed = 0.002
+
         if (earthRef.current) {
-            earthRef.current.rotation.y = t * 0.02
+            earthRef.current.rotation.y = t * rotationSpeed
+        }
+        if (lightsRef.current) {
+            lightsRef.current.rotation.y = t * rotationSpeed
         }
         if (cloudsRef.current) {
-            cloudsRef.current.rotation.y = t * 0.025
+            cloudsRef.current.rotation.y = t * (rotationSpeed * 1.15) // Clouds rotate slightly faster
+        }
+        if (glowRef.current) {
+            glowRef.current.rotation.y = t * rotationSpeed
         }
     })
 
-    return (
-        <group>
-            {/* Earth Sphere */}
-            <Sphere ref={earthRef} args={[2, 64, 64]}>
-                <meshStandardMaterial
-                    color="#1E4064"
-                    emissive="#0B1E3D"
-                    emissiveIntensity={0.2}
-                    roughness={0.6}
-                    metalness={0.1}
-                />
-            </Sphere>
+    // IcosahedronGeometry for smoother sphere (like original repo)
+    const geometry = useMemo(() => new THREE.IcosahedronGeometry(radius, 12), [radius])
 
-            {/* Atmosphere Glow (Fake) */}
-            <mesh scale={[2.1, 2.1, 2.1]}>
-                <sphereGeometry args={[1, 64, 64]} />
-                <meshBasicMaterial
-                    color="#00F0FF"
-                    transparent
-                    opacity={0.05}
-                    side={THREE.BackSide}
-                    blending={THREE.AdditiveBlending}
+    return (
+        <group rotation={[0, 0, -23.4 * Math.PI / 180]}> {/* Earth's axial tilt */}
+            {/* Earth Surface - Daytime */}
+            <mesh ref={earthRef} geometry={geometry}>
+                <meshPhongMaterial
+                    map={earthMap}
+                    bumpMap={earthBump}
+                    bumpScale={0.04}
+                    specularMap={earthSpec}
+                    specular={new THREE.Color(0x333333)}
+                    shininess={5}
                 />
             </mesh>
 
-            {/* Clouds / Grid Overlay */}
-            <Sphere ref={cloudsRef} args={[2.02, 64, 64]}>
-                <meshStandardMaterial
-                    color="#ffffff"
-                    transparent
-                    opacity={0.15}
+            {/* City Lights - Nightside */}
+            <mesh ref={lightsRef} geometry={geometry}>
+                <meshBasicMaterial
+                    map={earthLights}
                     blending={THREE.AdditiveBlending}
-                    alphaMap={null} // Could load a cloud map here
+                    transparent
+                    opacity={1}
                 />
-            </Sphere>
+            </mesh>
+
+            {/* Clouds Layer */}
+            <mesh ref={cloudsRef} geometry={geometry} scale={1.003}>
+                <meshStandardMaterial
+                    map={cloudMap}
+                    alphaMap={cloudAlpha}
+                    transparent
+                    opacity={0.8}
+                    blending={THREE.AdditiveBlending}
+                    depthWrite={false}
+                />
+            </mesh>
+
+            {/* Atmosphere Glow - Fresnel Effect */}
+            <mesh ref={glowRef} geometry={geometry} scale={1.01} material={fresnelMat} />
         </group>
     )
 }
