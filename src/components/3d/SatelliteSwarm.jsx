@@ -61,7 +61,14 @@ export default function SatelliteSwarm({
 
     // Risk calculation - heuristic for conjunction probability
     const computeRiskIndex = useCallback((time) => {
-        if (coordinated) return 0.0 // Coordinated = minimal risk by design
+        // Even coordinated constellations have residual risk - nothing is perfect
+        const baselineRisk = coordinated ? 0.02 : 0.08
+
+        if (coordinated) {
+            // Small fluctuation to feel alive, but fundamentally low
+            const jitter = Math.sin(time * 0.5) * 0.01 + Math.cos(time * 0.7) * 0.01
+            return Math.max(0.01, baselineRisk + jitter)
+        }
 
         // Sample subset for performance (O(n²) is expensive)
         const sampleSize = Math.min(satellites.length, 100)
@@ -95,10 +102,16 @@ export default function SatelliteSwarm({
         const sampledPairs = (sampleSize * (sampleSize - 1)) / 2
         const rawRisk = closeApproaches / Math.max(sampledPairs * 0.02, 1)
 
-        // Apply spread factor - higher spread = lower risk
-        const spreadFactor = 1 - (spread / Math.PI) * 0.5
+        // Density factor - more satellites = more risk, non-linearly
+        const densityFactor = Math.pow(satellites.length / 500, 0.3)
 
-        return Math.min(rawRisk * spreadFactor, 1.0)
+        // Spread factor - tighter orbits = more risk
+        const spreadFactor = 1.2 - (spread / Math.PI) * 0.4
+
+        // Add slight temporal variation for honesty
+        const temporalJitter = Math.sin(time * 1.3) * 0.03
+
+        return Math.min(baselineRisk + (rawRisk * densityFactor * spreadFactor) + temporalJitter, 1.0)
     }, [satellites, coordinated, speed, spread])
 
     // Generate trail geometry data

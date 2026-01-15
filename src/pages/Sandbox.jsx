@@ -7,11 +7,11 @@ import EarthScene from '../components/3d/EarthScene'
 export default function Sandbox() {
     const [riskIndex, setRiskIndex] = useState(0)
 
-    const { satelliteCount, altitude, speed, spread } = useControls('Orbital Parameters', {
+    const { satelliteCount, altitude, speed, inclination } = useControls('Orbital Parameters', {
         satelliteCount: { value: 500, min: 100, max: 5000, step: 100 },
         altitude: { value: 1.5, min: 0.5, max: 5, step: 0.1 },
         speed: { value: 0.5, min: 0, max: 5, step: 0.1 },
-        spread: { value: 1, min: 0.1, max: Math.PI, step: 0.1 }
+        inclination: { value: 1, min: 0.1, max: Math.PI, step: 0.1, label: 'Orbital Inclination' }
     })
 
     const { coordinated } = useControls('Coordination', {
@@ -41,7 +41,7 @@ export default function Sandbox() {
             <div className="absolute bottom-10 left-10 z-10 pointer-events-none">
                 <h1 className="text-4xl font-bold text-white mb-2 tracking-tighter">SANDBOX <span className="text-teal">MODE</span></h1>
                 <p className="text-white/50 max-w-sm text-sm font-mono">
-                    Interactive simulation of Ikirere Mesh Network coverage. Toggle coordination to see constellation management in action.
+                    Interactive simulation of Ikirere Mesh Network coverage. Toggle coordination to observe collective behavior under load.
                 </p>
             </div>
 
@@ -81,7 +81,7 @@ export default function Sandbox() {
                         satelliteCount={satelliteCount}
                         orbitalAltitude={altitude}
                         orbitSpeed={speed}
-                        swarmSpread={spread}
+                        swarmSpread={inclination}
                         coordinated={coordinated}
                         onRiskUpdate={handleRiskUpdate}
                     />
