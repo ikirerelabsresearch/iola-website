@@ -3,7 +3,14 @@ import { OrbitControls, Stars } from '@react-three/drei'
 import Earth from './Earth'
 import SatelliteSwarm from './SatelliteSwarm'
 
-export default function EarthScene({ satelliteCount, orbitalAltitude, orbitSpeed, swarmSpread }) {
+export default function EarthScene({
+    satelliteCount,
+    orbitalAltitude,
+    orbitSpeed,
+    swarmSpread,
+    coordinated = false,
+    onRiskUpdate = null
+}) {
     return (
         <>
             <ambientLight intensity={0.1} />
@@ -20,6 +27,8 @@ export default function EarthScene({ satelliteCount, orbitalAltitude, orbitSpeed
                 altitude={orbitalAltitude}
                 speed={orbitSpeed}
                 spread={swarmSpread}
+                coordinated={coordinated}
+                onRiskUpdate={onRiskUpdate}
             />
 
             <OrbitControls
