@@ -101,7 +101,7 @@ function ConstellationCard({ config, onChange, onRemove, isExpanded, onToggleExp
                             <div className="space-y-3">
                                 {/* Coordination toggle */}
                                 <div className="flex items-center justify-between">
-                                    <span className="text-white/60 text-xs">Coordinated</span>
+                                    <span className="text-white/60 text-xs">Coordinated by IkirereMesh</span>
                                     <button
                                         onClick={() => onChange({ ...config, coordinated: !coordinated })}
                                         className={`relative w-10 h-5 rounded-full transition-colors ${coordinated ? 'bg-teal/60' : 'bg-white/20'
