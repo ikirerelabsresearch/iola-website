@@ -96,14 +96,20 @@ export default function SatelliteInfoPanel({ satellite, onClose }) {
                                     color={isZombie ? 'bg-red-500' : 'bg-emerald-400'}
                                 />
                                 <TelemetryBar
+                                    label="FUEL"
+                                    value={telemetry.fuel || 0}
+                                    unit="%"
+                                    color={telemetry.fuel < 20 ? 'bg-orange-500' : isZombie ? 'bg-red-500' : 'bg-purple-400'}
+                                />
+                            </div>
+                            <div>
+                                <TelemetryBar
                                     label="SOLAR INPUT"
                                     value={telemetry.solar || 0}
                                     unit="W"
                                     max={600}
                                     color="bg-yellow-400"
                                 />
-                            </div>
-                            <div>
                                 <TelemetryBar
                                     label="THERMAL"
                                     value={telemetry.temp || 0}
@@ -111,23 +117,25 @@ export default function SatelliteInfoPanel({ satellite, onClose }) {
                                     max={100}
                                     color={isZombie ? 'bg-red-400' : 'bg-blue-400'}
                                 />
-                                <div className="mb-2">
-                                    <div className="flex justify-between text-[10px] font-mono mb-1">
-                                        <span className="text-white/40">SIGNAL</span>
-                                        <span className="text-white/80">{telemetry.signal?.toFixed(0)} dBm</span>
-                                    </div>
-                                    <div className="flex gap-0.5">
-                                        {[1, 2, 3, 4, 5].map(i => (
-                                            <div
-                                                key={i}
-                                                className={`h-1 flex-1 rounded-sm ${(telemetry.signal > -100 + (i * 10))
-                                                        ? (isZombie ? 'bg-red-500' : 'bg-teal')
-                                                        : 'bg-white/10'
-                                                    }`}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
+                            </div>
+                        </div>
+
+                        {/* Signal Strength */}
+                        <div>
+                            <div className="flex justify-between text-[10px] font-mono mb-1">
+                                <span className="text-white/40">SIGNAL STRENGTH</span>
+                                <span className="text-white/80">{telemetry.signal?.toFixed(0)} dBm</span>
+                            </div>
+                            <div className="flex gap-0.5">
+                                {[1, 2, 3, 4, 5].map(i => (
+                                    <div
+                                        key={i}
+                                        className={`h-1.5 flex-1 rounded-sm ${(telemetry.signal > -100 + (i * 10))
+                                            ? (isZombie ? 'bg-red-500' : 'bg-teal')
+                                            : 'bg-white/10'
+                                        }`}
+                                    />
+                                ))}
                             </div>
                         </div>
 

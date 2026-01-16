@@ -1,11 +1,13 @@
 import { Canvas } from '@react-three/fiber'
-import { Suspense, useState, useCallback, useMemo } from 'react'
+import { Suspense, useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import EarthScene from '../components/3d/EarthScene'
 import ConstellationControlPanel from '../components/ui/ConstellationControlPanel'
 import SatelliteInfoPanel from '../components/ui/SatelliteInfoPanel'
 import MusicPlayer from '../components/ui/MusicPlayer'
 import { getConstellationColor } from '../components/3d/Constellation'
+
+const TRANSITION_DURATION = 60 // 1 minute - must match Constellation.jsx
 
 // Generate unique ID
 const generateId = () => `const-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
@@ -19,7 +21,7 @@ const createConstellation = (index) => ({
     altitude: 1.2 + (index * 0.3),
     inclination: 0.8,
     speed: 0.5,
-    coordinated: true,
+    coordinated: false,
     visible: true,
     zombieCount: 0
 })
@@ -30,6 +32,57 @@ export default function Sandbox() {
         createConstellation(0)
     ])
     const [selectedSatellite, setSelectedSatellite] = useState(null)
+    
+    // Transition tracking
+    const [transitionState, setTransitionState] = useState({
+        active: false,
+        progress: 0,
+        direction: null, // 'coordinating' or 'decoordinating'
+        startTime: null
+    })
+    const prevCoordinatedRef = useRef({})
+    
+    // Track coordination changes and manage transition timer
+    useEffect(() => {
+        let changed = false
+        let direction = null
+        
+        constellations.forEach(c => {
+            if (prevCoordinatedRef.current[c.id] !== undefined && 
+                prevCoordinatedRef.current[c.id] !== c.coordinated) {
+                changed = true
+                direction = c.coordinated ? 'coordinating' : 'decoordinating'
+            }
+            prevCoordinatedRef.current[c.id] = c.coordinated
+        })
+        
+        if (changed) {
+            setTransitionState({
+                active: true,
+                progress: 0,
+                direction,
+                startTime: Date.now()
+            })
+        }
+    }, [constellations])
+    
+    // Update transition progress
+    useEffect(() => {
+        if (!transitionState.active) return
+        
+        const interval = setInterval(() => {
+            const elapsed = (Date.now() - transitionState.startTime) / 1000
+            const progress = Math.min(elapsed / TRANSITION_DURATION, 1)
+            
+            if (progress >= 1) {
+                setTransitionState(prev => ({ ...prev, active: false, progress: 1 }))
+            } else {
+                setTransitionState(prev => ({ ...prev, progress }))
+            }
+        }, 100)
+        
+        return () => clearInterval(interval)
+    }, [transitionState.active, transitionState.startTime])
 
     // Compute global metrics
     const globalMetrics = useMemo(() => {
@@ -122,6 +175,29 @@ export default function Sandbox() {
                             {globalMetrics.risk.toFixed(2)}
                         </div>
                     </div>
+                    
+                    {/* Transition Status */}
+                    {transitionState.active && (
+                        <>
+                            <div className="w-px h-8 bg-white/10" />
+                            <div className="text-center min-w-[120px]">
+                                <div className="text-yellow-400/60 text-[10px] font-mono tracking-widest">
+                                    {transitionState.direction === 'coordinating' ? 'COORDINATING' : 'DISPERSING'}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-gradient-to-r from-yellow-500 to-teal transition-all duration-100"
+                                            style={{ width: `${transitionState.progress * 100}%` }}
+                                        />
+                                    </div>
+                                    <span className="text-yellow-400 font-mono text-sm">
+                                        {Math.floor((1 - transitionState.progress) * TRANSITION_DURATION)}s
+                                    </span>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
 

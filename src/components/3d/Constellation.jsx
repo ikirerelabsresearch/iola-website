@@ -4,6 +4,7 @@ import * as THREE from 'three'
 
 const TRAIL_SEGMENTS = 30
 const TRAIL_LENGTH = 1.5
+const TRANSITION_DURATION = 60.0 // 1 minute to transition between states
 
 // Color palette for constellations
 const CONSTELLATION_COLORS = [
@@ -32,6 +33,7 @@ const generateSatelliteData = (id, index, isZombie, constellationId) => {
     const temp = isZombie ? (Math.random() > 0.5 ? -40 : 80) + Math.random() * 20 : 25 + Math.random() * 10
     const signal = isZombie ? -110 - Math.random() * 20 : -65 - Math.random() * 15
     const solarOutput = isZombie ? Math.random() * 100 : 450 + Math.random() * 50
+    const fuel = isZombie ? Math.random() * 10 : 60 + Math.random() * 35 // Fuel percentage
 
     return {
         designator: `IK-${launchYear}-${(index + 1).toString().padStart(3, '0')}`,
@@ -42,6 +44,7 @@ const generateSatelliteData = (id, index, isZombie, constellationId) => {
             temp: temp,
             signal: signal,
             solar: solarOutput,
+            fuel: fuel,
             latency: isZombie ? 999 : 20 + Math.random() * 40,
             cpuLoad: isZombie ? 0 : 30 + Math.random() * 40
         }
@@ -147,8 +150,38 @@ export default function Constellation({
 
     // Store positions for collision detection
     const positionsRef = useRef([])
-
     const highlightRef = useRef()
+
+    // Transition state - store previous orbital params when coordinated changes
+    const transitionRef = useRef({
+        active: false,
+        startTime: 0,
+        prevParams: [] // { phi, radiusOffset, speedOffset, currentAngle } for each satellite
+    })
+    const prevCoordinatedRef = useRef(coordinated)
+    
+    // Store actual theta values (not from sat array) to avoid jumps
+    const actualThetaRef = useRef([])
+
+    // Detect coordination changes and capture previous state for interpolation
+    useEffect(() => {
+        if (prevCoordinatedRef.current !== coordinated && positionsRef.current.length > 0) {
+            transitionRef.current = {
+                active: true,
+                startTime: -1,
+                prevParams: positionsRef.current.map(sat => ({
+                    phi: sat.phi,
+                    radiusOffset: sat.radiusOffset,
+                    speedOffset: sat.speedOffset,
+                    currentAngle: 0 // captured on first frame
+                }))
+            }
+        }
+        prevCoordinatedRef.current = coordinated
+    }, [coordinated])
+
+    // Smooth easing
+    const easeInOutQuad = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
 
     useFrame((state) => {
         if (!visible) return
@@ -158,15 +191,86 @@ export default function Constellation({
         const positions = []
         let selectedFound = false
 
+        // Handle transition timing
+        const transition = transitionRef.current
+        let transitionProgress = 1.0
+        
+        if (transition.active) {
+            if (transition.startTime < 0) {
+                transition.startTime = t
+                // Capture current angle for each satellite
+                satellites.forEach((sat, i) => {
+                    if (transition.prevParams[i]) {
+                        const prev = transition.prevParams[i]
+                        // Current angle = where the satellite IS right now
+                        transition.prevParams[i].currentAngle = positionsRef.current[i]?.theta 
+                            ? positionsRef.current[i].theta + t * speed * prev.speedOffset * 0.1
+                            : sat.theta + t * speed * prev.speedOffset * 0.1
+                    }
+                })
+            }
+            const elapsed = t - transition.startTime
+            transitionProgress = Math.min(elapsed / TRANSITION_DURATION, 1.0)
+            
+            if (transitionProgress >= 1.0) {
+                transition.active = false
+            }
+        }
+
         if (meshRef.current) {
             satellites.forEach((sat, i) => {
-                const zombieWobble = sat.isZombie ? Math.sin(t * 2 + i) * 0.1 : 0
-                const angle = sat.theta + t * speed * sat.speedOffset * 0.1 + zombieWobble
-                const r = earthRadius + altitude + sat.radiusOffset
+                let phi = sat.phi
+                let radiusOffset = sat.radiusOffset
+                let speedOffset = sat.speedOffset
+                let angle
 
-                const x = r * Math.cos(angle) * Math.cos(sat.phi)
-                const y = r * Math.sin(sat.phi)
-                const z = r * Math.sin(angle) * Math.cos(sat.phi)
+                const zombieWobble = sat.isZombie ? Math.sin(t * 2 + i) * 0.1 : 0
+                
+                // Final state angle (what the satellite SHOULD be at when not transitioning)
+                const finalAngle = sat.theta + t * speed * sat.speedOffset * 0.1 + zombieWobble
+
+                if (transition.active && transition.prevParams[i] && !sat.isZombie) {
+                    const prev = transition.prevParams[i]
+                    
+                    // Stagger for wave effect
+                    const stagger = (i / satellites.length) * 0.15
+                    const staggeredProgress = Math.max(0, Math.min(1, (transitionProgress - stagger) / (1 - stagger)))
+                    const t_ease = easeInOutQuad(staggeredProgress)
+
+                    // Smoothly transition orbital plane (inclination change)
+                    phi = prev.phi + (sat.phi - prev.phi) * t_ease
+                    
+                    // Smoothly transition altitude (orbit raising/lowering)
+                    radiusOffset = prev.radiusOffset + (sat.radiusOffset - prev.radiusOffset) * t_ease
+                    
+                    // Speed blends smoothly
+                    speedOffset = prev.speedOffset + (sat.speedOffset - prev.speedOffset) * t_ease
+                    
+                    // SIMPLE: Satellite moves FORWARD from where it started, at blended speed
+                    // NO target position = NO backwards motion possible
+                    const timeSinceStart = t - transition.startTime
+                    angle = prev.currentAngle + timeSinceStart * speed * speedOffset * 0.1
+                    
+                    // Store the actual theta for seamless handoff
+                    actualThetaRef.current[i] = angle - t * speed * speedOffset * 0.1
+                    
+                } else {
+                    // Normal operation - use actual theta if we have it (post-transition), otherwise sat.theta
+                    const useTheta = (actualThetaRef.current[i] !== undefined && !sat.isZombie) 
+                        ? actualThetaRef.current[i] 
+                        : sat.theta
+                    angle = useTheta + t * speed * sat.speedOffset * 0.1 + zombieWobble
+                    
+                    // Update actual theta to track current position
+                    if (!sat.isZombie) {
+                        actualThetaRef.current[i] = useTheta
+                    }
+                }
+
+                const r = earthRadius + altitude + radiusOffset
+                const x = r * Math.cos(angle) * Math.cos(phi)
+                const y = r * Math.sin(phi)
+                const z = r * Math.sin(angle) * Math.cos(phi)
 
                 dummy.position.set(x, y, z)
                 dummy.lookAt(0, 0, 0)
@@ -174,7 +278,15 @@ export default function Constellation({
                 dummy.updateMatrix()
                 meshRef.current.setMatrixAt(i, dummy.matrix)
 
-                positions.push({ ...sat, position: { x, y, z } })
+                // Store current params for next transition capture
+                positions.push({ 
+                    ...sat, 
+                    theta: angle - t * speed * speedOffset * 0.1, // derive theta from current angle
+                    phi, 
+                    radiusOffset, 
+                    speedOffset,
+                    position: { x, y, z } 
+                })
 
                 // Update highlight if this is the selected satellite
                 if (sat.id === selectedSatelliteId && highlightRef.current) {
@@ -184,6 +296,24 @@ export default function Constellation({
                 }
             })
             meshRef.current.instanceMatrix.needsUpdate = true
+
+            // Update trail geometry during transition
+            if (transition.active && trailsRef.current?.geometry) {
+                const geo = trailsRef.current.geometry
+                const orbitAttr = geo.getAttribute('aOrbit')
+                if (orbitAttr) {
+                    positions.forEach((pos, i) => {
+                        for (let j = 0; j < TRAIL_SEGMENTS; j++) {
+                            const idx = i * TRAIL_SEGMENTS + j
+                            orbitAttr.array[idx * 4 + 0] = pos.theta
+                            orbitAttr.array[idx * 4 + 1] = pos.phi
+                            orbitAttr.array[idx * 4 + 2] = pos.radiusOffset
+                            orbitAttr.array[idx * 4 + 3] = pos.speedOffset
+                        }
+                    })
+                    orbitAttr.needsUpdate = true
+                }
+            }
         }
 
         // Hide highlight if not found in this constellation (or if no selection)
