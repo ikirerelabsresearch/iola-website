@@ -157,4 +157,4 @@ Questions or issues? Contact the team:
 
 ---
 
-**Built in Kigali. Deployed to Orbit.**
+**Built in Africa. Deployed to Orbit.**

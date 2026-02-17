@@ -370,6 +370,6 @@ vercel --prod
 
 ---
 
-**Built in Kigali. Deployed to Orbit.** 🌍✨🛰️
+**Built in Africa. Deployed to Orbit.** 🌍✨🛰️
 
 *// Deterministic Safety in a Chaotic Orbit*
