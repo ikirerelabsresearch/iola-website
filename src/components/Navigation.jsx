@@ -16,6 +16,8 @@ export default function Navigation() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
+    { name: 'Brief', href: '/brief' },
+    { name: 'Archangel', href: '/archangel' },
     { name: 'Products', href: '/cubesat-kits' },
     { name: 'SDK', href: '/ikirere-mesh-sdk' },
     { name: 'Roadmap', href: '/roadmap' },
