@@ -1,0 +1,469 @@
+﻿Product Requirement Documentation From First Principles
+Abigail & Jason
+
+
+CORE IDEA
+Big satellites today are like old computers that filled entire rooms.
+* Huge
+* Expensive
+* Built for one job
+What happened to computers:
+* They became smaller
+* Cheaper
+* More powerful
+* One device now does many things
+That shift has not fully happened in satellites yet.
+________________
+
+
+WHAT WE ARE DOING
+We are applying that same shift to space:
+Make small satellites do the work of multiple large satellites
+________________
+
+
+THE PROBLEM
+Today:
+* One satellite = one job
+   * Earth imaging → one satellite
+   * Climate monitoring → another
+   * Communication → another
+This leads to:
+* High cost
+* Long timelines
+* Fragmented systems
+Only large governments and companies can afford this.
+________________
+
+
+OUR APPROACH
+Instead of:
+One satellite = one function
+We move toward:
+One small satellite = multiple functions
+Example (simple):
+One satellite can:
+* Take images
+* Monitor land and crops
+* Support basic communication
+Not perfect at everything.
+But useful across multiple things.
+________________
+
+
+WHY THIS MATTERS
+If this works:
+* Fewer satellites needed
+* Cost drops significantly
+* Smaller teams can build
+* Africa can own infrastructure
+________________
+
+
+CURRENT REALITY
+We are not building the full multipurpose satellite yet.
+We are starting with:
+One satellite
+One use case (earth observation)
+________________
+
+
+WHY SOFTWARE FIRST
+We begin with software because:
+* Hardware is expensive
+* Software is fast to build
+* Simulation lets us test ideas safely
+So first:
+Design → Simulate → Validate → Then build
+________________
+
+
+CURRENT STEP (PHASE 0)
+We are designing:
+* A 3U CubeSat
+* Earth observation payload (camera)
+* Nadir-facing (pointing to Earth)
+* Basic systems (power, comms, ADCS)
+Goal:
+Create something real enough to simulate
+________________
+
+
+TOOLS (WHAT WE ARE USING RIGHT NOW)
+* Blender → for external structure and visualization
+* Autodesk Fusion → for basic mechanical layout
+What we are doing:
+* Designing outer shell
+* Placing major components (camera, panels, body)
+What we are NOT doing yet:
+* Full internal circuit design
+* High-fidelity hardware modeling
+* PCB-level architecture
+Reason:
+* Those tools require capital and high complexity
+* Real engineering expertise we do not have yet
+* We only need a physically believable model
+________________
+
+
+WHAT THE SOFTWARE WILL DO? (CORE FUNCTIONS)
+The software we are building will:
+1. Track and visualize satellites in orbit
+   * Know where every satellite is in real time
+2. Simulate satellite behavior
+   * Orbit movement
+   * Power usage
+   * Coverage
+3. Coordinate satellites using RL (IkirereMesh)
+   * Avoid collisions
+   * Optimize coverage
+   * Manage constellation behavior
+________________
+
+
+QAR (Question, Answer, Reason) — CORE QUESTIONS
+1. Q: What is the goal of this outline?
+ A: To clearly define what we are building at the product level
+R: So the team is aligned before building anything
+________________
+
+
+2. Q: What are we trying to do?
+ A: Make small satellites do the work of multiple big ones
+R: That is how major technology shifts happen
+________________
+
+
+3. Q: What problem are we solving?
+ A: Satellites are too big, expensive, and single-purpose
+R: This limits access and slows innovation
+________________
+
+
+4. Q: Why does this problem matter?
+ A: Because most African teams cannot access or build satellite systems
+R: Cost and complexity are too high
+________________
+
+
+5. Q: What is our solution?
+ A: Build smaller, multipurpose satellites supported by software
+R: This reduces cost and increases flexibility
+________________
+
+
+6. Q: Why not build a large satellite?
+ A: It requires too much capital and time
+R: It is not practical at our stage
+________________
+
+
+7. Q: Why start with one use case?
+ A: Because multipurpose systems are complex
+R: We need to prove one function first
+________________
+
+
+8. Q: What is our first use case?
+ A: Earth observation
+R: It is simple, clear, and useful
+________________
+
+
+9. Q: Why earth observation first?
+ A: It requires fewer systems than communication or internet
+R: Easier to design and simulate
+________________
+
+
+10. Q: Why software first?
+ A: To validate ideas before building hardware
+R: Saves time, cost, and reduces risk
+________________
+
+
+11. Q: What is the first product?
+ A: A simulation system for satellites
+R: It allows testing without launching anything
+________________
+
+
+12. Q: What does Phase 0 represent?
+ A: Designing a real satellite model
+R: So the software has something realistic to simulate
+________________
+
+
+13. Q: What is ADCS in simple terms?
+ A: A system that keeps the satellite pointing correctly
+R: Without it, the camera and systems won’t work properly
+________________
+
+
+14. Q: What does “nadir-facing” mean?
+ A: The satellite always points toward Earth
+R: Required for earth imaging
+________________
+
+
+15. Q: What does success look like at this stage?
+ A: A clear satellite design + basic simulation readiness
+R: This proves we can move to the next phase
+________________
+
+
+QAR — SATELLITE DESIGN (PHASE 0)
+16. Q: What is the goal of the satellite?
+ A: Earth observation (optical imaging for agriculture and land monitoring)
+R: It is the simplest high-value use case to start with
+________________
+
+
+17. Q: What type of satellite are we building?
+ A: CubeSat (3U form factor)
+R: Standardized, realistic, and widely used
+________________
+
+
+18. Q: What orbit will it operate in?
+ A: Low Earth Orbit (500–600 km, Sun-Synchronous Orbit)
+R: Consistent lighting conditions for imaging
+________________
+
+
+19. Q: What payload does it carry?
+ A: Optical camera (RGB, multispectral later)
+R: Enables imaging and data collection
+________________
+
+
+20. Q: What are the core subsystems required?
+ A:
+* Payload (camera)
+* Power (solar + battery)
+* Onboard computer (OBC)
+* Communication system
+* ADCS
+R: These are the minimum systems for a functional satellite
+________________
+
+
+21. Q: Does it have propulsion?
+ A: No (passive orbit)
+R: Reduces complexity and cost for first version
+________________
+
+
+22. Q: How does it generate and store power?
+ A: Solar panels + battery
+R: Standard approach for small satellites
+________________
+
+
+23. Q: How does it communicate with Earth?
+ A: RF ground station link
+R: Enables telemetry and data transfer
+________________
+
+
+24. Q: What constraints define the design?
+ A:
+   * Size: 3U (10 x 10 x 30 cm)
+   * Mass: ~3–4 kg
+   * Limited power
+   * ~90-minute orbit
+R: These constraints define what is physically possible
+________________
+
+
+ONE LINE SUMMARY
+We are shrinking satellites the same way computers were shrunk, and making them do more than one thing.
+
+
+________________
+
+
+
+
+Index
+ADCS — SIMPLE EXPLANATION
+ADCS = Attitude Determination and Control System
+What it does:
+ It makes sure the satellite is pointing the right way, at the right time.
+________________
+
+
+THE PROBLEM
+In space, the satellite is not stable.
+It will:
+      * Tumble
+      * Rotate
+      * Drift off direction
+Nothing holds it steady.
+Without ADCS:
+      * The camera won’t face Earth
+      * The antenna won’t point to ground stations
+      * The solar panels won’t face the Sun
+The satellite becomes unusable.
+________________
+
+
+HOW ADCS WORKS
+1. Determination (Sense orientation)
+The satellite figures out how it is currently oriented using sensors:
+      * Sun sensors → detect Sun direction
+      * Magnetometer → detects Earth’s magnetic field
+      * Gyroscope → measures rotation
+This allows it to know:
+“I am not pointing correctly”
+________________
+
+
+2. Control (Fix orientation)
+The satellite corrects itself using:
+      * Reaction wheels → spin to rotate the satellite
+      * Magnetorquers → interact with Earth’s magnetic field to adjust direction
+No propulsion needed.
+________________
+
+
+FOR OUR DESIGN (EARTH OBSERVATION)
+We want:
+Camera always pointing down to Earth
+This is called:
+Nadir pointing
+So ADCS will:
+      * Detect when the satellite drifts
+      * Adjust orientation
+      * Keep it stable continuously
+________________
+
+
+WHAT THIS MEANS FOR PHASE 0
+      * The satellite will not naturally stay facing Earth
+      * ADCS is required for imaging to work
+In our design:
+      * Camera = Earth-facing side
+      * ADCS = internal system that keeps it aligned
+We do not model internal ADCS hardware yet
+But we must include it conceptually
+________________
+
+
+SIMPLIFIED VERSION (FOR NOW)
+      * Basic ADCS only
+      * No high precision
+      * Goal: keep camera pointing down
+This is enough for simulation.
+________________
+
+
+IMPORTANT DISTINCTION
+      * Orbit = where the satellite is
+      * ADCS = how it is oriented
+They are different systems.
+________________
+
+
+IMAGING STRATEGY
+The satellite will:
+      * Capture images only when passing over Africa
+      * Stay idle or conserve power outside target regions
+Reason:
+      * Saves power
+      * Focuses on primary use case
+      * Reduces unnecessary data collection
+________________
+
+
+DATA HANDLING STRATEGY
+The satellite will:
+      * Capture images when passing over Africa
+      * Store images onboard (internal memory)
+      * Transmit data only when in range of a ground station
+________________
+
+
+Reason:
+      * Real-time transmission requires high power
+      * Continuous connection is not guaranteed in LEO
+      * Storage + delayed transmission is more reliable
+      * Matches constraints of a 3U CubeSat
+________________
+
+
+COMMUNICATION STRATEGY
+The satellite will:
+      * Use RF communication (UHF/VHF or S-band)
+      * Establish connection only during ground station passes
+      * Downlink stored data in short communication windows
+________________
+
+
+Reason:
+      * Ground contact only happens for a few minutes per orbit
+      * Limited power requires short, efficient transmissions
+      * Simpler system for first version
+________________
+
+
+POWER USAGE STRATEGY
+The satellite will:
+      * Generate power using body-mounted solar panels
+      * Store energy in onboard batteries
+      * Prioritize power usage based on operation phase
+Operation priority:
+      1. Survival (basic systems always on)
+      2. ADCS (maintain orientation)
+      3. Payload (camera only when needed)
+      4. Communication (only during downlink windows)
+________________
+
+
+Reason:
+      * Power is the most limited resource
+      * Not all systems can run at once
+      * Requires controlled scheduling
+________________
+
+
+OPERATIONAL FLOW (SIMPLIFIED)
+The satellite will operate in cycles:
+      1. Orbiting Earth
+      2. Detect when over Africa
+      3. Activate camera → capture images
+      4. Store data onboard
+      5. Continue orbit
+      6. Detect ground station
+      7. Transmit stored data
+      8. Return to low-power state
+________________
+
+
+Reason:
+      * Matches real CubeSat operation
+      * Efficient use of limited resources
+      * Easy to simulate in software
+________________
+
+
+SOFTWARE ROLE (GROUND SYSTEM)
+The software will:
+      * Track satellite position in orbit
+      * Determine when satellite is over Africa
+      * Simulate power usage and system states
+      * Decide when to capture images
+      * Decide when to transmit data
+      * Coordinate behavior across satellites (later with RL)
+________________
+
+
+Reason:
+      * Software controls decision-making
+      * Enables testing before hardware exists
+      * Foundation for IkirereMesh coordination
+________________
+
+
+This fills the missing piece you were trying to recall earlier:
+simulate behavior + control decisions

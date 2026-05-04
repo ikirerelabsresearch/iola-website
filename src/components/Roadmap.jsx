@@ -1,224 +1,155 @@
-import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
+import { useRef, useEffect, useState } from 'react'
+
+function useInView(ref) {
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } }, { threshold: 0.2 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return visible
+}
+
+function SectionLabel({ text, color = '#00DCFF' }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+      <div style={{ width: 28, height: 1, background: color, opacity: 0.6 }} />
+      <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 10, letterSpacing: '0.35em', color, textTransform: 'uppercase' }}>{text}</span>
+    </div>
+  )
+}
+
+const phases = [
+  { phase: '01', status: 'In Progress', title: 'Sandbox Simulation', description: '32-satellite LEO simulation with RL planner and safety shield integration. WebGL dashboard.', active: true, color: '#FFBF00' },
+  { phase: '02', status: 'Q1 2026', title: 'Real Orbital Data', description: 'ESA DRAMA and NASA CARA integration for real-time conjunction analysis and live TLE feeds.', active: false, color: '#00DCFF' },
+  { phase: '03', status: 'Q2 2026', title: 'CubeSat Onboard', description: 'IkirereMesh deployed to flight-ready CubeSat hardware with onboard decision-making.', active: false, color: '#00DCFF' },
+  { phase: '04', status: 'Q4 2026', title: 'Inter-Operator Protocol', description: 'Standardized mesh coordination for multi-operator constellations. ISO compliance.', active: false, color: '#00DCFF' },
+]
 
 export default function Roadmap() {
-  const [ref, inView] = useInView({ threshold: 0.2, triggerOnce: true })
-
-  const phases = [
-    {
-      phase: 'Phase 1',
-      status: 'In Progress',
-      title: 'Sandbox Simulation',
-      period: 'Current',
-      description: 'High-fidelity 32-satellite LEO simulation with RL planner and safety shield integration.',
-      deliverables: [
-        'WebGL visualization dashboard',
-        'Collision avoidance verification',
-        'Multi-agent coordination prototype',
-      ],
-      color: 'amber',
-      active: true,
-    },
-    {
-      phase: 'Phase 2',
-      status: 'Q1 2026',
-      title: 'Real Orbital Data',
-      period: 'Next',
-      description: 'Integration with ESA DRAMA and NASA CARA databases for real-time conjunction analysis.',
-      deliverables: [
-        'Live TLE feed integration',
-        'Historical conjunction database',
-        'Benchmarking vs. traditional CDMs',
-      ],
-      color: 'teal',
-      active: false,
-    },
-    {
-      phase: 'Phase 3',
-      status: 'Q2 2026',
-      title: 'CubeSat Onboard Profile',
-      period: 'Planned',
-      description: 'Deploy IkirereMesh to flight-ready CubeSat hardware with onboard decision-making.',
-      deliverables: [
-        'Embedded Linux port',
-        'Hardware-in-the-loop testing',
-        'Flight certification prep',
-      ],
-      color: 'teal',
-      active: false,
-    },
-    {
-      phase: 'Phase 4',
-      status: 'Q4 2026',
-      title: 'Inter-Operator Protocol',
-      period: 'Vision',
-      description: 'Standardized mesh coordination protocol for multi-operator constellations (ISO compliance).',
-      deliverables: [
-        'Open-source protocol spec',
-        'Multi-tenant simulation',
-        'Partnership with satellite operators',
-      ],
-      color: 'teal',
-      active: false,
-    },
-  ]
+  const ref = useRef(null)
+  const vis = useInView(ref)
+  const [email, setEmail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
 
   return (
-    <section id="roadmap" className="relative py-32 bg-stratosphere">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-20"
-        >
-          <h2 className="text-4xl md:text-6xl font-heading font-bold text-orbital mb-6">
-            Development <span className="text-teal">Roadmap</span>
+    <section ref={ref} id="roadmap" style={{ background: 'linear-gradient(180deg, #040C1C 0%, #060F1E 50%, #040C1C 100%)', padding: '120px 6vw' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: 80, opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(30px)', transition: 'all 0.8s ease' }}>
+          <SectionLabel text="Roadmap" />
+          <h2 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 'clamp(32px, 5vw, 60px)', color: '#F5F7FA', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            Development{' '}
+            <span style={{ background: 'linear-gradient(135deg, #00DCFF, #0088FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Roadmap</span>
           </h2>
-          <p className="text-xl text-orbital/70 max-w-3xl mx-auto">
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: 'rgba(245,247,250,0.5)', marginTop: 16 }}>
             From simulation to orbit. A systematic path to sovereign orbital infrastructure.
           </p>
-        </motion.div>
+        </div>
 
         {/* Timeline */}
-        <div ref={ref} className="relative">
-
-          {/* Vertical Line */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-teal/20 transform -translate-x-1/2" />
-
-          {/* Phases */}
-          <div className="space-y-24">
-            {phases.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 50 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: i * 0.2 }}
-                className={`relative grid md:grid-cols-2 gap-8 items-center ${
-                  i % 2 === 0 ? '' : 'md:flex-row-reverse'
-                }`}
-              >
-                {/* Content */}
-                <div className={`${i % 2 === 0 ? 'md:text-right md:pr-12' : 'md:col-start-2 md:pl-12'}`}>
-                  <div className={`inline-block px-4 py-2 ${
-                    item.active ? 'bg-amber/10 border-amber/30' : 'bg-teal/10 border-teal/30'
-                  } border rounded-full mb-4`}>
-                    <span className={`${item.active ? 'text-amber' : 'text-teal'} font-mono text-xs tracking-wider uppercase`}>
-                      {item.status}
-                    </span>
-                  </div>
-
-                  <h3 className="text-3xl font-heading font-bold text-orbital mb-2">
-                    {item.title}
-                  </h3>
-
-                  <div className="text-sm text-orbital/50 font-mono mb-4">{item.phase}</div>
-
-                  <p className="text-orbital/70 mb-6 leading-relaxed">
-                    {item.description}
-                  </p>
-
-                  <div className="space-y-2">
-                    {item.deliverables.map((deliverable, j) => (
-                      <div key={j} className={`flex items-center gap-2 ${i % 2 === 0 ? 'md:justify-end' : ''}`}>
-                        <svg className="w-4 h-4 text-teal flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                        <span className="text-sm text-orbital/60">{deliverable}</span>
-                      </div>
-                    ))}
-                  </div>
+        <div style={{ position: 'relative', marginBottom: 100 }}>
+          <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, background: 'linear-gradient(to bottom, transparent, rgba(0,220,255,0.2) 10%, rgba(0,220,255,0.2) 90%, transparent)', transform: 'translateX(-50%)' }} className="timeline-spine" />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 56 }}>
+            {phases.map((p, i) => (
+              <div key={i} style={{
+                display: 'grid', gridTemplateColumns: '1fr 64px 1fr', alignItems: 'center', gap: 0,
+                opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(30px)',
+                transition: `all 0.7s ease ${i * 0.15}s`,
+              }} className="timeline-row">
+                {/* Left content */}
+                <div style={{ paddingRight: 40, textAlign: i % 2 === 0 ? 'right' : 'left', order: i % 2 === 0 ? 0 : 2 }}>
+                  {i % 2 === 0 ? (
+                    <div style={{ background: 'rgba(8,18,40,0.8)', border: `1px solid ${p.color}22`, borderRadius: 12, padding: '28px 32px' }}>
+                      <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 10, color: p.color, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>{p.status}</div>
+                      <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 22, color: '#F5F7FA', marginBottom: 10 }}>{p.title}</h3>
+                      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: 'rgba(245,247,250,0.55)', lineHeight: 1.7 }}>{p.description}</p>
+                    </div>
+                  ) : <div />}
                 </div>
 
                 {/* Node */}
-                <div className="hidden md:flex absolute left-1/2 top-8 transform -translate-x-1/2 items-center justify-center">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={inView ? { scale: 1 } : {}}
-                    transition={{ duration: 0.4, delay: i * 0.2 + 0.3 }}
-                    className={`relative w-12 h-12 rounded-full ${
-                      item.active ? 'bg-amber' : 'bg-teal'
-                    } flex items-center justify-center z-10 ${
-                      item.active ? 'glow-amber' : ''
-                    }`}
-                  >
-                    {item.active && (
-                      <motion.div
-                        className="absolute inset-0 rounded-full bg-amber"
-                        animate={{
-                          scale: [1, 1.5, 1],
-                          opacity: [0.5, 0, 0.5],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                        }}
-                      />
-                    )}
-                    <span className="relative text-stratosphere font-bold font-mono text-sm">
-                      {i + 1}
-                    </span>
-                  </motion.div>
-                </div>
-
-                {/* Visual Card (opposite side) */}
-                <div className={`${i % 2 === 0 ? 'md:col-start-2 md:pl-12' : 'md:col-start-1 md:pr-12'}`}>
-                  <div className="glass rounded-xl p-6 hover:border-teal/30 transition-all">
-                    <div className="text-orbital/50 text-xs font-mono mb-2 tracking-wider uppercase">
-                      {item.period}
-                    </div>
-                    <div className="text-6xl font-heading font-black text-teal/10">
-                      {item.phase.split(' ')[1]}
-                    </div>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', order: 1 }}>
+                  <div style={{
+                    width: 48, height: 48, borderRadius: '50%',
+                    background: p.active ? 'linear-gradient(135deg, #FFBF00, #FF9500)' : 'rgba(8,18,40,0.9)',
+                    border: `2px solid ${p.color}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: p.active ? '0 0 24px rgba(255,191,0,0.5)' : `0 0 16px rgba(0,220,255,0.1)`,
+                    zIndex: 2, position: 'relative',
+                  }}>
+                    <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 14, color: p.active ? '#040C1C' : p.color }}>{p.phase}</span>
+                    {p.active && <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', border: '1px solid rgba(255,191,0,0.3)', animation: 'nodePulse 2s ease-in-out infinite' }} />}
                   </div>
                 </div>
-              </motion.div>
+
+                {/* Right content */}
+                <div style={{ paddingLeft: 40, order: i % 2 === 0 ? 2 : 0 }}>
+                  {i % 2 !== 0 ? (
+                    <div style={{ background: 'rgba(8,18,40,0.8)', border: `1px solid ${p.color}22`, borderRadius: 12, padding: '28px 32px' }}>
+                      <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 10, color: p.color, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 8 }}>{p.status}</div>
+                      <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 22, color: '#F5F7FA', marginBottom: 10 }}>{p.title}</h3>
+                      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: 'rgba(245,247,250,0.55)', lineHeight: 1.7 }}>{p.description}</p>
+                    </div>
+                  ) : <div />}
+                </div>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mt-24 text-center"
-        >
-          <div className="glass rounded-2xl p-12 max-w-3xl mx-auto">
-            <h3 className="text-3xl font-heading font-bold text-orbital mb-4">
-              Join the Mission
-            </h3>
-            <p className="text-orbital/70 mb-8">
-              Be part of Africa's space infrastructure revolution. Get early access to the IkirereMesh sandbox.
-            </p>
-
-            {/* Waitlist Form */}
-            <form className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+        {/* Waitlist CTA */}
+        <div style={{
+          background: 'rgba(8,18,40,0.9)', border: '1px solid rgba(0,220,255,0.15)',
+          borderRadius: 20, padding: '64px 40px', textAlign: 'center', maxWidth: 700, margin: '0 auto',
+          opacity: vis ? 1 : 0, transition: 'opacity 0.8s ease 0.6s', position: 'relative',
+        }}>
+          <div style={{ position: 'absolute', top: -80, left: '50%', transform: 'translateX(-50%)', width: 300, height: 200, background: 'radial-gradient(ellipse, rgba(0,220,255,0.08), transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
+          <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 32, color: '#F5F7FA', marginBottom: 12 }}>Join the Mission</h3>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 16, color: 'rgba(245,247,250,0.55)', marginBottom: 36, lineHeight: 1.7 }}>
+            Be part of Africa's space infrastructure revolution. Get early access to the IkirereMesh sandbox.
+          </p>
+          {!submitted ? (
+            <form onSubmit={e => { e.preventDefault(); if (email) setSubmitted(true) }} style={{ display: 'flex', gap: 12, maxWidth: 480, margin: '0 auto', flexWrap: 'wrap', justifyContent: 'center' }}>
               <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 px-6 py-3 bg-stratosphere border border-teal/30 rounded-lg text-orbital placeholder-orbital/40 focus:outline-none focus:border-teal"
+                type="email" value={email} onChange={e => setEmail(e.target.value)}
+                placeholder="your@email.com" required
+                style={{
+                  flex: 1, minWidth: 220, padding: '13px 20px',
+                  background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(0,220,255,0.25)',
+                  borderRadius: 8, fontFamily: "'Inter', sans-serif", fontSize: 14,
+                  color: '#F5F7FA', outline: 'none',
+                }}
+                onFocus={e => e.target.style.borderColor = '#00DCFF'}
+                onBlur={e => e.target.style.borderColor = 'rgba(0,220,255,0.25)'}
               />
-              <button
-                type="submit"
-                className="px-8 py-3 bg-amber text-stratosphere font-bold rounded-lg hover:bg-amber/90 transition-all glow-amber whitespace-nowrap"
-              >
-                Join Waitlist
-              </button>
+              <button type="submit" style={{
+                padding: '13px 28px', background: 'linear-gradient(135deg, #FFBF00, #FF9500)',
+                border: 'none', borderRadius: 8, fontFamily: "'Inter', sans-serif",
+                fontWeight: 700, fontSize: 14, color: '#040C1C', cursor: 'pointer',
+                whiteSpace: 'nowrap', letterSpacing: '0.05em',
+              }}>Join Waitlist</button>
             </form>
-
-            <p className="text-xs text-orbital/40 mt-4">
-              Early access opens Q1 2026. No spam, ever.
-            </p>
-          </div>
-        </motion.div>
-
+          ) : (
+            <div style={{ fontFamily: "'Roboto Mono', monospace", color: '#00DCFF', fontSize: 16 }}>✓ You're on the list. Early access opens Q1 2026.</div>
+          )}
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: 'rgba(245,247,250,0.3)', marginTop: 16 }}>No spam, ever.</p>
+        </div>
       </div>
+
+      <style>{`
+        @keyframes nodePulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.15); }
+        }
+        @media (max-width: 768px) {
+          .timeline-spine { display: none !important; }
+          .timeline-row { grid-template-columns: 1fr !important; gap: 12px !important; }
+          .timeline-row > div { order: unset !important; padding: 0 !important; text-align: left !important; }
+        }
+      `}</style>
     </section>
   )
 }

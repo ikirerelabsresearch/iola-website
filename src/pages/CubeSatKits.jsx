@@ -1,182 +1,108 @@
-import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import PageSEO, { pageSEO } from '../components/PageSEO'
+import { Link } from 'react-router-dom'
+
+const D = {
+  page: { minHeight: '100vh', background: '#040C1C', paddingTop: 88 },
+  wrap: { maxWidth: 1100, margin: '0 auto', padding: '52px 6vw 100px' },
+  card: { background: 'rgba(8,18,40,0.8)', border: '1px solid rgba(0,220,255,0.12)', borderRadius: 14, padding: '28px 32px' },
+  eyebrow: (c='#00DCFF') => ({ fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.3em', color: `${c}80`, textTransform: 'uppercase', marginBottom: 8 }),
+  h1: { fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 'clamp(28px, 3.8vw, 46px)', color: '#F5F7FA', letterSpacing: '-0.02em', lineHeight: 1.05, marginBottom: 14 },
+  h2: { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 22, color: '#F5F7FA', letterSpacing: '-0.01em', marginBottom: 6 },
+  h3: { fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 15, color: '#F5F7FA', marginBottom: 5 },
+  sub: { fontFamily: "'Inter', sans-serif", fontSize: 15, color: 'rgba(245,247,250,0.58)', lineHeight: 1.7, maxWidth: 540 },
+  mono: (c='#00DCFF') => ({ fontFamily: "'Roboto Mono', monospace", fontSize: 11, color: c }),
+  badge: (c='#00DCFF') => ({ display: 'inline-flex', alignItems: 'center', padding: '5px 14px', border: `1px solid ${c}30`, borderRadius: 100, background: `${c}08`, fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.3em', color: c, textTransform: 'uppercase', marginBottom: 20 }),
+}
+
+const kits = [
+  { name: '3U CubeSat Kit', tag: 'Compact Research', color: '#00DCFF',
+    specs: [['Size','10×10×30 cm'],['Compute','NVIDIA Jetson Nano'],['Power','30W Solar'],['Storage','256GB SSD'],['Mass','~4 kg'],['Lifetime','2–3 years']],
+    features: ['Pre-integrated structure','Solar power system','3-axis attitude control','UHF communication module','IkirereMesh SDK compatible','SpaceX rideshare ready'] },
+  { name: '6U CubeSat Kit', tag: 'Extended Mission', color: '#FFBF00',
+    specs: [['Size','10×20×30 cm'],['Compute','NVIDIA Jetson Xavier NX'],['Power','60W Solar'],['Storage','512GB SSD'],['Mass','~8 kg'],['Lifetime','3–5 years']],
+    features: ['Extended payload capacity','Advanced solar arrays','Precision ADCS + star tracker','High-bandwidth comms','IkirereMesh SDK compatible','SpaceX rideshare ready','Extended mission duration'] },
+]
+
+const reasons = [
+  { title: 'Launch Ready', body: 'Pre-qualified for SpaceX rideshare. Lab to orbit in months.',
+    svg: <svg viewBox="0 0 28 28" width="24" height="24" fill="none"><path d="M14 3L17 9L24 11L19 16L20 23L14 20L8 23L9 16L4 11L11 9Z" stroke="#00DCFF" strokeWidth="1.4" strokeLinejoin="round"/></svg> },
+  { title: 'AI-Powered Compute', body: 'NVIDIA Jetson enables on-orbit ML and edge inference at the satellite.',
+    svg: <svg viewBox="0 0 28 28" width="24" height="24" fill="none"><rect x="5" y="5" width="18" height="18" rx="3" stroke="#00DCFF" strokeWidth="1.4"/><circle cx="14" cy="14" r="4" stroke="#00DCFF" strokeWidth="1.4"/><line x1="14" y1="5" x2="14" y2="10" stroke="#00DCFF" strokeWidth="1.4"/><line x1="14" y1="18" x2="14" y2="23" stroke="#00DCFF" strokeWidth="1.4"/><line x1="5" y1="14" x2="10" y2="14" stroke="#00DCFF" strokeWidth="1.4"/><line x1="18" y1="14" x2="23" y2="14" stroke="#00DCFF" strokeWidth="1.4"/></svg> },
+  { title: 'Safe Operations', body: 'Integrated with IkirereMesh for collision-free constellation management.',
+    svg: <svg viewBox="0 0 28 28" width="24" height="24" fill="none"><path d="M14 2L24 7V15C24 20 20 24 14 26C8 24 4 20 4 15V7Z" stroke="#00DCFF" strokeWidth="1.4"/><path d="M9 14L12 17L19 10" stroke="#00DCFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+]
 
 export default function CubeSatKits() {
-  const kits = [
-    {
-      name: '3U CubeSat Kit',
-      size: '10×10×30 cm',
-      compute: 'NVIDIA Jetson Nano',
-      power: '30W Solar Panels',
-      storage: '256GB SSD',
-      price: 'Contact for pricing',
-      features: [
-        'Pre-integrated structure',
-        'Solar power system',
-        'Attitude control',
-        'Communication module',
-        'IkirereMesh SDK compatible',
-        'SpaceX launch ready'
-      ]
-    },
-    {
-      name: '6U CubeSat Kit',
-      size: '10×20×30 cm',
-      compute: 'NVIDIA Jetson Xavier NX',
-      power: '60W Solar Panels',
-      storage: '512GB SSD',
-      price: 'Contact for pricing',
-      features: [
-        'Extended payload capacity',
-        'Advanced solar arrays',
-        'Precision ADCS',
-        'High-bandwidth comms',
-        'IkirereMesh SDK compatible',
-        'SpaceX launch ready',
-        'Extended mission duration'
-      ]
-    }
-  ]
-
-  const specs = {
-    '3U': {
-      mass: '~4 kg',
-      orbit: 'LEO 400-600 km',
-      lifetime: '2-3 years',
-      dataRate: '1 Mbps',
-      power: '30W peak',
-      orientation: '3-axis stabilized'
-    },
-    '6U': {
-      mass: '~8 kg',
-      orbit: 'LEO 400-800 km',
-      lifetime: '3-5 years',
-      dataRate: '5 Mbps',
-      power: '60W peak',
-      orientation: '3-axis stabilized'
-    }
-  }
-
   return (
-    <div className="min-h-screen bg-stratosphere pt-24">
+    <div style={D.page}>
       <PageSEO {...pageSEO.cubesatKits} />
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-5xl md:text-7xl font-heading font-black text-orbital mb-6">
-            Programmable <span className="text-teal">CubeSat Kits</span>
+      <div style={D.wrap}>
+        {/* Header */}
+        <div style={{ marginBottom: 52 }}>
+          <div style={D.badge()}><span>Products</span></div>
+          <h1 style={D.h1}>Programmable{' '}
+            <span style={{ background: 'linear-gradient(135deg,#00DCFF,#0088FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>CubeSat Kits</span>
           </h1>
-          <p className="text-xl md:text-2xl text-orbital/70 max-w-3xl mx-auto leading-relaxed">
-            Complete satellite hardware designed for African research institutions.
-            Pre-integrated, launch-ready, and powered by NVIDIA compute.
-          </p>
-        </motion.div>
+          <p style={D.sub}>Complete satellite hardware for African research institutions. Pre-integrated, launch-ready, NVIDIA compute inside.</p>
+        </div>
 
-        {/* Product Cards */}
-        <div className="grid md:grid-cols-2 gap-8 mb-20">
-          {kits.map((kit, index) => (
-            <motion.div
-              key={kit.name}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              className="bg-black/40 border border-teal/20 rounded-xl p-8 hover:border-teal/40 transition-all"
-            >
-              <h3 className="text-3xl font-heading font-bold text-teal mb-4">{kit.name}</h3>
-              <div className="space-y-2 mb-6 text-orbital/60">
-                <p><span className="text-orbital font-semibold">Size:</span> {kit.size}</p>
-                <p><span className="text-orbital font-semibold">Compute:</span> {kit.compute}</p>
-                <p><span className="text-orbital font-semibold">Power:</span> {kit.power}</p>
-                <p><span className="text-orbital font-semibold">Storage:</span> {kit.storage}</p>
+        {/* Kit Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 20, marginBottom: 52 }}>
+          {kits.map((k, i) => (
+            <div key={i} style={{ ...D.card, border: `1px solid ${k.color}22`, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(to right, transparent, ${k.color}50, transparent)` }} />
+              <div style={D.eyebrow(k.color)}>{k.tag}</div>
+              <h2 style={{ ...D.h2, color: k.color, marginBottom: 20 }}>{k.name}</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderTop: '1px solid rgba(0,220,255,0.07)', marginBottom: 20 }}>
+                {k.specs.map(([label, val], j) => (
+                  <div key={j} style={{ padding: '9px 8px 9px 0', borderBottom: '1px solid rgba(0,220,255,0.07)', borderRight: j % 2 === 0 ? '1px solid rgba(0,220,255,0.07)' : 'none', paddingLeft: j % 2 !== 0 ? 12 : 0 }}>
+                    <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, color: 'rgba(245,247,250,0.35)', marginBottom: 2 }}>{label}</div>
+                    <div style={D.mono()}>{val}</div>
+                  </div>
+                ))}
               </div>
-              <div className="mb-6">
-                <h4 className="text-orbital font-semibold mb-3">Features:</h4>
-                <ul className="space-y-2">
-                  {kit.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2 text-orbital/70">
-                      <span className="text-teal mt-1">✓</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 24 }}>
+                {k.features.map((f, j) => (
+                  <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                    <div style={{ width: 4, height: 4, borderRadius: '50%', background: k.color, flexShrink: 0 }} />
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: 'rgba(245,247,250,0.6)' }}>{f}</span>
+                  </div>
+                ))}
               </div>
-              <div className="pt-6 border-t border-teal/10">
-                <p className="text-amber font-mono text-2xl mb-4">{kit.price}</p>
-                <Link
-                  to="/contact"
-                  className="block w-full px-6 py-3 bg-teal text-black font-semibold rounded-lg hover:bg-teal/90 transition-all text-center"
-                >
-                  Request Quote
-                </Link>
-              </div>
-            </motion.div>
+              <a href="mailto:team@ikirere.com?subject=CubeSat Inquiry" style={{ display: 'block', textAlign: 'center', padding: '10px', background: i === 0 ? 'linear-gradient(135deg,#00DCFF,#0088FF)' : 'linear-gradient(135deg,#FFBF00,#FF9500)', borderRadius: 8, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 13, color: '#040C1C', textDecoration: 'none' }}>Request Quote</a>
+            </div>
           ))}
         </div>
 
-        {/* Technical Specifications */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="bg-black/40 border border-teal/20 rounded-xl p-8 mb-20"
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8">Technical Specifications</h2>
-          <div className="grid md:grid-cols-2 gap-12">
-            {Object.entries(specs).map(([type, spec]) => (
-              <div key={type}>
-                <h3 className="text-2xl font-heading font-bold text-teal mb-4">{type} Specifications</h3>
-                <div className="space-y-3 text-orbital/70">
-                  <p><span className="text-orbital font-semibold">Mass:</span> {spec.mass}</p>
-                  <p><span className="text-orbital font-semibold">Orbit:</span> {spec.orbit}</p>
-                  <p><span className="text-orbital font-semibold">Mission Lifetime:</span> {spec.lifetime}</p>
-                  <p><span className="text-orbital font-semibold">Data Rate:</span> {spec.dataRate}</p>
-                  <p><span className="text-orbital font-semibold">Peak Power:</span> {spec.power}</p>
-                  <p><span className="text-orbital font-semibold">Orientation:</span> {spec.orientation}</p>
+        {/* Why section */}
+        <div style={{ marginBottom: 52 }}>
+          <div style={D.eyebrow()}>Why Ikirere</div>
+          <h2 style={{ ...D.h2, marginBottom: 20 }}>Built for African Research Labs</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+            {reasons.map((r, i) => (
+              <div key={i} style={{ ...D.card, display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                <div style={{ width: 40, height: 40, background: 'rgba(0,220,255,0.07)', border: '1px solid rgba(0,220,255,0.15)', borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{r.svg}</div>
+                <div>
+                  <div style={D.h3}>{r.title}</div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: 'rgba(245,247,250,0.52)', lineHeight: 1.6 }}>{r.body}</p>
                 </div>
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        {/* Why CubeSats Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-center"
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8">Why Choose Ikirere CubeSats?</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-black/40 border border-amber/20 rounded-xl p-6">
-              <div className="text-amber text-4xl mb-4">🚀</div>
-              <h3 className="text-xl font-heading font-bold text-orbital mb-2">Launch Ready</h3>
-              <p className="text-orbital/60">
-                Pre-qualified for SpaceX rideshare missions. From lab to orbit in months.
-              </p>
-            </div>
-            <div className="bg-black/40 border border-teal/20 rounded-xl p-6">
-              <div className="text-teal text-4xl mb-4">🧠</div>
-              <h3 className="text-xl font-heading font-bold text-orbital mb-2">AI-Powered</h3>
-              <p className="text-orbital/60">
-                NVIDIA Jetson enables on-orbit machine learning and edge computing.
-              </p>
-            </div>
-            <div className="bg-black/40 border border-teal/20 rounded-xl p-6">
-              <div className="text-teal text-4xl mb-4">🛡️</div>
-              <h3 className="text-xl font-heading font-bold text-orbital mb-2">Safe Operations</h3>
-              <p className="text-orbital/60">
-                Integrated with IkirereMesh for collision-free constellation management.
-              </p>
-            </div>
+        {/* CTA */}
+        <div style={{ background: 'rgba(8,18,40,0.9)', border: '1px solid rgba(255,191,0,0.18)', borderRadius: 14, padding: '28px 36px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20 }}>
+          <div>
+            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 18, color: '#F5F7FA', marginBottom: 4 }}>Ready to deploy your research to orbit?</h3>
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: 'rgba(245,247,250,0.42)' }}>Academic and volume discounts available.</p>
           </div>
-        </motion.div>
-      </section>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <a href="mailto:team@ikirere.com?subject=CubeSat Inquiry" style={{ padding: '9px 22px', background: 'linear-gradient(135deg,#FFBF00,#FF9500)', borderRadius: 7, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, color: '#040C1C', textDecoration: 'none' }}>Get a Quote</a>
+            <Link to="/ikirere-mesh-sdk" style={{ padding: '9px 22px', background: 'transparent', border: '1px solid rgba(0,220,255,0.28)', borderRadius: 7, fontFamily: "'Inter', sans-serif", fontWeight: 600, fontSize: 12, color: '#00DCFF', textDecoration: 'none' }}>View SDK</Link>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

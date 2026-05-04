@@ -65,15 +65,15 @@ html {
 
 /* Glassmorphism utility */
 .glass {
-  background: rgba(11, 30, 61, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 240, 255, 0.1);
+  background: rgba(4, 12, 28, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 220, 255, 0.1);
 }
 
 /* Glow effects */
 .glow-teal {
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 220, 255, 0.3);
 }
 
 .glow-amber {
@@ -82,7 +82,7 @@ html {
 
 /* Text glow */
 .text-glow-teal {
-  text-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+  text-shadow: 0 0 20px rgba(0, 220, 255, 0.6);
 }
 
 .text-glow-amber {

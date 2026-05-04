@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IOLA — Build Sequence</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0d0f14; font-family: 'Segoe UI', Arial, sans-serif; padding: 40px 24px; }
+  h1 { color: #fff; font-size: 20px; text-align: center; letter-spacing: 1px; margin-bottom: 4px; }
+  .subtitle { color: #6b7280; font-size: 12px; text-align: center; margin-bottom: 36px; }
+  .phase { display: flex; margin-bottom: 0; }
+  .left { display: flex; flex-direction: column; align-items: center; width: 40px; flex-shrink: 0; margin-right: 16px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; margin-top: 24px; }
+  .line { width: 2px; flex: 1; background: #1f2937; }
+  .card { flex: 1; background: #1a1d27; border-radius: 10px; border-left: 5px solid; padding: 18px 20px; margin-bottom: 12px; }
+  .tag { font-size: 10px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px; text-transform: uppercase; }
+  .title { color: #fff; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .desc { color: #9ca3af; font-size: 12px; line-height: 1.6; }
+  .arrow { text-align: center; color: #374151; font-size: 20px; margin: -4px 0 4px 56px; }
+  .footer { color: #374151; font-size: 11px; text-align: center; margin-top: 24px; letter-spacing: 0.5px; }
+
+  .amber { border-color: #f59e0b; }
+  .amber .tag { color: #f59e0b; }
+  .amber .dot { background: #f59e0b; }
+
+  .blue { border-color: #3b82f6; }
+  .blue .tag { color: #3b82f6; }
+  .blue .dot { background: #3b82f6; }
+
+  .purple { border-color: #8b5cf6; }
+  .purple .tag { color: #8b5cf6; }
+  .purple .dot { background: #8b5cf6; }
+
+  .green { border-color: #10b981; }
+  .green .tag { color: #10b981; }
+  .green .dot { background: #10b981; }
+</style>
+</head>
+<body>
+
+<h1>IOLA — BUILD SEQUENCE</h1>
+<p class="subtitle">From today to orbit</p>
+
+<!-- Phase 0 -->
+<div class="phase">
+  <div class="left"><div class="dot" style="background:#f59e0b;margin-top:22px;"></div><div class="line"></div></div>
+  <div class="card amber">
+    <div class="tag">Now · Phase 0</div>
+    <div class="title">Virtual Hardware Design</div>
+    <div class="desc">Blender + Autodesk Fusion. Design the CubeSat concept virtually before writing a single line of simulation code. Define instruments, form factor, and physical constraints. The software now has something real to model.</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+
+<!-- Phase 1 -->
+<div class="phase">
+  <div class="left"><div class="dot" style="background:#3b82f6;margin-top:22px;"></div><div class="line"></div></div>
+  <div class="card blue">
+    <div class="tag">Q2–Q3 2026 · Phase 1</div>
+    <div class="title">Real Orbital Simulation Engine</div>
+    <div class="desc">Ingest live TLE data from CelesTrak. SGP4 orbit propagation. Every satellite on the globe corresponds to a real object in orbit. All dummy values replaced with real physics.</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+
+<!-- Phase 2 -->
+<div class="phase">
+  <div class="left"><div class="dot" style="background:#3b82f6;margin-top:22px;"></div><div class="line"></div></div>
+  <div class="card blue">
+    <div class="tag">Q3–Q4 2026 · Phase 2</div>
+    <div class="title">Conjunction Assessment</div>
+    <div class="desc">Compute closest approach distances between all satellite pairs. Flag high-risk encounters. Generate conjunction data messages. The risk score now means something real.</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+
+<!-- Phase 3 -->
+<div class="phase">
+  <div class="left"><div class="dot" style="background:#8b5cf6;margin-top:22px;"></div><div class="line"></div></div>
+  <div class="card purple">
+    <div class="tag">Q1–Q2 2027 · Phase 3</div>
+    <div class="title">IkirereMesh — RL Coordination Engine</div>
+    <div class="desc">Multi-satellite coordination algorithm. Collision avoidance, coverage maximisation, fuel optimisation. Core IP and compounding data moat. Research paper targeting ICML and NeurIPS.</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+
+<!-- Phase 4 -->
+<div class="phase">
+  <div class="left"><div class="dot" style="background:#3b82f6;margin-top:22px;"></div><div class="line"></div></div>
+  <div class="card blue">
+    <div class="tag">Q3–Q4 2027 · Phase 4</div>
+    <div class="title">Public API + Developer SDK</div>
+    <div class="desc">External satellite operators, universities, and labs access the coordination engine. First revenue. Pre-seed milestones complete. Seed round begins.</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+
+<!-- Phase 5 -->
+<div class="phase">
+  <div class="left"><div class="dot" style="background:#10b981;margin-top:22px;"></div><div class="line"></div></div>
+  <div class="card green">
+    <div class="tag">2028–2031 · Phase 5</div>
+    <div class="title">Physical Hardware + Onboard Firmware</div>
+    <div class="desc">Build the actual CubeSat. Develop onboard firmware and software. Test in controlled environments. Hardware is validated against the virtual design locked in Phase 0.</div>
+  </div>
+</div>
+<div class="arrow">↓</div>
+
+<!-- Phase 6 -->
+<div class="phase">
+  <div class="left"><div class="dot" style="background:#10b981;margin-top:22px;"></div></div>
+  <div class="card green">
+    <div class="tag">2031+ · Phase 6</div>
+    <div class="title">Launch + Constellation Scale</div>
+    <div class="desc">SpaceX rideshare. Full constellation in LEO running IOLA firmware, coordinated by IkirereMesh. Agriculture. Climate. Connectivity. Logistics. Telecom. Africa's own infrastructure.</div>
+  </div>
+</div>
+
+<p class="footer">Software first. Hardware second. Space third.</p>
+
+</body>
+</html>

@@ -1,239 +1,135 @@
-import { motion } from 'framer-motion'
 import PageSEO, { pageSEO } from '../components/PageSEO'
 
+const D = {
+  page: { minHeight: '100vh', background: '#040C1C', paddingTop: 88 },
+  wrap: { maxWidth: 1100, margin: '0 auto', padding: '52px 6vw 100px' },
+  card: { background: 'rgba(8,18,40,0.8)', border: '1px solid rgba(0,220,255,0.12)', borderRadius: 14, padding: '28px 32px' },
+  h1: { fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 'clamp(28px, 3.8vw, 46px)', color: '#F5F7FA', letterSpacing: '-0.02em', lineHeight: 1.05, marginBottom: 14 },
+  h2: { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 22, color: '#F5F7FA', letterSpacing: '-0.01em', marginBottom: 16 },
+  label: (c='#00DCFF') => ({ fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.3em', color: `${c}80`, textTransform: 'uppercase', marginBottom: 8 }),
+  badge: (c='#00DCFF') => ({ display: 'inline-flex', alignItems: 'center', padding: '5px 14px', border: `1px solid ${c}30`, borderRadius: 100, background: `${c}08`, fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.3em', color: c, textTransform: 'uppercase', marginBottom: 20 }),
+  sub: { fontFamily: "'Inter', sans-serif", fontSize: 15, color: 'rgba(245,247,250,0.58)', lineHeight: 1.7, maxWidth: 560 },
+}
+
+const milestones = [
+  { year: '2025', title: 'Foundation', desc: 'Ikirere Orbital Labs Africa founded in Kigali, Rwanda' },
+  { year: 'Q2 2026', title: 'First Prototype', desc: 'IkirereMesh SDK alpha release to partner institutions' },
+  { year: 'Q4 2026', title: 'CubeSat Production', desc: 'First 3U CubeSat kits delivered to African universities' },
+  { year: 'Q2 2027', title: 'Launch', desc: 'First Ikirere satellites deployed via SpaceX rideshare' },
+]
+
+const values = [
+  { title: 'African-First', desc: 'Building sovereign space infrastructure on the continent, for the continent' },
+  { title: 'Open Access', desc: 'Democratizing orbital operations for universities and research labs' },
+  { title: 'Safety First', desc: 'Deterministic collision avoidance to prevent space debris cascades' },
+  { title: 'Rapid Innovation', desc: 'From concept to orbit in months, not years' },
+]
+
+const approach = [
+  { n: '1', title: 'Integrated Hardware', body: 'Pre-built, launch-ready CubeSat kits with NVIDIA compute. No need to source components from dozens of suppliers.' },
+  { n: '2', title: 'AI-Powered Coordination', body: 'IkirereMesh SDK combines RL for fuel-efficient planning with deterministic safety shields for collision-free guarantees.' },
+  { n: '3', title: 'Launch Partnerships', body: 'Direct coordination with SpaceX rideshare missions. Streamlined path from lab to orbit.' },
+  { n: '4', title: 'Local Support', body: 'Training, technical support, and community building for African space programs.' },
+]
+
 export default function About() {
-  const milestones = [
-    {
-      year: '2025',
-      title: 'Foundation',
-      description: 'Ikirere Orbital Labs Africa founded in Kigali, Rwanda'
-    },
-    {
-      year: '2026 Q2',
-      title: 'First Prototype',
-      description: 'IkirereMesh SDK alpha release to partner institutions'
-    },
-    {
-      year: '2026 Q4',
-      title: 'CubeSat Production',
-      description: 'First 3U CubeSat kits delivered to African universities'
-    },
-    {
-      year: '2027 Q2',
-      title: 'Launch',
-      description: 'First Ikirere satellites deployed via SpaceX rideshare'
-    }
-  ]
-
-  const values = [
-    {
-      icon: '🌍',
-      title: 'African-First',
-      description: 'Building sovereign space infrastructure on the continent, for the continent'
-    },
-    {
-      icon: '🔓',
-      title: 'Open Access',
-      description: 'Democratizing orbital operations for universities and research labs'
-    },
-    {
-      icon: '🛡️',
-      title: 'Safety First',
-      description: 'Deterministic collision avoidance to prevent space debris cascades'
-    },
-    {
-      icon: '🚀',
-      title: 'Rapid Innovation',
-      description: 'From concept to orbit in months, not years'
-    }
-  ]
-
   return (
-    <div className="min-h-screen bg-stratosphere pt-24">
+    <div style={D.page}>
       <PageSEO {...pageSEO.about} />
-      <section className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-20"
-        >
-          <h1 className="text-5xl md:text-7xl font-heading font-black text-orbital mb-6">
-            About <span className="text-teal">Ikirere</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-orbital/70 max-w-3xl mx-auto leading-relaxed">
-            Building the foundational infrastructure for the African space age
+      <div style={D.wrap}>
+        {/* Header */}
+        <div style={{ marginBottom: 52 }}>
+          <div style={D.badge()}><span>About Us</span></div>
+          <h1 style={D.h1}>About <span style={{ background: 'linear-gradient(135deg,#00DCFF,#0088FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Ikirere</span></h1>
+          <p style={D.sub}>Building the foundational infrastructure for the African space age.</p>
+        </div>
+
+        {/* Mission */}
+        <div style={{ ...D.card, textAlign: 'center', marginBottom: 40 }}>
+          <div style={D.label()}>Mission</div>
+          <h2 style={{ ...D.h2, color: '#00DCFF' }}>Our Mission</h2>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: 'rgba(245,247,250,0.72)', lineHeight: 1.8, maxWidth: 720, margin: '0 auto' }}>
+            To be the <span style={{ color: '#00DCFF', fontWeight: 600 }}>NVIDIA for Space</span> — providing hardware and software that enables African universities, research institutions, and governments to deploy satellites for scientific research, earth observation, and communications. Making LEO accessible across the continent with deterministic safety guarantees.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Mission Statement */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-black/40 border border-teal/20 rounded-xl p-12 mb-20"
-        >
-          <h2 className="text-3xl font-heading font-bold text-teal mb-6 text-center">Our Mission</h2>
-          <p className="text-xl text-orbital/80 leading-relaxed text-center max-w-4xl mx-auto">
-            To be the <span className="text-teal font-semibold">NVIDIA for Space</span> — providing
-            the hardware and software layer that enables African universities, research institutions,
-            and governments to deploy satellites for scientific research, earth observation, and telecommunications.
-            We're making Low Earth Orbit accessible across the continent while preventing the tragedy of space debris through deterministic safety guarantees.
-          </p>
-        </motion.div>
-
-        {/* The Problem */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="mb-20"
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">The Problem We're Solving</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-black/40 border border-amber/20 rounded-xl p-8">
-              <div className="text-amber text-4xl mb-4">🌍</div>
-              <h3 className="text-2xl font-heading font-bold text-orbital mb-3">Access Inequality</h3>
-              <p className="text-orbital/70">
-                African institutions lack affordable, integrated satellite infrastructure.
-                Current options require navigating complex international supply chains and prohibitive costs.
-              </p>
-            </div>
-            <div className="bg-black/40 border border-amber/20 rounded-xl p-8">
-              <div className="text-amber text-4xl mb-4">💥</div>
-              <h3 className="text-2xl font-heading font-bold text-orbital mb-3">Space Debris Crisis</h3>
-              <p className="text-orbital/70">
-                With 34,000+ tracked objects in orbit and growing constellations, collision risk is escalating.
-                Kessler Syndrome threatens to make orbital operations unsustainable.
-              </p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Our Approach */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mb-20"
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">Our Approach</h2>
-          <div className="bg-black/40 border border-teal/20 rounded-xl p-8">
-            <div className="space-y-6 text-orbital/70">
-              <div>
-                <h3 className="text-xl font-semibold text-teal mb-2">1. Integrated Hardware</h3>
-                <p>
-                  Pre-built, launch-ready CubeSat kits with NVIDIA compute. No need to source components
-                  from dozens of suppliers or navigate complex integration.
-                </p>
+        {/* Problems */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={D.label()}>The Problem</div>
+          <h2 style={D.h2}>What We're Solving</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 14 }}>
+            {[
+              { title: 'Access Inequality', body: 'African institutions lack affordable, integrated satellite infrastructure. Current options require navigating complex international supply chains.', accent: '#FFBF00' },
+              { title: 'Space Debris Crisis', body: 'With 34,000+ tracked objects in orbit and growing constellations, collision risk is escalating. Kessler Syndrome threatens orbital operations.', accent: '#FF4444' },
+            ].map((p, i) => (
+              <div key={i} style={{ ...D.card, border: `1px solid ${p.accent}22` }}>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: p.accent, marginBottom: 12 }} />
+                <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 15, color: '#F5F7FA', marginBottom: 8 }}>{p.title}</div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'rgba(245,247,250,0.55)', lineHeight: 1.65 }}>{p.body}</p>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold text-teal mb-2">2. AI-Powered Coordination</h3>
-                <p>
-                  IkirereMesh SDK combines Reinforcement Learning for fuel-efficient planning with
-                  deterministic safety shields for collision-free guarantees.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-teal mb-2">3. Launch Partnerships</h3>
-                <p>
-                  Direct coordination with SpaceX rideshare missions. Streamlined path from lab to orbit.
-                </p>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-teal mb-2">4. Local Support</h3>
-                <p>
-                  Training, technical support, and community building for African space programs.
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Core Values */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mb-20"
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">Our Values</h2>
-          <div className="grid md:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.9 + index * 0.1 }}
-                className="bg-black/40 border border-teal/20 rounded-xl p-6 text-center"
-              >
-                <div className="text-4xl mb-3">{value.icon}</div>
-                <h3 className="text-lg font-heading font-bold text-teal mb-2">{value.title}</h3>
-                <p className="text-sm text-orbital/60">{value.description}</p>
-              </motion.div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        {/* Milestones */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">Journey to Orbit</h2>
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-teal/20 hidden md:block" />
-
-            <div className="space-y-12">
-              {milestones.map((milestone, index) => (
-                <motion.div
-                  key={milestone.year}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 1.3 + index * 0.2 }}
-                  className={`flex items-center gap-8 ${
-                    index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                  }`}
-                >
-                  <div className={`flex-1 ${index % 2 === 0 ? 'md:text-right' : 'md:text-left'}`}>
-                    <div className="bg-black/40 border border-teal/20 rounded-xl p-6">
-                      <div className="text-amber font-mono text-sm mb-2">{milestone.year}</div>
-                      <h3 className="text-xl font-heading font-bold text-teal mb-2">{milestone.title}</h3>
-                      <p className="text-orbital/60">{milestone.description}</p>
-                    </div>
-                  </div>
-                  <div className="w-4 h-4 rounded-full bg-teal hidden md:block flex-shrink-0" />
-                  <div className="flex-1 hidden md:block" />
-                </motion.div>
-              ))}
-            </div>
+        {/* Approach */}
+        <div style={{ ...D.card, marginBottom: 40 }}>
+          <div style={D.label()}>Approach</div>
+          <h2 style={D.h2}>How We Build</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {approach.map((a, i) => (
+              <div key={i} style={{ display: 'flex', gap: 18, paddingTop: i > 0 ? 18 : 0, paddingBottom: i < 3 ? 18 : 0, borderBottom: i < 3 ? '1px solid rgba(0,220,255,0.07)' : 'none' }}>
+                <div style={{ width: 28, height: 28, background: 'rgba(0,220,255,0.08)', border: '1px solid rgba(0,220,255,0.25)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 11, color: '#00DCFF' }}>{a.n}</span>
+                </div>
+                <div>
+                  <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 14, color: '#00DCFF', marginBottom: 4 }}>{a.title}</div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: 'rgba(245,247,250,0.52)', lineHeight: 1.65 }}>{a.body}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </motion.div>
+        </div>
+
+        {/* Values */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={D.label()}>Values</div>
+          <h2 style={D.h2}>What We Stand For</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14 }}>
+            {values.map((v, i) => (
+              <div key={i} style={D.card}>
+                <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 14, color: '#00DCFF', marginBottom: 6 }}>{v.title}</div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: 'rgba(245,247,250,0.52)', lineHeight: 1.6 }}>{v.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Timeline */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={D.label()}>Journey</div>
+          <h2 style={D.h2}>Journey to Orbit</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {milestones.map((m, i) => (
+              <div key={i} style={{ display: 'grid', gridTemplateColumns: '100px 1fr', gap: 16, alignItems: 'start' }}>
+                <div style={{ background: 'rgba(255,191,0,0.07)', border: '1px solid rgba(255,191,0,0.18)', borderRadius: 8, padding: '8px 12px', textAlign: 'center' }}>
+                  <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 11, color: '#FFBF00', fontWeight: 700 }}>{m.year}</div>
+                </div>
+                <div style={D.card}>
+                  <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 13, color: '#00DCFF', marginBottom: 3 }}>{m.title}</div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: 'rgba(245,247,250,0.52)' }}>{m.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Location */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 2.0 }}
-          className="mt-20 text-center"
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-4">Based in Kigali, Rwanda</h2>
-          <p className="text-orbital/70 mb-6">
-            Building space infrastructure at the intersection of innovation and opportunity
-          </p>
-          <div className="inline-block px-6 py-3 bg-black/40 border border-teal/20 rounded-lg">
-            <a
-              href="mailto:team@ikirere.com"
-              className="text-teal hover:text-teal/80 transition-colors"
-            >
-              team@ikirere.com
-            </a>
-          </div>
-        </motion.div>
-      </section>
+        <div style={{ textAlign: 'center', paddingTop: 20 }}>
+          <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 18, color: '#F5F7FA', marginBottom: 8 }}>Based in Kigali, Rwanda</div>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'rgba(245,247,250,0.45)', marginBottom: 20 }}>Building space infrastructure at the intersection of innovation and opportunity</p>
+          <a href="mailto:team@ikirere.com" style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 12, color: '#00DCFF', textDecoration: 'none', padding: '9px 20px', border: '1px solid rgba(0,220,255,0.28)', borderRadius: 8, display: 'inline-block' }}>team@ikirere.com</a>
+        </div>
+      </div>
     </div>
   )
 }

@@ -1,252 +1,133 @@
-import { motion } from 'framer-motion'
 import PageSEO, { pageSEO } from '../components/PageSEO'
 
+const D = {
+  page: { minHeight: '100vh', background: '#040C1C', paddingTop: 88 },
+  wrap: { maxWidth: 1100, margin: '0 auto', padding: '52px 6vw 100px' },
+  card: { background: 'rgba(8,18,40,0.8)', border: '1px solid rgba(0,220,255,0.12)', borderRadius: 14, padding: '28px 32px' },
+  h1: { fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 'clamp(28px, 3.8vw, 46px)', color: '#F5F7FA', letterSpacing: '-0.02em', lineHeight: 1.05, marginBottom: 14 },
+  h2: { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 22, color: '#F5F7FA', letterSpacing: '-0.01em', marginBottom: 16 },
+  label: (c='#00DCFF') => ({ fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.3em', color: `${c}80`, textTransform: 'uppercase', marginBottom: 8 }),
+  badge: (c='#00DCFF') => ({ display: 'inline-flex', alignItems: 'center', padding: '5px 14px', border: `1px solid ${c}30`, borderRadius: 100, background: `${c}08`, fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.3em', color: c, textTransform: 'uppercase', marginBottom: 20 }),
+  sub: { fontFamily: "'Inter', sans-serif", fontSize: 15, color: 'rgba(245,247,250,0.58)', lineHeight: 1.7, maxWidth: 560 },
+}
+
+const positions = [
+  { title: 'Flight Software Engineer', location: 'Kigali, Rwanda', type: 'Full-time',
+    desc: 'Build embedded Linux systems for CubeSats. Work on ADCS, communications, and onboard autonomy.',
+    reqs: ['C/C++ and Python expertise','Embedded systems experience','Understanding of spacecraft systems','Linux kernel development (preferred)'] },
+  { title: 'Hardware Engineer (CubeSat)', location: 'Kigali, Rwanda', type: 'Full-time',
+    desc: 'Design and integrate CubeSat subsystems. Work with power, ADCS, comms, and payload modules.',
+    reqs: ['Electrical engineering background','PCB design and testing','Thermal and structural analysis','Experience with space-grade components'] },
+  { title: 'ML Research Engineer', location: 'Remote / Kigali', type: 'Full-time',
+    desc: 'Develop reinforcement learning algorithms for constellation coordination and collision avoidance.',
+    reqs: ['PhD or equivalent in ML/RL','PyTorch or JAX experience','Multi-agent systems knowledge','Publications in top-tier venues (preferred)'] },
+  { title: 'Mission Operations Specialist', location: 'Kigali, Rwanda', type: 'Full-time',
+    desc: 'Operate satellite constellations. Manage ground station networks and respond to orbital events.',
+    reqs: ['Astrodynamics fundamentals','Experience with STK or GMAT','Telemetry and command protocols','24/7 shift work availability'] },
+]
+
+const perks = [
+  { title: 'Build Real Satellites', desc: 'Your code and hardware will fly in orbit', svg: <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 2L15 8L22 10L17 15L18 22L12 19L6 22L7 15L2 10L9 8Z" stroke="#00DCFF" strokeWidth="1.5" strokeLinejoin="round"/></svg> },
+  { title: 'Africa-First Mission', desc: 'Directly impact African space capabilities', svg: <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><circle cx="12" cy="12" r="9" stroke="#00DCFF" strokeWidth="1.5"/><path d="M9 8C9 8 10 10 10 12S9 16 9 16" stroke="#00DCFF" strokeWidth="1.2"/><path d="M15 8C15 8 14 10 14 12S15 16 15 16" stroke="#00DCFF" strokeWidth="1.2"/><path d="M3 12h18" stroke="#00DCFF" strokeWidth="1.2"/></svg> },
+  { title: 'Competitive Compensation', desc: 'Salary + equity in a frontier market', svg: <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><rect x="2" y="6" width="20" height="12" rx="2" stroke="#00DCFF" strokeWidth="1.5"/><path d="M2 10h20" stroke="#00DCFF" strokeWidth="1.2"/></svg> },
+  { title: 'Learning Budget', desc: 'Conferences, courses, and research resources', svg: <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M4 6h16M4 10h16M4 14h10" stroke="#00DCFF" strokeWidth="1.5" strokeLinecap="round"/><rect x="3" y="3" width="18" height="18" rx="2" stroke="#00DCFF" strokeWidth="1.5"/></svg> },
+  { title: 'Health Coverage', desc: 'Comprehensive medical and dental', svg: <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M12 21C12 21 3 15 3 9C3 6 5 4 8 4C10 4 11 5 12 6C13 5 14 4 16 4C19 4 21 6 21 9C21 15 12 21 12 21Z" stroke="#00DCFF" strokeWidth="1.5"/><path d="M9 12h6M12 9v6" stroke="#00DCFF" strokeWidth="1.5" strokeLinecap="round"/></svg> },
+  { title: 'Flexible Work', desc: 'Hybrid remote, outcomes over hours', svg: <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><circle cx="12" cy="12" r="9" stroke="#00DCFF" strokeWidth="1.5"/><path d="M12 7v5l3 3" stroke="#00DCFF" strokeWidth="1.5" strokeLinecap="round"/></svg> },
+]
+
+const process = [
+  { n: '1', title: 'Apply', desc: 'Send CV and cover letter' },
+  { n: '2', title: 'Screen', desc: 'Initial technical interview' },
+  { n: '3', title: 'Challenge', desc: 'Take-home technical project' },
+  { n: '4', title: 'Offer', desc: 'Team meet & final decision' },
+]
+
 export default function Careers() {
-  const positions = [
-    {
-      title: 'Flight Software Engineer',
-      location: 'Kigali, Rwanda',
-      type: 'Full-time',
-      description: 'Build embedded Linux systems for CubeSats. Work on ADCS, communications, and onboard autonomy.',
-      requirements: [
-        'C/C++ and Python expertise',
-        'Embedded systems experience',
-        'Understanding of spacecraft systems',
-        'Linux kernel development (preferred)'
-      ]
-    },
-    {
-      title: 'Hardware Engineer (CubeSat)',
-      location: 'Kigali, Rwanda',
-      type: 'Full-time',
-      description: 'Design and integrate CubeSat subsystems. Work with power, ADCS, comms, and payload modules.',
-      requirements: [
-        'Electrical engineering background',
-        'PCB design and testing',
-        'Thermal and structural analysis',
-        'Experience with space-grade components'
-      ]
-    },
-    {
-      title: 'ML Research Engineer',
-      location: 'Remote / Kigali',
-      type: 'Full-time',
-      description: 'Develop reinforcement learning algorithms for constellation coordination and collision avoidance.',
-      requirements: [
-        'PhD or equivalent in ML/RL',
-        'PyTorch or JAX experience',
-        'Multi-agent systems knowledge',
-        'Publications in top-tier venues (preferred)'
-      ]
-    },
-    {
-      title: 'Mission Operations Specialist',
-      location: 'Kigali, Rwanda',
-      type: 'Full-time',
-      description: 'Operate satellite constellations. Manage ground station networks and respond to orbital events.',
-      requirements: [
-        'Astrodynamics fundamentals',
-        'Experience with STK or GMAT',
-        'Telemetry and command protocols',
-        '24/7 shift work availability'
-      ]
-    }
-  ]
-
-  const perks = [
-    {
-      icon: '🚀',
-      title: 'Build Real Satellites',
-      description: 'Your code and hardware will fly in orbit'
-    },
-    {
-      icon: '🌍',
-      title: 'Africa-First Mission',
-      description: 'Directly impact African space capabilities'
-    },
-    {
-      icon: '💰',
-      title: 'Competitive Compensation',
-      description: 'Salary + equity in a frontier market'
-    },
-    {
-      icon: '📚',
-      title: 'Learning Budget',
-      description: 'Conferences, courses, and research resources'
-    },
-    {
-      icon: '🏥',
-      title: 'Health Coverage',
-      description: 'Comprehensive medical and dental insurance'
-    },
-    {
-      icon: '⏰',
-      title: 'Flexible Work',
-      description: 'Hybrid remote, focus on outcomes over hours'
-    }
-  ]
-
   return (
-    <div className="min-h-screen bg-stratosphere pt-24">
+    <div style={D.page}>
       <PageSEO {...pageSEO.careers} />
-      <section className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-20"
-        >
-          <h1 className="text-5xl md:text-7xl font-heading font-black text-orbital mb-6">
-            Join <span className="text-teal">Ikirere</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-orbital/70 max-w-3xl mx-auto leading-relaxed">
-            Build the foundational infrastructure for the African space age. We're looking for
-            engineers, researchers, and operators who want to make history.
-          </p>
-        </motion.div>
+      <div style={D.wrap}>
+        {/* Header */}
+        <div style={{ marginBottom: 48 }}>
+          <div style={D.badge()}><span>Careers</span></div>
+          <h1 style={D.h1}>Join <span style={{ background: 'linear-gradient(135deg,#00DCFF,#0088FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Ikirere</span></h1>
+          <p style={D.sub}>Build the foundational infrastructure for the African space age. We're looking for engineers, researchers, and operators who want to make history.</p>
+        </div>
 
-        {/* Mission Statement */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-gradient-to-r from-teal/10 to-amber/10 border border-teal/30 rounded-xl p-8 mb-20 text-center"
-        >
-          <h2 className="text-2xl font-heading font-bold text-orbital mb-4">Why Ikirere?</h2>
-          <p className="text-lg text-orbital/80 max-w-3xl mx-auto leading-relaxed">
-            Most space companies are building satellites for communication or imaging. We're building
-            the <span className="text-teal font-semibold">infrastructure layer</span> that makes orbital
-            operations accessible to an entire continent. Your work here will enable dozens of African
-            universities, governments, and research labs to deploy their own missions.
+        {/* Why banner */}
+        <div style={{ background: 'linear-gradient(135deg, rgba(0,220,255,0.06), rgba(255,191,0,0.04))', border: '1px solid rgba(0,220,255,0.2)', borderRadius: 14, padding: '24px 32px', marginBottom: 44 }}>
+          <div style={D.label()}>Why Ikirere</div>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 14, color: 'rgba(245,247,250,0.7)', lineHeight: 1.75, maxWidth: 720 }}>
+            Most space companies build satellites for comms or imaging. We're building the <span style={{ color: '#00DCFF' }}>infrastructure layer</span> that makes orbital operations accessible to an entire continent. Your work here will enable dozens of African universities, governments, and research labs to deploy their own missions.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Open Positions */}
-        <div className="mb-20">
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">Open Positions</h2>
-          <div className="space-y-6">
-            {positions.map((position, index) => (
-              <motion.div
-                key={position.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-                className="bg-black/40 border border-teal/20 rounded-xl p-8 hover:border-teal/40 transition-all"
-              >
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-                  <div>
-                    <h3 className="text-2xl font-heading font-bold text-teal mb-2">{position.title}</h3>
-                    <div className="flex items-center gap-4 text-orbital/60 text-sm">
-                      <span>📍 {position.location}</span>
-                      <span>•</span>
-                      <span>💼 {position.type}</span>
-                    </div>
-                  </div>
-                  <a
-                    href={`mailto:team@ikirere.com?subject=Application:%20${position.title}`}
-                    className="mt-4 md:mt-0 px-6 py-3 bg-teal text-black font-semibold rounded-lg hover:bg-teal/90 transition-all inline-block text-center"
-                  >
-                    Apply Now
-                  </a>
-                </div>
-                <p className="text-orbital/70 mb-4">{position.description}</p>
+        {/* Positions */}
+        <div style={{ marginBottom: 44 }}>
+          <div style={D.label()}>Open Roles</div>
+          <h2 style={D.h2}>Open Positions</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {positions.map((p, i) => (
+              <div key={i} style={{ ...D.card, display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'start' }}>
                 <div>
-                  <h4 className="text-orbital font-semibold mb-2">Requirements:</h4>
-                  <ul className="space-y-1">
-                    {position.requirements.map((req) => (
-                      <li key={req} className="flex items-start gap-2 text-orbital/60">
-                        <span className="text-teal mt-1">•</span>
-                        <span>{req}</span>
-                      </li>
+                  <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 16, color: '#00DCFF', marginBottom: 4 }}>{p.title}</div>
+                  <div style={{ display: 'flex', gap: 12, marginBottom: 10 }}>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: 'rgba(245,247,250,0.4)' }}>{p.location}</span>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: 'rgba(245,247,250,0.25)' }}>·</span>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: 'rgba(245,247,250,0.4)' }}>{p.type}</span>
+                  </div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'rgba(245,247,250,0.6)', lineHeight: 1.6, marginBottom: 10 }}>{p.desc}</p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {p.reqs.map((r, j) => (
+                      <span key={j} style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: 'rgba(245,247,250,0.5)', background: 'rgba(0,220,255,0.06)', border: '1px solid rgba(0,220,255,0.12)', borderRadius: 6, padding: '3px 9px' }}>{r}</span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
-              </motion.div>
+                <a href={`mailto:team@ikirere.com?subject=Application: ${p.title}`} style={{ padding: '9px 20px', background: 'linear-gradient(135deg,#00DCFF,#0088FF)', borderRadius: 7, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, color: '#040C1C', textDecoration: 'none', whiteSpace: 'nowrap', alignSelf: 'flex-start' }}>Apply Now</a>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Perks & Benefits */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mb-20"
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">Perks & Benefits</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {perks.map((perk, index) => (
-              <motion.div
-                key={perk.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.9 + index * 0.1 }}
-                className="bg-black/40 border border-teal/20 rounded-xl p-6 text-center"
-              >
-                <div className="text-4xl mb-3">{perk.icon}</div>
-                <h3 className="text-lg font-heading font-bold text-teal mb-2">{perk.title}</h3>
-                <p className="text-sm text-orbital/60">{perk.description}</p>
-              </motion.div>
+        {/* Perks */}
+        <div style={{ marginBottom: 44 }}>
+          <div style={D.label()}>Benefits</div>
+          <h2 style={D.h2}>Perks & Benefits</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
+            {perks.map((p, i) => (
+              <div key={i} style={{ ...D.card, display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                <div style={{ width: 36, height: 36, background: 'rgba(0,220,255,0.07)', border: '1px solid rgba(0,220,255,0.15)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{p.svg}</div>
+                <div>
+                  <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 13, color: '#F5F7FA', marginBottom: 3 }}>{p.title}</div>
+                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: 'rgba(245,247,250,0.48)', lineHeight: 1.5 }}>{p.desc}</p>
+                </div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        {/* Application Process */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="mb-20"
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">Application Process</h2>
-          <div className="grid md:grid-cols-4 gap-6">
-            <div className="bg-black/40 border border-teal/20 rounded-xl p-6 text-center">
-              <div className="text-teal text-3xl font-bold mb-2">1</div>
-              <h3 className="text-lg font-heading font-bold text-orbital mb-2">Apply</h3>
-              <p className="text-sm text-orbital/60">Send CV and cover letter</p>
-            </div>
-            <div className="bg-black/40 border border-teal/20 rounded-xl p-6 text-center">
-              <div className="text-teal text-3xl font-bold mb-2">2</div>
-              <h3 className="text-lg font-heading font-bold text-orbital mb-2">Screen</h3>
-              <p className="text-sm text-orbital/60">Initial technical interview</p>
-            </div>
-            <div className="bg-black/40 border border-teal/20 rounded-xl p-6 text-center">
-              <div className="text-teal text-3xl font-bold mb-2">3</div>
-              <h3 className="text-lg font-heading font-bold text-orbital mb-2">Challenge</h3>
-              <p className="text-sm text-orbital/60">Take-home technical project</p>
-            </div>
-            <div className="bg-black/40 border border-teal/20 rounded-xl p-6 text-center">
-              <div className="text-teal text-3xl font-bold mb-2">4</div>
-              <h3 className="text-lg font-heading font-bold text-orbital mb-2">Offer</h3>
-              <p className="text-sm text-orbital/60">Team meet & final decision</p>
-            </div>
+        {/* Process */}
+        <div style={{ marginBottom: 44 }}>
+          <div style={D.label()}>Process</div>
+          <h2 style={D.h2}>Application Process</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+            {process.map((p, i) => (
+              <div key={i} style={{ ...D.card, textAlign: 'center' }}>
+                <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 28, color: '#00DCFF', opacity: 0.3, marginBottom: 8 }}>{p.n}</div>
+                <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 14, color: '#F5F7FA', marginBottom: 4 }}>{p.title}</div>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: 'rgba(245,247,250,0.48)' }}>{p.desc}</p>
+              </div>
+            ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.6 }}
-          className="bg-black/40 border border-amber/30 rounded-xl p-12 text-center"
-        >
-          <div className="text-5xl mb-6">🌟</div>
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-4">
-            Don't See Your Role?
-          </h2>
-          <p className="text-lg text-orbital/70 mb-6 max-w-2xl mx-auto">
-            We're always looking for exceptional talent. If you're passionate about space, Africa,
-            and building foundational infrastructure, we want to hear from you.
-          </p>
-          <a
-            href="mailto:team@ikirere.com?subject=General%20Application"
-            className="inline-block px-8 py-4 bg-amber text-black font-semibold rounded-lg hover:bg-amber/90 transition-all"
-          >
-            Send General Application
-          </a>
-        </motion.div>
-      </section>
+        <div style={{ background: 'rgba(8,18,40,0.9)', border: '1px solid rgba(255,191,0,0.2)', borderRadius: 14, padding: '28px 36px', textAlign: 'center' }}>
+          <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 18, color: '#F5F7FA', marginBottom: 6 }}>Don't see your role?</h3>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'rgba(245,247,250,0.5)', marginBottom: 20 }}>We're always looking for exceptional talent passionate about space, Africa, and foundational infrastructure.</p>
+          <a href="mailto:team@ikirere.com?subject=General Application" style={{ padding: '10px 28px', background: 'linear-gradient(135deg,#FFBF00,#FF9500)', borderRadius: 8, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 13, color: '#040C1C', textDecoration: 'none', display: 'inline-block' }}>Send General Application</a>
+        </div>
+      </div>
     </div>
   )
 }

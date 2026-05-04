@@ -228,7 +228,7 @@ export default function ConstellationControlPanel({ constellations, onChange, on
     const totalSatellites = constellations.reduce((sum, c) => sum + c.satelliteCount + (c.zombieCount || 0), 0)
 
     return (
-        <div className="absolute top-24 left-6 w-72 z-40">
+        <div style={{ position: 'absolute', top: 72, left: 20, width: 280, zIndex: 40 }}>
             <div className="backdrop-blur-xl bg-black/60 border border-white/10 rounded-xl overflow-hidden">
                 {/* Header */}
                 <div className="px-4 py-3 border-b border-white/10">

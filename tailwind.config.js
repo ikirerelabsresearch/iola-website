@@ -7,8 +7,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        'stratosphere': '#0B1E3D',
-        'teal': '#00F0FF',
+        'stratosphere': '#040C1C',
+        'navy': '#0B1E3D',
+        'teal': '#00DCFF',
         'amber': '#FFBF00',
         'orbital': '#F5F7FA',
       },

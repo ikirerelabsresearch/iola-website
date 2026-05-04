@@ -1,203 +1,104 @@
-import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import PageSEO, { pageSEO } from '../components/PageSEO'
+import { Link } from 'react-router-dom'
+
+const D = {
+  page: { minHeight: '100vh', background: '#040C1C', paddingTop: 88 },
+  wrap: { maxWidth: 1100, margin: '0 auto', padding: '52px 6vw 100px' },
+  card: { background: 'rgba(8,18,40,0.8)', border: '1px solid rgba(0,220,255,0.12)', borderRadius: 14, padding: '28px 32px' },
+  h1: { fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 'clamp(28px, 3.8vw, 46px)', color: '#F5F7FA', letterSpacing: '-0.02em', lineHeight: 1.05, marginBottom: 14 },
+  h2: { fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 22, color: '#F5F7FA', letterSpacing: '-0.01em', marginBottom: 16 },
+  label: (c='#00DCFF') => ({ fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.3em', color: `${c}80`, textTransform: 'uppercase', marginBottom: 8 }),
+  badge: (c='#00DCFF') => ({ display: 'inline-flex', alignItems: 'center', padding: '5px 14px', border: `1px solid ${c}30`, borderRadius: 100, background: `${c}08`, fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.3em', color: c, textTransform: 'uppercase', marginBottom: 20 }),
+  sub: { fontFamily: "'Inter', sans-serif", fontSize: 15, color: 'rgba(245,247,250,0.58)', lineHeight: 1.7, maxWidth: 560 },
+}
+
+const sections = [
+  { title: 'Getting Started', items: ['Installation & Setup','Quick Start Guide','System Requirements','License Activation'] },
+  { title: 'CubeSat Hardware', items: ['Assembly Instructions','Component Specifications','Power System Configuration','Communication Setup','Testing & Verification'] },
+  { title: 'IkirereMesh SDK', items: ['API Reference','Constellation Planning','Safety Shield Configuration','Simulation Tools','Deployment Guide'] },
+  { title: 'Mission Operations', items: ['Launch Preparation','On-Orbit Commissioning','Ground Station Operations','Telemetry & Commands','Anomaly Resolution'] },
+]
+
+const tutorials = [
+  { title: 'Your First Satellite Mission', duration: '30 min', desc: 'From kit assembly to mission simulation in one tutorial' },
+  { title: 'Collision Avoidance with IkirereMesh', duration: '45 min', desc: 'Configure safety shields and plan safe maneuvers' },
+  { title: 'Multi-Satellite Coordination', duration: '1 hr', desc: 'Build and manage a small constellation end-to-end' },
+  { title: 'Custom Payload Integration', duration: '2 hrs', desc: 'Add sensors and instruments to your CubeSat' },
+]
 
 export default function Documentation() {
-  const sections = [
-    {
-      title: 'Getting Started',
-      items: [
-        'Installation & Setup',
-        'Quick Start Guide',
-        'System Requirements',
-        'License Activation'
-      ]
-    },
-    {
-      title: 'CubeSat Hardware',
-      items: [
-        'Assembly Instructions',
-        'Component Specifications',
-        'Power System Configuration',
-        'Communication Setup',
-        'Testing & Verification'
-      ]
-    },
-    {
-      title: 'IkirereMesh SDK',
-      items: [
-        'API Reference',
-        'Constellation Planning',
-        'Safety Shield Configuration',
-        'Simulation Tools',
-        'Deployment Guide'
-      ]
-    },
-    {
-      title: 'Mission Operations',
-      items: [
-        'Launch Preparation',
-        'On-Orbit Commissioning',
-        'Ground Station Operations',
-        'Telemetry & Commands',
-        'Anomaly Resolution'
-      ]
-    }
-  ]
-
-  const tutorials = [
-    {
-      title: 'Your First Satellite Mission',
-      duration: '30 minutes',
-      description: 'From kit assembly to mission simulation in one tutorial'
-    },
-    {
-      title: 'Collision Avoidance with IkirereMesh',
-      duration: '45 minutes',
-      description: 'Configure safety shields and plan safe maneuvers'
-    },
-    {
-      title: 'Multi-Satellite Coordination',
-      duration: '1 hour',
-      description: 'Build and manage a small constellation'
-    },
-    {
-      title: 'Custom Payload Integration',
-      duration: '2 hours',
-      description: 'Add sensors and instruments to your CubeSat'
-    }
-  ]
-
   return (
-    <div className="min-h-screen bg-stratosphere pt-24">
+    <div style={D.page}>
       <PageSEO {...pageSEO.documentation} />
-      <section className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
-        {/* Hero */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-5xl md:text-7xl font-heading font-black text-orbital mb-6">
-            <span className="text-teal">Documentation</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-orbital/70 max-w-3xl mx-auto leading-relaxed">
-            Everything you need to build, launch, and operate your satellite mission.
-          </p>
-        </motion.div>
+      <div style={D.wrap}>
+        {/* Header */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={D.badge()}><span>Docs</span></div>
+          <h1 style={D.h1}><span style={{ background: 'linear-gradient(135deg,#00DCFF,#0088FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Documentation</span></h1>
+          <p style={D.sub}>Everything you need to build, launch, and operate your satellite mission.</p>
+        </div>
 
-        {/* Search Bar */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mb-16"
-        >
-          <div className="max-w-2xl mx-auto">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search documentation..."
-                className="w-full px-6 py-4 bg-black/40 border border-teal/30 rounded-xl text-orbital placeholder-orbital/40 focus:outline-none focus:border-teal/60 transition-all"
-              />
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-teal">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-            </div>
+        {/* Search */}
+        <div style={{ marginBottom: 40 }}>
+          <div style={{ maxWidth: 480, position: 'relative' }}>
+            <input type="text" placeholder="Search documentation..." style={{ width: '100%', padding: '11px 44px 11px 16px', background: 'rgba(8,18,40,0.8)', border: '1px solid rgba(0,220,255,0.2)', borderRadius: 10, fontFamily: "'Inter', sans-serif", fontSize: 13, color: '#F5F7FA', outline: 'none' }} onFocus={e => e.target.style.borderColor = '#00DCFF'} onBlur={e => e.target.style.borderColor = 'rgba(0,220,255,0.2)'} />
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}><circle cx="8.5" cy="8.5" r="5.5" stroke="#00DCFF" strokeWidth="1.5" opacity="0.5"/><path d="M13 13L17 17" stroke="#00DCFF" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/></svg>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Documentation Sections */}
-        <div className="grid md:grid-cols-2 gap-8 mb-20">
-          {sections.map((section, index) => (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 + index * 0.1 }}
-              className="bg-black/40 border border-teal/20 rounded-xl p-8 hover:border-teal/40 transition-all"
-            >
-              <h2 className="text-2xl font-heading font-bold text-teal mb-6">{section.title}</h2>
-              <ul className="space-y-3">
-                {section.items.map((item) => (
-                  <li key={item}>
-                    <a
-                      href="#"
-                      className="flex items-center gap-2 text-orbital/70 hover:text-teal transition-colors group"
-                    >
-                      <span className="text-teal group-hover:translate-x-1 transition-transform">→</span>
-                      <span>{item}</span>
+        {/* Sections */}
+        <div style={{ marginBottom: 44 }}>
+          <div style={D.label()}>Reference</div>
+          <h2 style={D.h2}>Documentation Sections</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
+            {sections.map((s, i) => (
+              <div key={i} style={D.card}>
+                <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 15, color: '#00DCFF', marginBottom: 14 }}>{s.title}</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {s.items.map((item, j) => (
+                    <a key={j} href="#" style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Inter', sans-serif", fontSize: 12, color: 'rgba(245,247,250,0.55)', textDecoration: 'none' }}
+                      onMouseEnter={e => { e.currentTarget.style.color = '#00DCFF' }}
+                      onMouseLeave={e => { e.currentTarget.style.color = 'rgba(245,247,250,0.55)' }}>
+                      <span style={{ color: 'rgba(0,220,255,0.4)', fontSize: 11 }}>→</span>{item}
                     </a>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Tutorials */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="mb-20"
-        >
-          <h2 className="text-3xl font-heading font-bold text-orbital mb-8 text-center">Video Tutorials</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {tutorials.map((tutorial, index) => (
-              <motion.div
-                key={tutorial.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.9 + index * 0.1 }}
-                className="bg-black/40 border border-teal/20 rounded-xl p-6 hover:border-teal/40 transition-all"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-heading font-bold text-teal">{tutorial.title}</h3>
-                  <span className="text-amber text-sm font-mono">{tutorial.duration}</span>
+        <div style={{ marginBottom: 44 }}>
+          <div style={D.label()}>Tutorials</div>
+          <h2 style={D.h2}>Video Tutorials</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14 }}>
+            {tutorials.map((t, i) => (
+              <div key={i} style={D.card}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                  <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700, fontSize: 14, color: '#F5F7FA' }}>{t.title}</div>
+                  <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 10, color: '#FFBF00', flexShrink: 0, paddingLeft: 10 }}>{t.duration}</span>
                 </div>
-                <p className="text-orbital/60 mb-4">{tutorial.description}</p>
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-2 text-teal hover:gap-3 transition-all"
-                >
-                  <span>Watch Tutorial</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 12, color: 'rgba(245,247,250,0.5)', marginBottom: 12, lineHeight: 1.55 }}>{t.desc}</p>
+                <a href="#" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontFamily: "'Inter', sans-serif", fontSize: 11, color: '#00DCFF', textDecoration: 'none' }}>
+                  Watch Tutorial
+                  <svg viewBox="0 0 16 16" width="12" height="12" fill="none"><circle cx="8" cy="8" r="6" stroke="#00DCFF" strokeWidth="1.3"/><path d="M6.5 5.5L11 8L6.5 10.5V5.5Z" fill="#00DCFF"/></svg>
                 </a>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        {/* Coming Soon Notice */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="bg-amber/10 border border-amber/30 rounded-xl p-8 text-center"
-        >
-          <div className="text-amber text-5xl mb-4">📚</div>
-          <h2 className="text-2xl font-heading font-bold text-orbital mb-4">
-            Full Documentation Coming Q3 2026
-          </h2>
-          <p className="text-orbital/70 max-w-2xl mx-auto mb-6">
-            We're building comprehensive technical documentation, video tutorials, and interactive
-            examples. Early access customers will receive draft documentation starting Q2 2026.
+        {/* Coming soon */}
+        <div style={{ background: 'rgba(255,191,0,0.04)', border: '1px solid rgba(255,191,0,0.2)', borderRadius: 14, padding: '28px 32px' }}>
+          <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.3em', color: 'rgba(255,191,0,0.6)', textTransform: 'uppercase', marginBottom: 8 }}>Coming Soon</div>
+          <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 18, color: '#F5F7FA', marginBottom: 8 }}>Full Documentation — Q3 2026</h3>
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'rgba(245,247,250,0.52)', lineHeight: 1.65, marginBottom: 20, maxWidth: 640 }}>
+            We're building comprehensive technical documentation, video tutorials, and interactive examples. Early access customers will receive draft documentation starting Q2 2026.
           </p>
-          <a
-            href="mailto:team@ikirere.com?subject=Documentation%20Early%20Access"
-            className="inline-block px-6 py-3 bg-amber text-black font-semibold rounded-lg hover:bg-amber/90 transition-all"
-          >
-            Request Early Access
-          </a>
-        </motion.div>
-      </section>
+          <a href="mailto:team@ikirere.com?subject=Documentation Early Access" style={{ padding: '9px 22px', background: 'linear-gradient(135deg,#FFBF00,#FF9500)', borderRadius: 7, fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 12, color: '#040C1C', textDecoration: 'none', display: 'inline-block' }}>Request Early Access</a>
+        </div>
+      </div>
     </div>
   )
 }

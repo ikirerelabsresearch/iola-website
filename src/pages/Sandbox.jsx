@@ -7,17 +7,14 @@ import SatelliteInfoPanel from '../components/ui/SatelliteInfoPanel'
 import MusicPlayer from '../components/ui/MusicPlayer'
 import { getConstellationColor } from '../components/3d/Constellation'
 
-const TRANSITION_DURATION = 60 // 1 minute - must match Constellation.jsx
-
-// Generate unique ID
+const TRANSITION_DURATION = 60
 const generateId = () => `const-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-// Default constellation config
 const createConstellation = (index) => ({
     id: generateId(),
-    name: ['Ikirere Alpha', 'Beta Network', 'Gamma Array', 'Delta Mesh', 'Epsilon Grid', 'Zeta Cluster'][index % 6],
+    name: ['Ikirere Alpha','Beta Network','Gamma Array','Delta Mesh','Epsilon Grid','Zeta Cluster'][index % 6],
     color: getConstellationColor(index),
-    satelliteCount: 200,
+    satelliteCount: 24 + (index * 8),
     altitude: 1.2 + (index * 0.3),
     inclination: 0.8,
     speed: 0.5,
@@ -26,201 +23,113 @@ const createConstellation = (index) => ({
     zombieCount: 0
 })
 
-export default function Sandbox() {
-    // Constellation state
-    const [constellations, setConstellations] = useState([
-        createConstellation(0)
-    ])
-    const [selectedSatellite, setSelectedSatellite] = useState(null)
-    
-    // Transition tracking
-    const [transitionState, setTransitionState] = useState({
-        active: false,
-        progress: 0,
-        direction: null, // 'coordinating' or 'decoordinating'
-        startTime: null
-    })
-    const prevCoordinatedRef = useRef({})
-    
-    // Track coordination changes and manage transition timer
+// ── Algorithm state mini-feed ──────────────────────────────────────────────────
+function AlgorithmFeed({ coordinated }) {
+    const [events, setEvents] = useState([])
     useEffect(() => {
-        let changed = false
-        let direction = null
-        
+        const msgs = coordinated
+            ? ['RL policy: trajectory optimized','Safety shield: separation OK','Graph coordinator: updated','Conjunction: 0 alerts','Fuel efficiency: 94.8%']
+            : ['Uncoordinated flight detected','Manual mode: no safety shield','High collision probability','No mesh consensus','Risk accumulating...']
+        const iv = setInterval(() => {
+            setEvents(p => {
+                const ts = new Date().toISOString().split('T')[1].slice(0, 8)
+                return [`${ts}  ${msgs[Math.floor(Math.random() * msgs.length)]}`, ...p].slice(0, 5)
+            })
+        }, 2200)
+        return () => clearInterval(iv)
+    }, [coordinated])
+    return (
+        <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 9, lineHeight: 1.7, color: coordinated ? 'rgba(0,220,255,0.5)' : 'rgba(255,120,60,0.55)', maxHeight: 90, overflow: 'hidden' }}>
+            {events.map((e, i) => <div key={i}>{e}</div>)}
+        </div>
+    )
+}
+
+// ── Risk gauge ─────────────────────────────────────────────────────────────────
+function RiskGauge({ risk }) {
+    const pct = Math.round(risk * 100)
+    const color = risk < 0.2 ? '#00DCFF' : risk < 0.5 ? '#FFBF00' : '#FF4444'
+    const arcR = 24
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <svg width="64" height="40" viewBox="0 0 64 40">
+                <path d="M 8 36 A 24 24 0 0 1 56 36" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="4" strokeLinecap="round" />
+                <path d="M 8 36 A 24 24 0 0 1 56 36" fill="none" stroke={color} strokeWidth="4" strokeLinecap="round"
+                    strokeDasharray={`${(risk * Math.PI * arcR).toFixed(2)} 999`}
+                    style={{ transition: 'stroke-dasharray 0.5s ease, stroke 0.5s ease', filter: `drop-shadow(0 0 3px ${color})` }} />
+                <text x="32" y="35" textAnchor="middle" fill={color} fontSize="11" fontFamily="Roboto Mono" fontWeight="bold">{pct}</text>
+            </svg>
+            <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: 'rgba(245,247,250,0.35)', letterSpacing: '0.2em' }}>RISK %</div>
+        </div>
+    )
+}
+
+export default function Sandbox() {
+    const [constellations, setConstellations] = useState([createConstellation(0)])
+    const [selectedSatellite, setSelectedSatellite] = useState(null)
+    const [transitionState, setTransitionState] = useState({ active: false, progress: 0, direction: null, startTime: null })
+    const prevCoordinatedRef = useRef({})
+
+    useEffect(() => {
+        let changed = false, direction = null
         constellations.forEach(c => {
-            if (prevCoordinatedRef.current[c.id] !== undefined && 
-                prevCoordinatedRef.current[c.id] !== c.coordinated) {
-                changed = true
-                direction = c.coordinated ? 'coordinating' : 'decoordinating'
+            if (prevCoordinatedRef.current[c.id] !== undefined && prevCoordinatedRef.current[c.id] !== c.coordinated) {
+                changed = true; direction = c.coordinated ? 'coordinating' : 'decoordinating'
             }
             prevCoordinatedRef.current[c.id] = c.coordinated
         })
-        
-        if (changed) {
-            setTransitionState({
-                active: true,
-                progress: 0,
-                direction,
-                startTime: Date.now()
-            })
-        }
+        if (changed) setTransitionState({ active: true, progress: 0, direction, startTime: Date.now() })
     }, [constellations])
-    
-    // Update transition progress
+
     useEffect(() => {
         if (!transitionState.active) return
-        
-        const interval = setInterval(() => {
+        const iv = setInterval(() => {
             const elapsed = (Date.now() - transitionState.startTime) / 1000
             const progress = Math.min(elapsed / TRANSITION_DURATION, 1)
-            
-            if (progress >= 1) {
-                setTransitionState(prev => ({ ...prev, active: false, progress: 1 }))
-            } else {
-                setTransitionState(prev => ({ ...prev, progress }))
-            }
+            if (progress >= 1) setTransitionState(p => ({ ...p, active: false, progress: 1 }))
+            else setTransitionState(p => ({ ...p, progress }))
         }, 100)
-        
-        return () => clearInterval(interval)
+        return () => clearInterval(iv)
     }, [transitionState.active, transitionState.startTime])
 
-    // Compute global metrics
     const globalMetrics = useMemo(() => {
-        const totalSats = constellations.reduce((sum, c) => sum + c.satelliteCount + (c.zombieCount || 0), 0)
-        const zombieTotal = constellations.reduce((sum, c) => sum + (c.zombieCount || 0), 0)
+        const totalSats = constellations.reduce((s, c) => s + c.satelliteCount + (c.zombieCount || 0), 0)
+        const zombieTotal = constellations.reduce((s, c) => s + (c.zombieCount || 0), 0)
         const uncoordinated = constellations.filter(c => !c.coordinated && c.visible).length
-
-        // Simple risk calculation
-        const baseRisk = 0.02
+        const coordinated = constellations.filter(c => c.coordinated && c.visible).length
         const densityRisk = Math.min(totalSats / 5000, 0.3)
         const zombieRisk = (zombieTotal / Math.max(totalSats, 1)) * 0.4
         const uncoordRisk = (uncoordinated / Math.max(constellations.length, 1)) * 0.25
-
-        return {
-            totalSatellites: totalSats,
-            totalZombies: zombieTotal,
-            constellationCount: constellations.length,
-            risk: Math.min(baseRisk + densityRisk + zombieRisk + uncoordRisk, 1.0)
-        }
+        return { totalSatellites: totalSats, totalZombies: zombieTotal, constellationCount: constellations.length, coordinated, risk: Math.min(0.02 + densityRisk + zombieRisk + uncoordRisk, 1.0) }
     }, [constellations])
 
-    // Add new constellation
     const handleAddConstellation = useCallback(() => {
         setConstellations(prev => [...prev, createConstellation(prev.length)])
     }, [])
 
-    // Handle satellite selection
     const handleSelectSatellite = useCallback((satellite) => {
         setSelectedSatellite(satellite)
     }, [])
 
-    // Close satellite panel
     const handleCloseSatellitePanel = useCallback(() => {
         setSelectedSatellite(null)
     }, [])
 
+    const riskColor = globalMetrics.risk < 0.2 ? '#00DCFF' : globalMetrics.risk < 0.5 ? '#FFBF00' : '#FF4444'
+    const anyCoordinated = constellations.some(c => c.coordinated)
+
     return (
-        <div className="relative h-screen w-full bg-[#050A14]">
-            {/* Back Button */}
-            <div className="absolute top-6 left-6 z-50">
-                <Link
-                    to="/"
-                    className="px-4 py-2 border border-teal/30 rounded-lg text-teal/80 hover:text-teal hover:bg-teal/10 hover:border-teal transition-all flex items-center gap-2 text-sm font-mono tracking-wide backdrop-blur-md bg-black/20"
-                >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    RETURN TO COMMAND
-                </Link>
-            </div>
+        <div style={{ position: 'relative', height: '100vh', width: '100%', background: '#020810', overflow: 'hidden' }}>
+            <style>{`
+                @keyframes blink { 0%,100%{opacity:0.4} 50%{opacity:1} }
+                @keyframes fadeInDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+                .hud-panel { backdrop-filter: blur(20px); background: rgba(5,13,26,0.85); border: 1px solid rgba(0,220,255,0.12); border-radius: 12px; }
+            `}</style>
 
-            {/* Title */}
-            <div className="absolute bottom-6 left-6 z-10 pointer-events-none">
-                <h1 className="text-3xl font-bold text-white mb-1 tracking-tighter">
-                    COMMAND <span className="text-teal">CENTER</span>
-                </h1>
-                <p className="text-white/40 max-w-xs text-xs font-mono">
-                    Multi-constellation simulation. Click satellites for metadata. Toggle coordination to observe collective behavior.
-                </p>
-            </div>
-
-            {/* Global Metrics Bar */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-                <div className="backdrop-blur-md bg-black/40 border border-white/10 rounded-lg px-6 py-2 flex items-center gap-8">
-                    <div className="text-center">
-                        <div className="text-white/40 text-[10px] font-mono tracking-widest">SATELLITES</div>
-                        <div className="text-white font-mono text-lg">{globalMetrics.totalSatellites}</div>
-                    </div>
-                    <div className="w-px h-8 bg-white/10" />
-                    <div className="text-center">
-                        <div className="text-white/40 text-[10px] font-mono tracking-widest">CONSTELLATIONS</div>
-                        <div className="text-white font-mono text-lg">{globalMetrics.constellationCount}</div>
-                    </div>
-                    <div className="w-px h-8 bg-white/10" />
-                    <div className="text-center">
-                        <div className="text-white/40 text-[10px] font-mono tracking-widest">ZOMBIES</div>
-                        <div className={`font-mono text-lg ${globalMetrics.totalZombies > 0 ? 'text-red-400' : 'text-white'}`}>
-                            {globalMetrics.totalZombies}
-                        </div>
-                    </div>
-                    <div className="w-px h-8 bg-white/10" />
-                    <div className="text-center">
-                        <div className="text-white/40 text-[10px] font-mono tracking-widest">CONJUNCTION RISK</div>
-                        <div
-                            className="font-mono text-lg transition-colors"
-                            style={{
-                                color: globalMetrics.risk < 0.2 ? '#00F0FF' : globalMetrics.risk < 0.5 ? '#FFB800' : '#FF4444'
-                            }}
-                        >
-                            {globalMetrics.risk.toFixed(2)}
-                        </div>
-                    </div>
-                    
-                    {/* Transition Status */}
-                    {transitionState.active && (
-                        <>
-                            <div className="w-px h-8 bg-white/10" />
-                            <div className="text-center min-w-[120px]">
-                                <div className="text-yellow-400/60 text-[10px] font-mono tracking-widest">
-                                    {transitionState.direction === 'coordinating' ? 'COORDINATING' : 'DISPERSING'}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-gradient-to-r from-yellow-500 to-teal transition-all duration-100"
-                                            style={{ width: `${transitionState.progress * 100}%` }}
-                                        />
-                                    </div>
-                                    <span className="text-yellow-400 font-mono text-sm">
-                                        {Math.floor((1 - transitionState.progress) * TRANSITION_DURATION)}s
-                                    </span>
-                                </div>
-                            </div>
-                        </>
-                    )}
-                </div>
-            </div>
-
-            {/* Constellation Control Panel */}
-            <ConstellationControlPanel
-                constellations={constellations}
-                onChange={setConstellations}
-                onAdd={handleAddConstellation}
-            />
-
-            {/* Satellite Info Panel */}
-            <SatelliteInfoPanel
-                satellite={selectedSatellite}
-                onClose={handleCloseSatellitePanel}
-            />
-
-            {/* Ambient Music */}
-            <MusicPlayer />
-
-            {/* 3D Canvas */}
+            {/* ── 3D Canvas ── */}
             <Canvas
                 camera={{ position: [0, 0, 8], fov: 45 }}
-                gl={{ antialias: false, powerPreference: 'high-performance' }}
+                gl={{ antialias: true, powerPreference: 'high-performance' }}
                 dpr={[1, 2]}
             >
                 <Suspense fallback={null}>
@@ -231,6 +140,169 @@ export default function Sandbox() {
                     />
                 </Suspense>
             </Canvas>
+
+            {/* ── TOP BAR: single row left/center/right ── */}
+            <div style={{
+                position: 'absolute', top: 0, left: 0, right: 0, zIndex: 50,
+                height: 60,
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '0 20px',
+                background: 'linear-gradient(to bottom, rgba(2,8,16,0.92) 0%, transparent 100%)',
+                backdropFilter: 'blur(8px)',
+                borderBottom: '1px solid rgba(0,220,255,0.06)',
+            }}>
+                {/* Left: back + title */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+                    <Link to="/" style={{
+                        display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0,
+                        padding: '6px 12px', background: 'rgba(0,220,255,0.06)',
+                        border: '1px solid rgba(0,220,255,0.2)', borderRadius: 7,
+                        fontFamily: "'Roboto Mono', monospace", fontSize: 10, letterSpacing: '0.12em',
+                        color: 'rgba(0,220,255,0.7)', textDecoration: 'none', transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.color = '#00DCFF'; e.currentTarget.style.borderColor = 'rgba(0,220,255,0.45)'; e.currentTarget.style.background = 'rgba(0,220,255,0.1)' }}
+                    onMouseLeave={e => { e.currentTarget.style.color = 'rgba(0,220,255,0.7)'; e.currentTarget.style.borderColor = 'rgba(0,220,255,0.2)'; e.currentTarget.style.background = 'rgba(0,220,255,0.06)' }}>
+                        <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                            <path d="M8 2L4 6L8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                        </svg>
+                        RETURN
+                    </Link>
+                    <div style={{ borderLeft: '1px solid rgba(255,255,255,0.08)', paddingLeft: 14 }}>
+                        <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 15, letterSpacing: '0.08em', color: '#F5F7FA', lineHeight: 1 }}>
+                            COMMAND <span style={{ color: '#00DCFF' }}>CENTER</span>
+                        </div>
+                        <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.15em', color: 'rgba(245,247,250,0.3)', marginTop: 3 }}>
+                            IkirereMesh Orbital Simulation
+                        </div>
+                    </div>
+                </div>
+
+                {/* Center: prototype badge */}
+                <div style={{
+                    display: 'flex', alignItems: 'center', gap: 7, flexShrink: 0,
+                    padding: '5px 14px', background: 'rgba(255,191,0,0.07)',
+                    border: '1px solid rgba(255,191,0,0.28)', borderRadius: 100,
+                    fontFamily: "'Roboto Mono', monospace", fontSize: 9, letterSpacing: '0.16em', color: 'rgba(255,191,0,0.75)',
+                }}>
+                    <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#FFBF00', animation: 'blink 2s ease-in-out infinite', flexShrink: 0 }} />
+                    PROTOTYPE · SIMULATED DATA
+                </div>
+
+                {/* Right: compact risk + mesh status in top bar */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                    {/* Inline risk indicator */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', background: 'rgba(5,13,26,0.7)', border: `1px solid ${riskColor}30`, borderRadius: 8 }}>
+                        <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.15em', color: 'rgba(245,247,250,0.35)' }}>RISK</div>
+                        <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 16, color: riskColor, textShadow: `0 0 8px ${riskColor}60`, lineHeight: 1 }}>
+                            {(globalMetrics.risk * 100).toFixed(1)}%
+                        </div>
+                        <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: riskColor, opacity: 0.8 }}>
+                            {globalMetrics.risk < 0.2 ? 'LOW' : globalMetrics.risk < 0.5 ? 'MOD' : 'CRIT'}
+                        </div>
+                    </div>
+
+                    {/* IkirereMesh status pill */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'rgba(5,13,26,0.7)', border: `1px solid rgba(0,220,255,0.15)`, borderRadius: 8 }}>
+                        <div style={{ width: 5, height: 5, borderRadius: '50%', background: anyCoordinated ? '#00DCFF' : 'rgba(245,247,250,0.2)', boxShadow: anyCoordinated ? '0 0 6px #00DCFF' : 'none', animation: anyCoordinated ? 'blink 1.5s infinite' : 'none' }} />
+                        <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.12em', color: anyCoordinated ? '#00DCFF' : 'rgba(245,247,250,0.3)' }}>
+                            {anyCoordinated ? 'MESH ACTIVE' : 'MESH STANDBY'}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ── LEFT SIDE: IkirereMesh algorithm panel (below constellation list) ── */}
+            <div style={{ position: 'absolute', top: 72, left: 20, width: 280, zIndex: 39, pointerEvents: 'none' }}>
+                {/* This is a pass-through container — actual constellation panel renders above it */}
+            </div>
+
+            {/* ── BOTTOM CENTER: Global metrics ── */}
+            <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 50 }}>
+                <div className="hud-panel" style={{ padding: '10px 24px', display: 'flex', alignItems: 'center', gap: 20 }}>
+                    {[
+                        { label: 'SATELLITES', value: globalMetrics.totalSatellites, color: '#F5F7FA' },
+                        { label: 'CONSTELLATIONS', value: globalMetrics.constellationCount, color: '#F5F7FA' },
+                        { label: 'COORDINATED', value: globalMetrics.coordinated, color: '#00DCFF' },
+                        { label: 'ZOMBIES', value: globalMetrics.totalZombies, color: globalMetrics.totalZombies > 0 ? '#FF4444' : 'rgba(245,247,250,0.4)' },
+                    ].map((m, i) => (
+                        <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 64 }}>
+                            <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.2em', color: 'rgba(245,247,250,0.35)', marginBottom: 2 }}>{m.label}</div>
+                            <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 18, color: m.color, lineHeight: 1 }}>{m.value}</div>
+                        </div>
+                    ))}
+
+                    {transitionState.active && (
+                        <>
+                            <div style={{ width: 1, height: 32, background: 'rgba(255,255,255,0.08)' }} />
+                            <div style={{ minWidth: 130 }}>
+                                <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.15em', color: transitionState.direction === 'coordinating' ? '#00DCFF' : '#FFBF00', marginBottom: 4, animation: 'blink 1s infinite' }}>
+                                    {transitionState.direction === 'coordinating' ? '● COORDINATING' : '● DISPERSING'}
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <div style={{ flex: 1, height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2, overflow: 'hidden' }}>
+                                        <div style={{ width: `${transitionState.progress * 100}%`, height: '100%', background: 'linear-gradient(to right, #FFBF00, #00DCFF)', borderRadius: 2, transition: 'width 0.1s ease' }} />
+                                    </div>
+                                    <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 10, color: '#FFBF00', minWidth: 24 }}>
+                                        {Math.floor((1 - transitionState.progress) * TRANSITION_DURATION)}s
+                                    </span>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {/* ── LEFT BOTTOM: IkirereMesh algorithm panel ── */}
+            <div style={{
+                position: 'absolute', bottom: 90, left: 20, width: 280, zIndex: 40,
+                backdropFilter: 'blur(20px)', background: 'rgba(5,13,26,0.85)',
+                border: '1px solid rgba(0,220,255,0.1)', borderRadius: 12,
+                padding: '10px 14px',
+            }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.2em', color: 'rgba(0,220,255,0.5)', textTransform: 'uppercase' }}>IkirereMesh Engine</div>
+                    <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: anyCoordinated ? '#00DCFF' : 'rgba(245,247,250,0.25)', animation: anyCoordinated ? 'blink 1.5s infinite' : 'none' }}>
+                        {anyCoordinated ? '● ACTIVE' : '○ STANDBY'}
+                    </div>
+                </div>
+                {[
+                    { label: 'Graph Topology', val: 1.0, color: '#00DCFF' },
+                    { label: 'RL Policy Eval', val: anyCoordinated ? 1.0 : 0.0, color: '#FFBF00' },
+                    { label: 'Safety Shield', val: anyCoordinated ? 1.0 : 0.0, color: '#00DCFF' },
+                    { label: 'Maneuver Plan', val: anyCoordinated ? globalMetrics.coordinated / Math.max(globalMetrics.constellationCount, 1) : 0, color: '#2ECC71' },
+                ].map((l, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                        <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: 'rgba(245,247,250,0.35)', width: 86, flexShrink: 0 }}>{l.label}</div>
+                        <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
+                            <div style={{ width: `${l.val * 100}%`, height: '100%', background: l.color, borderRadius: 2, boxShadow: l.val > 0.5 ? `0 0 4px ${l.color}` : 'none', transition: 'width 0.6s ease' }} />
+                        </div>
+                        <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: l.val > 0 ? l.color : 'rgba(245,247,250,0.18)', width: 26, textAlign: 'right', flexShrink: 0 }}>{(l.val * 100).toFixed(0)}%</div>
+                    </div>
+                ))}
+                <div style={{ borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 7, marginTop: 4 }}>
+                    <AlgorithmFeed coordinated={anyCoordinated} />
+                </div>
+            </div>
+
+            {/* ── BOTTOM LEFT: Click hint ── */}
+            <div style={{ position: 'absolute', bottom: 24, left: 20, zIndex: 50, fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.12em', color: 'rgba(245,247,250,0.18)', lineHeight: 1.8, pointerEvents: 'none' }}>
+                <div>CLICK SATELLITE → inspect · TOGGLE MESH → coordinate</div>
+                <div>SCROLL TO ZOOM · DRAG TO ROTATE</div>
+            </div>
+
+            {/* ── Panels ── */}
+            <ConstellationControlPanel
+                constellations={constellations}
+                onChange={setConstellations}
+                onAdd={handleAddConstellation}
+            />
+
+            <SatelliteInfoPanel
+                satellite={selectedSatellite}
+                onClose={handleCloseSatellitePanel}
+            />
+
+            <MusicPlayer />
         </div>
     )
 }

@@ -1,225 +1,129 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
+import { useRef, useEffect, useState } from 'react'
+
+function useInView(ref) {
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } }, { threshold: 0.2 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return visible
+}
+
+function SectionLabel({ text, color = '#00DCFF' }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+      <div style={{ width: 28, height: 1, background: color, opacity: 0.6 }} />
+      <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 10, letterSpacing: '0.35em', color, textTransform: 'uppercase' }}>{text}</span>
+    </div>
+  )
+}
 
 export default function ProblemSolution() {
-  const containerRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start end', 'end start']
-  })
+  const ref = useRef(null)
+  const vis = useInView(ref)
 
-  const opacity1 = useTransform(scrollYProgress, [0, 0.3, 0.5], [0, 1, 0])
-  const opacity2 = useTransform(scrollYProgress, [0.3, 0.5, 0.7], [0, 1, 0])
-  const opacity3 = useTransform(scrollYProgress, [0.5, 0.7, 1], [0, 1, 1])
-
-  const [ref1, inView1] = useInView({ threshold: 0.5, triggerOnce: false })
-  const [ref2, inView2] = useInView({ threshold: 0.5, triggerOnce: false })
-  const [ref3, inView3] = useInView({ threshold: 0.5, triggerOnce: false })
+  const cards = [
+    {
+      label: 'Problem', labelColor: '#FF4444', title: 'Space is Crowded', accent: '#FF4444',
+      body: 'Over 34,000 tracked debris objects orbit Earth. A single collision cascades into thousands of fragments, making entire orbital shells unusable for generations.',
+      items: ['Kessler Syndrome risk is real', 'Uncoordinated maneuvers', 'No African orbital infrastructure'],
+      icon: (
+        <svg viewBox="0 0 80 80" width="80" height="80" style={{ opacity: 0.8 }}>
+          <circle cx="40" cy="40" r="18" fill="none" stroke="#FF4444" strokeWidth="1.5" strokeDasharray="4 2" />
+          {[...Array(16)].map((_, i) => {
+            const a = (i / 16) * Math.PI * 2; const r = 28 + (i % 3) * 6
+            return <circle key={i} cx={40 + Math.cos(a) * r} cy={40 + Math.sin(a) * r} r="2" fill="#FF4444" opacity="0.6" />
+          })}
+          <circle cx="40" cy="40" r="6" fill="#FF6644" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Solution', labelColor: '#00DCFF', title: 'We Bring Order', accent: '#00DCFF',
+      body: 'IkirereMesh coordinates satellite constellations using a graph-based planner with deterministic safety shields that guarantee collision-free trajectories.',
+      items: ['Reinforcement Learning Planner', 'Deterministic Safety Override', 'Multi-Agent Coordination'],
+      icon: (
+        <svg viewBox="0 0 80 80" width="80" height="80" style={{ opacity: 0.9 }}>
+          <circle cx="40" cy="40" r="22" fill="none" stroke="#00DCFF" strokeWidth="1" opacity="0.3" />
+          <circle cx="40" cy="40" r="15" fill="none" stroke="#00DCFF" strokeWidth="1.5" />
+          {[0,1,2,3,4,5].map(i => {
+            const a = (i / 6) * Math.PI * 2 - Math.PI / 2
+            return <circle key={i} cx={40 + Math.cos(a) * 22} cy={40 + Math.sin(a) * 22} r="2.5" fill="#00DCFF" opacity="0.8" />
+          })}
+          <circle cx="40" cy="40" r="5" fill="#00DCFF" />
+        </svg>
+      ),
+    },
+    {
+      label: 'Outcome', labelColor: '#FFBF00', title: 'Deterministic Safety', accent: '#FFBF00',
+      body: 'Our safety shield mathematically guarantees separation distances, overriding any unsafe RL actions with provably safe maneuvers in under 500ms.',
+      items: ['100% collision avoidance', '95% fuel efficiency', '<500ms reaction time'],
+      icon: (
+        <svg viewBox="0 0 80 80" width="80" height="80" style={{ opacity: 0.9 }}>
+          <path d="M40 8 L68 22 L68 44 C68 60 55 72 40 76 C25 72 12 60 12 44 L12 22 Z" fill="none" stroke="#FFBF00" strokeWidth="1.5" />
+          <path d="M28 40 L36 48 L52 32" stroke="#FFBF00" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ),
+    },
+  ]
 
   return (
-    <section id="mission" ref={containerRef} className="relative py-32 bg-stratosphere">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-24"
-        >
-          <h2 className="text-4xl md:text-6xl font-heading font-bold text-orbital mb-6">
-            Precision in <span className="text-teal">Chaos</span>
+    <section ref={ref} id="mission" style={{ background: 'linear-gradient(180deg, #040C1C 0%, #060F1E 100%)', padding: '120px 6vw' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 80, opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(30px)', transition: 'all 0.8s ease' }}>
+          <SectionLabel text="Mission Critical" />
+          <h2 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 900, fontSize: 'clamp(32px, 5vw, 60px)', color: '#F5F7FA', letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            Precision in{' '}
+            <span style={{ background: 'linear-gradient(135deg, #00DCFF, #0088FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Chaos</span>
           </h2>
-          <p className="text-xl text-orbital/70 max-w-3xl mx-auto">
+          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 18, color: 'rgba(245,247,250,0.55)', marginTop: 16, maxWidth: 560, margin: '16px auto 0' }}>
             Low Earth Orbit is congested. We bring deterministic order to the orbital environment.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Scrollytelling Steps */}
-        <div className="space-y-96">
-
-          {/* Step 1: The Problem */}
-          <motion.div
-            ref={ref1}
-            style={{ opacity: opacity1 }}
-            className="grid md:grid-cols-2 gap-12 items-center"
-          >
-            <div className={`transition-all duration-700 ${inView1 ? 'translate-x-0 opacity-100' : '-translate-x-20 opacity-0'}`}>
-              <div className="inline-block px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-full mb-6">
-                <span className="text-red-400 font-mono text-sm tracking-wider">PROBLEM</span>
-              </div>
-              <h3 className="text-3xl md:text-5xl font-heading font-bold text-orbital mb-6">
-                Space is <span className="text-red-400">Crowded</span>
-              </h3>
-              <p className="text-lg text-orbital/70 mb-6 leading-relaxed">
-                Over <span className="text-teal font-bold">34,000 tracked debris objects</span> orbit Earth.
-                A single collision can cascade into thousands of fragments, making entire orbital shells unusable.
-              </p>
-              <ul className="space-y-3">
-                {['Kessler Syndrome Risk', 'Uncoordinated Maneuvers', 'Limited Orbital Awareness'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-orbital/80">
-                    <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className={`relative transition-all duration-700 delay-200 ${inView1 ? 'translate-x-0 opacity-100' : 'translate-x-20 opacity-0'}`}>
-              <div className="aspect-square glass rounded-2xl p-8 flex items-center justify-center">
-                <div className="relative w-full h-full">
-                  {/* Chaotic debris visualization */}
-                  {[...Array(30)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute w-2 h-2 bg-red-400 rounded-full"
-                      style={{
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                      }}
-                      animate={{
-                        x: [0, Math.random() * 40 - 20],
-                        y: [0, Math.random() * 40 - 20],
-                        opacity: [0.3, 0.8, 0.3],
-                      }}
-                      transition={{
-                        duration: 2 + Math.random() * 2,
-                        repeat: Infinity,
-                        ease: 'linear',
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Step 2: The Solution */}
-          <motion.div
-            ref={ref2}
-            style={{ opacity: opacity2 }}
-            className="grid md:grid-cols-2 gap-12 items-center"
-          >
-            <div className={`relative order-2 md:order-1 transition-all duration-700 ${inView2 ? 'translate-x-0 opacity-100' : '-translate-x-20 opacity-0'}`}>
-              <div className="aspect-square glass rounded-2xl p-8 flex items-center justify-center overflow-hidden">
-                <div className="relative w-full h-full">
-                  {/* Safety shield visualization */}
-                  <motion.div
-                    className="absolute inset-0 border-4 border-teal rounded-full"
-                    animate={{
-                      scale: [1, 1.2, 1],
-                      opacity: [0.3, 0.6, 0.3],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 bg-amber rounded-full glow-amber" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
+          {cards.map((c, i) => (
+            <div key={i} style={{
+              background: 'rgba(8,18,40,0.8)', border: `1px solid ${c.accent}22`, borderRadius: 16, padding: '40px 36px',
+              opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(40px)',
+              transition: `all 0.8s ease ${i * 0.15}s`, position: 'relative', overflow: 'hidden',
+            }}>
+              <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 120, height: 1, background: `linear-gradient(to right, transparent, ${c.accent}, transparent)` }} />
+              <SectionLabel text={c.label} color={c.labelColor} />
+              <div style={{ marginBottom: 24 }}>{c.icon}</div>
+              <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 28, color: '#F5F7FA', marginBottom: 16 }}>{c.title}</h3>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, color: 'rgba(245,247,250,0.6)', lineHeight: 1.7, marginBottom: 28 }}>{c.body}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {c.items.map((item, j) => (
+                  <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: c.accent, flexShrink: 0 }} />
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: 13, color: 'rgba(245,247,250,0.7)' }}>{item}</span>
                   </div>
-                  {/* Grid lines */}
-                  {[...Array(8)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute w-full h-px bg-teal/20"
-                      style={{ top: `${(i + 1) * 12.5}%` }}
-                    />
-                  ))}
-                  {[...Array(8)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute h-full w-px bg-teal/20"
-                      style={{ left: `${(i + 1) * 12.5}%` }}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className={`order-1 md:order-2 transition-all duration-700 delay-200 ${inView2 ? 'translate-x-0 opacity-100' : 'translate-x-20 opacity-0'}`}>
-              <div className="inline-block px-4 py-2 bg-teal/10 border border-teal/30 rounded-full mb-6">
-                <span className="text-teal font-mono text-sm tracking-wider">SOLUTION</span>
-              </div>
-              <h3 className="text-3xl md:text-5xl font-heading font-bold text-orbital mb-6">
-                We Bring <span className="text-teal">Order</span>
-              </h3>
-              <p className="text-lg text-orbital/70 mb-6 leading-relaxed">
-                <span className="text-teal font-bold">IkirereMesh</span> coordinates satellite constellations
-                using a graph-based planner with deterministic safety shields that guarantee collision-free trajectories.
-              </p>
-              <ul className="space-y-3">
-                {['Reinforcement Learning Planner', 'Deterministic Safety Override', 'Multi-Agent Coordination'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-orbital/80">
-                    <svg className="w-5 h-5 text-teal" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    {item}
-                  </li>
                 ))}
-              </ul>
+              </div>
             </div>
-          </motion.div>
+          ))}
+        </div>
 
-          {/* Step 3: The Result */}
-          <motion.div
-            ref={ref3}
-            style={{ opacity: opacity3 }}
-            className="grid md:grid-cols-2 gap-12 items-center"
-          >
-            <div className={`transition-all duration-700 ${inView3 ? 'translate-x-0 opacity-100' : '-translate-x-20 opacity-0'}`}>
-              <div className="inline-block px-4 py-2 bg-amber/10 border border-amber/30 rounded-full mb-6">
-                <span className="text-amber font-mono text-sm tracking-wider">OUTCOME</span>
-              </div>
-              <h3 className="text-3xl md:text-5xl font-heading font-bold text-orbital mb-6">
-                Deterministic <span className="text-amber">Safety</span>
-              </h3>
-              <p className="text-lg text-orbital/70 mb-6 leading-relaxed">
-                Our safety shield mathematically guarantees separation distances,
-                overriding any unsafe RL actions with <span className="text-amber font-bold">provably safe maneuvers</span>.
-              </p>
-              <div className="glass rounded-xl p-6 font-mono text-sm">
-                <div className="text-teal/60 mb-2">// Safety Shield Output</div>
-                <div className="text-orbital/80">
-                  <span className="text-amber">if</span> (collision_risk &gt; threshold) {'{'}<br />
-                  &nbsp;&nbsp;<span className="text-teal">execute</span>(deterministic_maneuver);<br />
-                  &nbsp;&nbsp;<span className="text-amber">guarantee</span>(min_separation);<br />
-                  {'}'}
-                </div>
-              </div>
-            </div>
-            <div className={`relative transition-all duration-700 delay-200 ${inView3 ? 'translate-x-0 opacity-100' : 'translate-x-20 opacity-0'}`}>
-              <div className="glass rounded-2xl p-8">
-                <div className="space-y-6">
-                  {[
-                    { label: 'Collision Avoidance', value: '100%', color: 'amber' },
-                    { label: 'Fuel Efficiency', value: '95%', color: 'teal' },
-                    { label: 'Reaction Time', value: '<500ms', color: 'teal' },
-                  ].map((metric, i) => (
-                    <div key={i}>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-orbital/70 text-sm">{metric.label}</span>
-                        <span className={`text-${metric.color} font-bold`}>{metric.value}</span>
-                      </div>
-                      <div className="h-2 bg-stratosphere rounded-full overflow-hidden">
-                        <motion.div
-                          className={`h-full bg-${metric.color}`}
-                          initial={{ width: 0 }}
-                          whileInView={{ width: metric.value === '100%' ? '100%' : metric.value === '95%' ? '95%' : '85%' }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 1, delay: i * 0.2 }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
+        <div style={{
+          marginTop: 64, background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(0,220,255,0.15)',
+          borderRadius: 12, padding: '32px 40px',
+          opacity: vis ? 1 : 0, transform: vis ? 'none' : 'translateY(30px)', transition: 'all 0.8s ease 0.5s',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+            {['#FF5F57','#FEBC2E','#28C840'].map((c,i) => <div key={i} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />)}
+            <span style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 11, color: 'rgba(0,220,255,0.4)', marginLeft: 8, letterSpacing: '0.1em' }}>safety_shield.py</span>
+          </div>
+          <pre style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 13, lineHeight: 1.8, margin: 0, color: 'rgba(245,247,250,0.75)', overflow: 'auto', whiteSpace: 'pre-wrap' }}>
+            <span style={{color:'rgba(0,220,255,0.5)'}}>{'  // IkirereMesh Safety Shield'}</span>{'\n'}
+            <span style={{color:'#FFBF00'}}>  if</span>{' (collision_risk > '}<span style={{color:'#00DCFF'}}>threshold</span>{') {\n'}
+            {'    '}<span style={{color:'#00DCFF'}}>execute</span>{'(deterministic_maneuver);\n'}
+            {'    '}<span style={{color:'#FFBF00'}}>guarantee</span>{'(min_separation_5km);   '}<span style={{color:'rgba(0,220,255,0.4)'}}>{'// 100% verified'}</span>{'\n  }\n'}
+            {'  → '}<span style={{color:'#00DCFF'}}>Response time:</span><span style={{color:'#FFBF00'}}>{' <500ms'}</span>{'  |  Fuel efficiency: '}<span style={{color:'#00DCFF'}}>95%</span>
+          </pre>
         </div>
       </div>
     </section>
