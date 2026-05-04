@@ -1,12 +1,35 @@
+/**
+ * Constellation.jsx — Prototype orbital simulation with maneuver engine
+ *
+ * How real orbital maneuvers work:
+ *
+ * 1. Ground uplinks a ΔV plan (burn time, magnitude, direction)
+ * 2. Each satellite acknowledges and schedules an attitude reorientation
+ * 3. At the burn window, thrusters fire → satellite enters Hohmann transfer orbit
+ *    (elliptical arc between old and new orbit radius)
+ * 4. At transfer apogee/perigee, second burn circularizes into the new orbit
+ * 5. Inclination changes happen at nodal crossings (equator crossing),
+ *    altitude changes happen at apogee/perigee
+ *
+ * In this prototype:
+ *  - Each orbital PLANE maneuvers sequentially (real ops avoid simultaneous burns)
+ *  - During transfer: r temporarily arcs to Hohmann midpoint radius
+ *  - inclination + raan interpolate smoothly with easeInOutCubic
+ *  - Per-plane stagger = PLANE_STAGGER_S seconds between each plane's burn start
+ *  - onManeuverEvent callback drives the uplink log in the HUD
+ */
+
 import { useRef, useMemo, useEffect, useCallback } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
+import { walkerConstellation, ORBIT_PRESETS, smaFromAlt } from '../../lib/orbitMath'
 
-const TRAIL_SEGMENTS = 48
-const TRAIL_LENGTH = 1.8
-const TRANSITION_DURATION = 60.0
+const TRAIL_SEGMENTS    = 40
+const TRAIL_ARC         = 0.55
+const EARTH_R           = 2.0
+const MANEUVER_DURATION = 18   // seconds per plane to complete full maneuver
+const PLANE_STAGGER_S   = 4    // seconds between each plane starting its burn
 
-// ── Color palette ────────────────────────────────────────────────────────────
 const CONSTELLATION_COLORS = [
     '#00DCFF', '#FF6B35', '#7B2CBF', '#2ECC71',
     '#E74C3C', '#F39C12', '#3498DB', '#E91E63',
@@ -15,429 +38,485 @@ export function getConstellationColor(index) {
     return CONSTELLATION_COLORS[index % CONSTELLATION_COLORS.length]
 }
 
-// ── Procedural 3U CubeSat geometry (10×10×30 cm → scene units ~0.05) ─────────
+// ── Procedural CubeSat geometry ───────────────────────────────────────────────
 function buildCubeSatGeometry() {
-    const body = new THREE.BoxGeometry(0.022, 0.022, 0.065)
-
-    // Two deployable solar panels (each side)
-    const panelGeo = new THREE.BoxGeometry(0.04, 0.001, 0.03)
-    const panelL = panelGeo.clone()
-    const panelR = panelGeo.clone()
-
-    // Offset the panels outward from the body
-    const mL = new THREE.Matrix4().makeTranslation(-0.031, 0, 0.008)
-    const mR = new THREE.Matrix4().makeTranslation( 0.031, 0, 0.008)
-    panelL.applyMatrix4(mL)
-    panelR.applyMatrix4(mR)
-
-    // UHF antenna stub (top face)
-    const antGeo = new THREE.CylinderGeometry(0.001, 0.001, 0.018, 6)
-    const antMat = new THREE.Matrix4().makeTranslation(0, 0, 0.038).multiply(
-        new THREE.Matrix4().makeRotationX(Math.PI / 2)
-    )
-    antGeo.applyMatrix4(antMat)
-
-    // Camera lens (bottom face)
-    const camGeo = new THREE.CylinderGeometry(0.004, 0.004, 0.006, 8)
-    const camMat = new THREE.Matrix4().makeTranslation(0, 0, -0.036).multiply(
-        new THREE.Matrix4().makeRotationX(Math.PI / 2)
-    )
-    camGeo.applyMatrix4(camMat)
-
-    // Merge all into one geometry for instanced mesh
-    const merged = mergeGeometries([body, panelL, panelR, antGeo, camGeo])
-    return merged
+    const body  = new THREE.BoxGeometry(0.022, 0.022, 0.065)
+    const panelL = new THREE.BoxGeometry(0.04, 0.001, 0.03)
+    const panelR = new THREE.BoxGeometry(0.04, 0.001, 0.03)
+    panelL.applyMatrix4(new THREE.Matrix4().makeTranslation(-0.031, 0, 0.008))
+    panelR.applyMatrix4(new THREE.Matrix4().makeTranslation( 0.031, 0, 0.008))
+    const ant = new THREE.CylinderGeometry(0.001, 0.001, 0.018, 6)
+    ant.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, 0.038).multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2)))
+    const cam = new THREE.CylinderGeometry(0.004, 0.004, 0.006, 8)
+    cam.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 0, -0.036).multiply(new THREE.Matrix4().makeRotationX(Math.PI / 2)))
+    return mergeGeometries([body, panelL, panelR, ant, cam])
 }
 
-// Minimal geometry merge (replaces BufferGeometryUtils to avoid extra import)
 function mergeGeometries(geos) {
-    let totalVerts = 0
-    let totalIdx = 0
+    let total = 0
+    geos.forEach(g => { total += g.attributes.position.count })
+    const pos = new Float32Array(total * 3)
+    const nor = new Float32Array(total * 3)
+    const idx = []
+    let off = 0
     geos.forEach(g => {
-        totalVerts += g.attributes.position.count
-        if (g.index) totalIdx += g.index.count
+        const p = g.attributes.position.array
+        const n = g.attributes.normal?.array
+        const c = g.attributes.position.count
+        for (let i = 0; i < p.length; i++) pos[off * 3 + i] = p[i]
+        if (n) for (let i = 0; i < n.length; i++) nor[off * 3 + i] = n[i]
+        if (g.index) g.index.array.forEach(v => idx.push(v + off))
+        off += c
     })
-
-    const positions = new Float32Array(totalVerts * 3)
-    const normals = new Float32Array(totalVerts * 3)
-    const indices = totalIdx > 0 ? [] : null
-
-    let vOff = 0
-    let iOff = 0
-
-    geos.forEach(g => {
-        const pos = g.attributes.position.array
-        const nor = g.attributes.normal ? g.attributes.normal.array : null
-        const n = g.attributes.position.count
-        for (let i = 0; i < pos.length; i++) positions[vOff * 3 + i] = pos[i]
-        if (nor) for (let i = 0; i < nor.length; i++) normals[vOff * 3 + i] = nor[i]
-        if (indices && g.index) {
-            const idx = g.index.array
-            for (let i = 0; i < idx.length; i++) indices.push(idx[i] + vOff)
-        }
-        vOff += n
-        iOff += g.index ? g.index.count : 0
-    })
-
     const out = new THREE.BufferGeometry()
-    out.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    out.setAttribute('normal', new THREE.BufferAttribute(normals, 3))
-    if (indices) out.setIndex(indices)
+    out.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+    out.setAttribute('normal',   new THREE.BufferAttribute(nor, 3))
+    if (idx.length) out.setIndex(idx)
     out.computeVertexNormals()
     return out
 }
 
-// ── Satellite metadata generator ─────────────────────────────────────────────
-const SAT_MODELS = ['IK-3U-v2', 'IK-3U-EO', 'IK-6U-Pro', 'IK-3U-Comm']
+// ── Metadata ──────────────────────────────────────────────────────────────────
+const SAT_MODELS   = ['IK-3U-v2', 'IK-3U-EO', 'IK-6U-Pro', 'IK-3U-Comm']
 const SAT_MISSIONS = ['Earth Observation', 'Climate Monitor', 'IoT Gateway', 'RF Survey']
 
-function generateSatelliteData(id, index, isZombie) {
-    const year = 2024 + Math.floor(Math.random() * 3)
-    const month = Math.floor(Math.random() * 12) + 1
-    const battery = isZombie ? Math.random() * 25 : 80 + Math.random() * 18
-    const temp = isZombie ? (Math.random() > 0.5 ? -45 : 82) + Math.random() * 15 : 18 + Math.random() * 12
-    const signal = isZombie ? -118 - Math.random() * 12 : -62 - Math.random() * 18
-    const solar = isZombie ? Math.random() * 80 : 430 + Math.random() * 70
-    const fuel = isZombie ? Math.random() * 8 : 55 + Math.random() * 38
+function genMeta(_id, idx, isZombie) {
+    const yr = 2024 + Math.floor(Math.random() * 3)
+    const mo = Math.floor(Math.random() * 12) + 1
     return {
-        designator: `IK-${year}-${(index + 1).toString().padStart(3, '0')}`,
-        model: SAT_MODELS[index % SAT_MODELS.length],
-        mission: SAT_MISSIONS[index % SAT_MISSIONS.length],
-        launchDate: `${year}-${month.toString().padStart(2, '0')}-${(Math.floor(Math.random() * 27) + 1).toString().padStart(2, '0')}`,
-        noradId: 44000 + index + Math.floor(Math.random() * 4000),
-        inclination: (45 + Math.random() * 53).toFixed(2),
-        telemetry: { battery, temp, signal, solar, fuel,
-            latency: isZombie ? 999 : 18 + Math.random() * 35,
-            cpuLoad: isZombie ? 0 : 22 + Math.random() * 44,
-            dataRate: isZombie ? 0 : 0.8 + Math.random() * 4.2,
+        designator:  `IK-${yr}-${(idx + 1).toString().padStart(3, '0')}`,
+        model:       SAT_MODELS[idx % SAT_MODELS.length],
+        mission:     SAT_MISSIONS[idx % SAT_MISSIONS.length],
+        launchDate:  `${yr}-${mo.toString().padStart(2, '0')}-${(Math.floor(Math.random() * 27) + 1).toString().padStart(2, '0')}`,
+        noradId:     44000 + idx + Math.floor(Math.random() * 4000),
+        telemetry: {
+            battery:  isZombie ? Math.random() * 25        : 80 + Math.random() * 18,
+            temp:     isZombie ? 82 + Math.random() * 15   : 18 + Math.random() * 12,
+            signal:   isZombie ? -118 - Math.random() * 12 : -62 - Math.random() * 18,
+            solar:    isZombie ? Math.random() * 80         : 430 + Math.random() * 70,
+            fuel:     isZombie ? Math.random() * 8          : 55 + Math.random() * 38,
+            latency:  isZombie ? 999                        : 18 + Math.random() * 35,
+            cpuLoad:  isZombie ? 0                          : 22 + Math.random() * 44,
+            dataRate: isZombie ? 0                          : 0.8 + Math.random() * 4.2,
         }
     }
 }
 
-// ── Main Constellation component ──────────────────────────────────────────────
-export default function Constellation({ config, onSatelliteClick, onPositionsUpdate, selectedSatelliteId }) {
-    const { id, color, satelliteCount, altitude, inclination, speed, coordinated, visible, zombieCount = 0 } = config
+// ── Orbital position from inclination + RAAN (Y-up ECI) ──────────────────────
+function satPosition(r, inclRad, raanRad, theta) {
+    const ci = Math.cos(inclRad), si = Math.sin(inclRad)
+    const cO = Math.cos(raanRad), sO = Math.sin(raanRad)
+    const r0x = cO,  r0y = 0,  r0z = -sO
+    const nx = -si * sO,  ny = ci,  nz = si * cO
+    const r1x = ny * r0z - nz * r0y
+    const r1y = nz * r0x - nx * r0z
+    const r1z = nx * r0y - ny * r0x
+    const ct = Math.cos(theta), st = Math.sin(theta)
+    return {
+        x: r * (ct * r0x + st * r1x),
+        y: r * (ct * r0y + st * r1y),
+        z: r * (ct * r0z + st * r1z),
+    }
+}
 
-    const meshRef = useRef()
+// ── Easing ────────────────────────────────────────────────────────────────────
+const easeInOutCubic = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2
+
+// Hohmann arc: r bulges outward in the first half, contracts in the second
+// This mimics the transfer orbit ellipse — at t=0.5 the satellite is at apogee of transfer
+function hohmannR(r0, r1, progress) {
+    const rMid = (r0 + r1) / 2 + Math.abs(r1 - r0) * 0.35  // slightly exaggerated arc
+    if (progress < 0.5) {
+        const tp = progress * 2
+        return r0 + (rMid - r0) * easeInOutCubic(tp)
+    } else {
+        const tp = (progress - 0.5) * 2
+        return rMid + (r1 - rMid) * easeInOutCubic(tp)
+    }
+}
+
+// ── Resolve orbit config to scene params ──────────────────────────────────────
+function resolveOrbitParams(config) {
+    const p   = ORBIT_PRESETS[config.orbitPreset] || ORBIT_PRESETS.LEO_MIDLAT
+    const alt = config.altitudeKm    ?? p.altitudeKm    ?? 550
+    const inc = (config.inclinationDeg ?? p.inclinationDeg ?? 53) * Math.PI / 180
+    const ecc = config.eccentricity  ?? p.eccentricity  ?? 0.0001
+    const P   = config.planesCount   ?? Math.max(1, Math.ceil(config.satelliteCount / 8))
+    const F   = config.walkerF       ?? p.walkerF        ?? 1
+    const bR  = (config.baseRaan     ?? 0) * Math.PI / 180
+    const a_km = p.semiMajorAxisKm ?? smaFromAlt(alt)
+    const r_scene = (a_km / 6371) * EARTH_R
+    const baseSpeed = 0.12 / Math.sqrt(r_scene / EARTH_R)
+    return { inc, ecc, P, F, bR, a_km, r_scene, baseSpeed, label: p.label }
+}
+
+// ── Main component ─────────────────────────────────────────────────────────────
+export default function Constellation({ config, onSatelliteClick, onPositionsUpdate, selectedSatelliteId, onManeuverEvent }) {
+    const { id, color, satelliteCount, speedMultiplier, coordinated, visible, zombieCount = 0 } = config
+
+    const meshRef   = useRef()
     const trailsRef = useRef()
-    const orbitRingRef = useRef()
-    const { camera, raycaster, pointer } = useThree()
+    const ringsRef  = useRef([])
+    useThree() // needed to activate R3F context; click handling uses event.instanceId directly
     const dummy = useMemo(() => new THREE.Object3D(), [])
-
-    // Procedural CubeSat geometry (shared across all instances)
     const satGeometry = useMemo(() => buildCubeSatGeometry(), [])
 
-    // Generate satellite logical data
-    const satellites = useMemo(() => {
-        const sats = []
-        const total = satelliteCount + zombieCount
+    // ── Track config changes for maneuver detection ───────────────────────────
+    const prevConfigKeyRef = useRef(null)
+
+    // configKey captures all orbit-changing parameters
+    const configKey = [
+        config.orbitPreset, config.altitudeKm, config.inclinationDeg,
+        config.eccentricity, config.planesCount, config.walkerF, config.baseRaan
+    ].join('|')
+
+    // ── Satellite logical records (rebuilt on orbit change) ───────────────────
+    const buildSatellites = useCallback((cfg) => {
+        const params = resolveOrbitParams(cfg)
+        const { inc, ecc, P, F, bR, r_scene, baseSpeed, a_km } = params
+        const total  = cfg.satelliteCount + (cfg.zombieCount || 0)
+        const walker = walkerConstellation(cfg.satelliteCount, P, F, bR)
+        const sats   = []
         for (let i = 0; i < total; i++) {
-            const isZombie = i >= satelliteCount
-            const meta = generateSatelliteData(id, i, isZombie)
-            if (coordinated && !isZombie) {
-                const numShells = Math.max(1, Math.ceil(satelliteCount / 50))
-                const satsPerShell = Math.ceil(satelliteCount / numShells)
-                const shellIdx = Math.floor(i / satsPerShell)
-                const posInShell = i % satsPerShell
-                const shellSatCount = Math.min(satsPerShell, satelliteCount - shellIdx * satsPerShell)
+            const isZombie = i >= cfg.satelliteCount
+            const meta = genMeta(id, i, isZombie)
+            if (isZombie) {
                 sats.push({
-                    id: `${id}-sat-${i}`, constellationId: id,
-                    theta: (posInShell / shellSatCount) * Math.PI * 2,
-                    phi: ((shellIdx % 3 - 1) * 0.3) * Math.min(inclination, 0.5),
-                    radiusOffset: (shellIdx / numShells) * 0.3 - 0.15,
-                    speedOffset: 1.0, isZombie: false, ...meta
+                    id: `${id}-sat-${i}`, constellationId: id, isZombie: true,
+                    r: r_scene * (0.95 + Math.random() * 0.08),
+                    inc: inc + (Math.random() - 0.5) * 0.15,
+                    raan: Math.random() * Math.PI * 2,
+                    theta0: Math.random() * Math.PI * 2,
+                    speed: baseSpeed * (0.6 + Math.random() * 0.4) * (cfg.speedMultiplier ?? 1),
+                    plane: -1, a_km, e: ecc, i_rad: inc, ...meta,
                 })
             } else {
+                const w = walker[i % walker.length]
                 sats.push({
-                    id: `${id}-sat-${i}`, constellationId: id,
-                    theta: Math.random() * Math.PI * 2,
-                    phi: (Math.random() - 0.5) * inclination,
-                    radiusOffset: (Math.random() - 0.5) * 0.2,
-                    speedOffset: isZombie ? Math.random() * 0.3 + 0.05 : Math.random() * 0.5 + 0.5,
-                    isZombie, ...meta
+                    id: `${id}-sat-${i}`, constellationId: id, isZombie: false,
+                    r: r_scene, inc, raan: w.raan,
+                    theta0: w.m0,
+                    speed: baseSpeed * (0.9 + Math.random() * 0.2) * (cfg.speedMultiplier ?? 1),
+                    plane: w.plane, a_km, e: ecc, i_rad: inc, ...meta,
                 })
             }
         }
-        return sats
-    }, [id, satelliteCount, zombieCount, coordinated, inclination])
+        return { sats, params }
+    }, [id])
 
-    // Trail geometry
-    const trailGeometry = useMemo(() => {
-        const count = satellites.length
-        const totalV = count * TRAIL_SEGMENTS
-        const indices = [], orbitParams = new Float32Array(totalV * 4), trailOffsets = new Float32Array(totalV), positions = new Float32Array(totalV * 3)
-        for (let i = 0; i < count; i++) {
-            const s = satellites[i]
-            for (let j = 0; j < TRAIL_SEGMENTS; j++) {
-                const idx = i * TRAIL_SEGMENTS + j
-                orbitParams[idx * 4] = s.theta; orbitParams[idx * 4 + 1] = s.phi
-                orbitParams[idx * 4 + 2] = s.radiusOffset; orbitParams[idx * 4 + 3] = s.speedOffset
-                trailOffsets[idx] = j / (TRAIL_SEGMENTS - 1)
-                const r = 2 + altitude
-                positions[idx * 3] = r; positions[idx * 3 + 1] = 0; positions[idx * 3 + 2] = 0
-                if (j < TRAIL_SEGMENTS - 1) indices.push(idx, idx + 1)
+    // ── Per-satellite maneuver state ──────────────────────────────────────────
+    // Each entry: { from: {r,inc,raan}, to: {r,inc,raan}, startT, duration }
+    const maneuverRef  = useRef(null)   // { sats: [{from,to,startT,done}], startedPlanes: Set }
+    const satelliteRef = useRef([])     // current satellite records (inc live theta)
+    const liveThetas   = useRef([])
+
+    // ── Initialize satellites on first mount ──────────────────────────────────
+    useEffect(() => {
+        const { sats } = buildSatellites(config)
+        satelliteRef.current = sats
+        liveThetas.current = sats.map(s => s.theta0)
+        prevConfigKeyRef.current = configKey
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    // ── Detect orbit type change and set up maneuver ───────────────────────────
+    useEffect(() => {
+        if (prevConfigKeyRef.current === null) return  // skip initial
+        if (prevConfigKeyRef.current === configKey) return
+
+        prevConfigKeyRef.current = configKey
+
+        const { sats: newSats, params: newParams } = buildSatellites(config)
+
+        // Build per-satellite from→to maneuver records
+        const maneuvers = satelliteRef.current.map((oldSat, i) => {
+            const newSat = newSats[i] || newSats[newSats.length - 1]
+            return {
+                from:  { r: oldSat.r, inc: oldSat.inc, raan: oldSat.raan },
+                to:    { r: newSat.r, inc: newSat.inc, raan: newSat.raan },
+                plane: oldSat.plane,
+                // start time set when plane's turn comes (in useFrame)
+                startT: null,
+                done: false,
             }
+        })
+
+        // Unique planes sorted so they stagger sequentially
+        const uniquePlanes = [...new Set(
+            satelliteRef.current.map(s => s.plane)
+        )].filter(p => p >= 0).sort((a, b) => a - b)
+
+        maneuverRef.current = {
+            maneuvers,
+            uniquePlanes,
+            globalStartT: null,   // set on first useFrame after this
+            newSats,
+            newParams,
+            firedEvents: new Set(),
         }
-        return { indices: new Uint32Array(indices), orbitParams, trailOffsets, positions }
-    }, [satellites, altitude])
+
+        // Emit initial event: maneuver queued
+        const dInc = Math.abs((newParams.inc - (resolveOrbitParams({ ...config, orbitPreset: prevConfigKeyRef.current?.split('|')[0] || config.orbitPreset })?.inc ?? newParams.inc)) * 57.3).toFixed(1)
+        if (onManeuverEvent) {
+            onManeuverEvent({
+                constellationId: id,
+                phase: 'QUEUED',
+                label: config.name || id,
+                targetOrbit: newParams.label,
+                totalSats: config.satelliteCount,
+                planes: uniquePlanes.length,
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [configKey])
+
+    // ── Orbital ring geometry (from current satellite positions) ───────────────
+    const ringsKey = useMemo(() => {
+        return satelliteRef.current
+            .filter(s => !s.isZombie)
+            .map(s => `${s.plane}-${s.raan.toFixed(3)}-${s.inc.toFixed(3)}-${s.r.toFixed(3)}`)
+            .join(',')
+    }, [configKey]) // eslint-disable-line
+
+    const ringGeometries = useMemo(() => {
+        const planes = new Map()
+        satelliteRef.current.forEach(s => {
+            if (!s.isZombie && !planes.has(s.plane))
+                planes.set(s.plane, { r: s.r, inc: s.inc, raan: s.raan })
+        })
+        return Array.from(planes.values()).map(({ r, inc, raan }) => {
+            const pts = []
+            for (let i = 0; i <= 128; i++) {
+                const p = satPosition(r, inc, raan, (i / 128) * Math.PI * 2)
+                pts.push(new THREE.Vector3(p.x, p.y, p.z))
+            }
+            const geo = new THREE.BufferGeometry().setFromPoints(pts)
+            geo.computeBoundingSphere()
+            return geo
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ringsKey])
+
+    // ── Trail buffer ───────────────────────────────────────────────────────────
+    const trailCount = useMemo(() => Math.max(satelliteRef.current.length, config.satelliteCount + zombieCount), [config.satelliteCount, zombieCount])
+
+    const trailIndices = useMemo(() => {
+        const idx = []
+        for (let i = 0; i < trailCount; i++)
+            for (let j = 0; j < TRAIL_SEGMENTS - 1; j++)
+                idx.push(i * TRAIL_SEGMENTS + j, i * TRAIL_SEGMENTS + j + 1)
+        return new Uint32Array(idx)
+    }, [trailCount])
+
+    const trailAlphas = useMemo(() => {
+        const a = new Float32Array(trailCount * TRAIL_SEGMENTS)
+        for (let i = 0; i < trailCount; i++)
+            for (let j = 0; j < TRAIL_SEGMENTS; j++)
+                a[i * TRAIL_SEGMENTS + j] = 1.0 - j / (TRAIL_SEGMENTS - 1)
+        return a
+    }, [trailCount])
 
     useEffect(() => {
-        if (trailsRef.current?.geometry) {
-            const geo = trailsRef.current.geometry
-            geo.setIndex(new THREE.BufferAttribute(trailGeometry.indices, 1))
-            geo.setAttribute('position', new THREE.BufferAttribute(trailGeometry.positions, 3))
-            geo.setAttribute('aOrbit', new THREE.BufferAttribute(trailGeometry.orbitParams, 4))
-            geo.setAttribute('aOffset', new THREE.BufferAttribute(trailGeometry.trailOffsets, 1))
-            geo.computeBoundingSphere()
-        }
-    }, [trailGeometry])
-
-    // Build orbital ring path (dashed circle at this constellation's altitude + mean inclination)
-    const orbitRingGeometry = useMemo(() => {
-        const segments = 256
-        const r = 2 + altitude
-        const pts = []
-        for (let i = 0; i <= segments; i++) {
-            const a = (i / segments) * Math.PI * 2
-            pts.push(new THREE.Vector3(r * Math.cos(a), 0, r * Math.sin(a)))
-        }
-        const geo = new THREE.BufferGeometry().setFromPoints(pts)
+        if (!trailsRef.current?.geometry) return
+        const geo = trailsRef.current.geometry
+        geo.setIndex(new THREE.BufferAttribute(trailIndices, 1))
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(trailCount * TRAIL_SEGMENTS * 3), 3))
+        geo.setAttribute('aAlpha',   new THREE.BufferAttribute(trailAlphas, 1))
         geo.computeBoundingSphere()
-        return geo
-    }, [altitude])
+    }, [trailIndices, trailAlphas, trailCount])
 
     const positionsRef = useRef([])
     const highlightRef = useRef()
-    const transitionRef = useRef({ active: false, startTime: 0, prevParams: [] })
-    const prevCoordinatedRef = useRef(coordinated)
-    const actualThetaRef = useRef([])
+    const hitRef       = useRef()   // invisible hitbox mesh — larger, easier to click
+    const threeColor   = useMemo(() => new THREE.Color(color), [color])
 
-    useEffect(() => {
-        if (prevCoordinatedRef.current !== coordinated && positionsRef.current.length > 0) {
-            transitionRef.current = {
-                active: true, startTime: -1,
-                prevParams: positionsRef.current.map(s => ({ phi: s.phi, radiusOffset: s.radiusOffset, speedOffset: s.speedOffset, currentAngle: 0 }))
-            }
-        }
-        prevCoordinatedRef.current = coordinated
-    }, [coordinated])
-
-    const easeInOutQuad = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
-
-    const threeColor = useMemo(() => new THREE.Color(color), [color])
-
-    const trailUniforms = useMemo(() => ({
-        uTime: { value: 0 }, uAltitude: { value: altitude },
-        uSpeed: { value: speed }, uTrailLength: { value: TRAIL_LENGTH }
-    }), [])
-
+    // ── Animation loop ─────────────────────────────────────────────────────────
     useFrame((state) => {
         if (!visible) return
         const t = state.clock.getElapsedTime()
-        const r_earth = 2
+        const sats = satelliteRef.current
+        if (!sats.length || !meshRef.current) return
+
         const positions = []
         let selectedFound = false
+        const posAttr = trailsRef.current?.geometry?.getAttribute('position')
+        const man = maneuverRef.current
 
-        const transition = transitionRef.current
-        let tp = 1.0
-        if (transition.active) {
-            if (transition.startTime < 0) {
-                transition.startTime = t
-                satellites.forEach((s, i) => {
-                    if (transition.prevParams[i]) transition.prevParams[i].currentAngle = s.theta + t * speed * (transition.prevParams[i].speedOffset || 1) * 0.1
-                })
-            }
-            tp = Math.min((t - transition.startTime) / TRANSITION_DURATION, 1.0)
-            if (tp >= 1.0) transition.active = false
+        // ── Set global start time on first frame after maneuver is queued ──
+        if (man && man.globalStartT === null) {
+            man.globalStartT = t
         }
 
-        if (meshRef.current) {
-            satellites.forEach((s, i) => {
-                let phi = s.phi, radiusOffset = s.radiusOffset, speedOffset = s.speedOffset, angle
-                const zombieWobble = s.isZombie ? Math.sin(t * 1.5 + i * 0.7) * 0.08 : 0
+        sats.forEach((s, i) => {
+            if (liveThetas.current[i] === undefined) liveThetas.current[i] = s.theta0
 
-                if (transition.active && transition.prevParams[i] && !s.isZombie) {
-                    const prev = transition.prevParams[i]
-                    const stagger = (i / satellites.length) * 0.12
-                    const sp = Math.max(0, Math.min(1, (tp - stagger) / (1 - stagger)))
-                    const te = easeInOutQuad(sp)
-                    phi = prev.phi + (s.phi - prev.phi) * te
-                    radiusOffset = prev.radiusOffset + (s.radiusOffset - prev.radiusOffset) * te
-                    speedOffset = prev.speedOffset + (s.speedOffset - prev.speedOffset) * te
-                    const tss = t - transition.startTime
-                    angle = prev.currentAngle + tss * speed * speedOffset * 0.1
-                    actualThetaRef.current[i] = angle - t * speed * speedOffset * 0.1
-                } else {
-                    const useTheta = (actualThetaRef.current[i] !== undefined && !s.isZombie) ? actualThetaRef.current[i] : s.theta
-                    angle = useTheta + t * speed * s.speedOffset * 0.1 + zombieWobble
-                    if (!s.isZombie) actualThetaRef.current[i] = useTheta
-                }
+            const zombieWobble = s.isZombie ? Math.sin(t * 1.5 + i) * 0.05 : 0
+            liveThetas.current[i] += s.speed * 0.016
+            const theta = liveThetas.current[i] + zombieWobble
 
-                const r = r_earth + altitude + radiusOffset
-                // Apply inclination as a rotation around X axis
-                const rawX = r * Math.cos(angle)
-                const rawZ = r * Math.sin(angle)
-                const x = rawX
-                const y = rawZ * Math.sin(phi)
-                const z = rawZ * Math.cos(phi)
+            // Default to current satellite params
+            let liveR   = s.r
+            let liveInc = s.inc
+            let liveRaan = s.raan
+            let isManeuvering = false
 
-                dummy.position.set(x, y, z)
-                // Orient satellite: body Z toward Earth (-nadir), panels along X
-                dummy.lookAt(0, 0, 0)
-                // Scale: zombies slightly larger (tumbling debris), normal sats compact
-                dummy.scale.setScalar(s.isZombie ? 0.9 : 0.7)
-                dummy.updateMatrix()
-                meshRef.current.setMatrixAt(i, dummy.matrix)
+            // ── Apply maneuver interpolation if active ────────────────────
+            if (man && !s.isZombie && man.maneuvers[i]) {
+                const mv = man.maneuvers[i]
 
-                positions.push({ ...s, phi, radiusOffset, speedOffset, liveAngle: angle, position: { x, y, z } })
+                // Calculate this plane's stagger delay
+                const planeIdx = man.uniquePlanes.indexOf(s.plane)
+                const planeDelay = planeIdx >= 0 ? planeIdx * PLANE_STAGGER_S : 0
+                const planeStartT = man.globalStartT + planeDelay
+                const eventKey = `plane-${s.plane}`
 
-                if (s.id === selectedSatelliteId && highlightRef.current) {
-                    highlightRef.current.position.set(x, y, z)
-                    highlightRef.current.visible = true
-                    selectedFound = true
-                }
-            })
-            meshRef.current.instanceMatrix.needsUpdate = true
-
-            // Every frame: push each satellite's LIVE current angle into aOrbit.x
-            // This guarantees the trail head is always exactly at the satellite position.
-            if (trailsRef.current?.geometry) {
-                const geo = trailsRef.current.geometry
-                const orbitAttr = geo.getAttribute('aOrbit')
-                if (orbitAttr) {
-                    positions.forEach((pos, i) => {
-                        for (let j = 0; j < TRAIL_SEGMENTS; j++) {
-                            const idx = i * TRAIL_SEGMENTS + j
-                            orbitAttr.array[idx * 4]     = pos.liveAngle      // live current angle, not initial theta
-                            orbitAttr.array[idx * 4 + 1] = pos.phi
-                            orbitAttr.array[idx * 4 + 2] = pos.radiusOffset
-                            orbitAttr.array[idx * 4 + 3] = pos.speedOffset
+                if (t >= planeStartT && !mv.done) {
+                    isManeuvering = true
+                    if (mv.startT === null) {
+                        mv.startT = t
+                        // Fire per-plane events
+                        if (!man.firedEvents.has(`uplink-${s.plane}`)) {
+                            man.firedEvents.add(`uplink-${s.plane}`)
+                            onManeuverEvent?.({
+                                constellationId: id, phase: 'UPLINK',
+                                plane: s.plane, planeIdx,
+                            })
+                            // Schedule subsequent events
+                            setTimeout(() => onManeuverEvent?.({ constellationId: id, phase: 'ACK', plane: s.plane, planeIdx }), 900)
+                            setTimeout(() => onManeuverEvent?.({ constellationId: id, phase: 'BURN1', plane: s.plane, planeIdx }), 2200)
+                            setTimeout(() => onManeuverEvent?.({ constellationId: id, phase: 'TRANSFER', plane: s.plane, planeIdx }), 4500)
+                            setTimeout(() => onManeuverEvent?.({ constellationId: id, phase: 'BURN2', plane: s.plane, planeIdx }), MANEUVER_DURATION * 1000 - 2000)
                         }
-                    })
-                    orbitAttr.needsUpdate = true
+                    }
+
+                    const elapsed  = t - mv.startT
+                    const progress = Math.min(elapsed / MANEUVER_DURATION, 1.0)
+                    const eased    = easeInOutCubic(progress)
+
+                    // Hohmann arc for radius, smooth interpolation for inc/raan
+                    liveR    = hohmannR(mv.from.r, mv.to.r, progress)
+                    liveInc  = mv.from.inc  + (mv.to.inc  - mv.from.inc)  * eased
+                    liveRaan = mv.from.raan + (mv.to.raan - mv.from.raan) * eased
+
+                    if (progress >= 1.0 && !mv.done) {
+                        mv.done = true
+                        // Update the satellite's stored params to final values
+                        s.r    = mv.to.r
+                        s.inc  = mv.to.inc
+                        s.raan = mv.to.raan
+
+                        // Check if ALL planes are done
+                        const allDone = man.maneuvers.every(m => m.done || man.satelliteRef?.current[m]?.isZombie)
+                        const nominalDone = man.maneuvers.filter((_, mi) => !sats[mi]?.isZombie).every(m => m.done)
+                        if (nominalDone && !man.firedEvents.has('complete')) {
+                            man.firedEvents.add('complete')
+                            onManeuverEvent?.({ constellationId: id, phase: 'COMPLETE', targetOrbit: man.newParams.label })
+                            maneuverRef.current = null
+                        } else if (!man.firedEvents.has(`circularize-${s.plane}`)) {
+                            man.firedEvents.add(`circularize-${s.plane}`)
+                            onManeuverEvent?.({ constellationId: id, phase: 'CIRCULARIZE', plane: s.plane, planeIdx })
+                        }
+                    }
+                } else if (!mv.done && t < planeStartT) {
+                    // Waiting for this plane's turn — hold at from position
+                    liveR    = mv.from.r
+                    liveInc  = mv.from.inc
+                    liveRaan = mv.from.raan
                 }
             }
+
+            const pos = satPosition(liveR, liveInc, liveRaan, theta)
+            dummy.position.set(pos.x, pos.y, pos.z)
+            dummy.lookAt(0, 0, 0)
+            // Thrusting satellites pitch slightly (attitude maneuver visual)
+            if (isManeuvering) dummy.rotation.z += 0.3
+            dummy.scale.setScalar(s.isZombie ? 0.9 : 0.7)
+            dummy.updateMatrix()
+            meshRef.current.setMatrixAt(i, dummy.matrix)
+
+            // Trail
+            if (posAttr) {
+                for (let j = 0; j < TRAIL_SEGMENTS; j++) {
+                    const thetaT = theta - (j / (TRAIL_SEGMENTS - 1)) * TRAIL_ARC
+                    const tp = satPosition(liveR, liveInc, liveRaan, thetaT)
+                    const base = (i * TRAIL_SEGMENTS + j) * 3
+                    posAttr.array[base]     = tp.x
+                    posAttr.array[base + 1] = tp.y
+                    posAttr.array[base + 2] = tp.z
+                }
+            }
+
+            positions.push({ ...s, r: liveR, inc: liveInc, raan: liveRaan, liveTheta: theta, isManeuvering, position: pos })
+
+            if (s.id === selectedSatelliteId && highlightRef.current) {
+                highlightRef.current.position.set(pos.x, pos.y, pos.z)
+                highlightRef.current.visible = true
+                selectedFound = true
+            }
+        })
+
+        meshRef.current.instanceMatrix.needsUpdate = true
+        // Sync hitbox to same transforms
+        if (hitRef.current) {
+            hitRef.current.instanceMatrix.copy(meshRef.current.instanceMatrix)
+            hitRef.current.instanceMatrix.needsUpdate = true
         }
-
+        if (posAttr) {
+            posAttr.needsUpdate = true
+            trailsRef.current.geometry.computeBoundingSphere()
+        }
         if (!selectedFound && highlightRef.current) highlightRef.current.visible = false
-
         positionsRef.current = positions
         if (onPositionsUpdate) onPositionsUpdate(id, positions)
 
-        // Trail shader only needs uAltitude/uSpeed for the lag calculation now
-        if (trailsRef.current?.material) {
-            const mat = trailsRef.current.material
-            mat.uniforms.uTime.value = t
-            mat.uniforms.uAltitude.value = altitude
-            mat.uniforms.uSpeed.value = speed
-            mat.uniforms.uTrailLength.value = TRAIL_LENGTH
-        }
-
-        // Animate dashed orbital ring — dash flows in direction of orbit
-        if (orbitRingRef.current?.material) {
-            orbitRingRef.current.material.dashOffset = -t * speed * 0.04
-        }
+        // Ring dash animation
+        ringsRef.current.forEach(ring => {
+            if (ring?.material) ring.material.dashOffset -= 0.0015
+        })
     })
 
     const handleClick = useCallback((e) => {
-        if (!meshRef.current || !onSatelliteClick) return
+        if (!onSatelliteClick) return
         e.stopPropagation()
-        raycaster.setFromCamera(pointer, camera)
-        const intersects = raycaster.intersectObject(meshRef.current)
-        if (intersects.length > 0) {
-            const instanceId = intersects[0].instanceId
-            if (instanceId !== undefined && positionsRef.current[instanceId]) {
-                onSatelliteClick(positionsRef.current[instanceId])
-            }
+        // Use instanceId from the event directly — works for both visible and hitbox mesh
+        const instanceId = e.instanceId ?? e.object?.userData?.instanceId
+        if (instanceId !== undefined && positionsRef.current[instanceId]) {
+            onSatelliteClick(positionsRef.current[instanceId])
         }
-    }, [camera, raycaster, pointer, onSatelliteClick])
+    }, [onSatelliteClick])
 
     if (!visible) return null
 
-    // Mean inclination for the ring tilt
-    const ringTilt = satellites.length > 0
-        ? satellites.slice(0, Math.min(10, satellites.length)).reduce((s, x) => s + x.phi, 0) / Math.min(10, satellites.length)
-        : 0
-
     return (
         <group>
-            {/* ── Orbital ring (dashed, animated) ── */}
-            <group rotation={[ringTilt, 0, 0]}>
-                <line ref={orbitRingRef} geometry={orbitRingGeometry} frustumCulled={false}>
-                    <lineDashedMaterial
-                        color={color}
-                        dashSize={0.18}
-                        gapSize={0.09}
-                        transparent
-                        opacity={coordinated ? 0.55 : 0.2}
-                        linewidth={1}
-                    />
+            {ringGeometries.map((geo, ri) => (
+                <line key={ri} ref={el => { ringsRef.current[ri] = el }} geometry={geo} frustumCulled={false}>
+                    <lineDashedMaterial color={color} dashSize={0.14} gapSize={0.07} transparent opacity={coordinated ? 0.55 : 0.2} />
                 </line>
-            </group>
+            ))}
 
-            {/* ── Satellite fleet (instanced high-fidelity CubeSat mesh) ── */}
-            <instancedMesh
-                ref={meshRef}
-                args={[satGeometry, null, satellites.length]}
-                frustumCulled={false}
-                onClick={handleClick}
-            >
-                <meshStandardMaterial
-                    color={threeColor}
-                    emissive={threeColor}
-                    emissiveIntensity={coordinated ? 0.9 : 0.5}
-                    metalness={0.7}
-                    roughness={0.25}
-                />
+            {/* Visible satellite mesh */}
+            <instancedMesh ref={meshRef} args={[satGeometry, null, config.satelliteCount + zombieCount]} frustumCulled={false}>
+                <meshStandardMaterial color={threeColor} emissive={threeColor} emissiveIntensity={coordinated ? 0.9 : 0.45} metalness={0.7} roughness={0.25} />
             </instancedMesh>
 
-            {/* ── Selection highlight ring ── */}
+            {/* Invisible click hitbox — larger sphere synced to meshRef matrix, easier to click */}
+            <instancedMesh ref={hitRef} args={[null, null, config.satelliteCount + zombieCount]} frustumCulled={false} onClick={handleClick}>
+                <sphereGeometry args={[0.16, 5, 5]} />
+                <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+            </instancedMesh>
+
             <mesh ref={highlightRef} visible={false}>
-                <torusGeometry args={[0.065, 0.008, 8, 32]} />
-                <meshBasicMaterial
-                    color="#ffffff"
-                    transparent
-                    opacity={0.85}
-                    depthTest={false}
-                />
+                <torusGeometry args={[0.072, 0.009, 8, 32]} />
+                <meshBasicMaterial color="#ffffff" transparent opacity={0.85} depthTest={false} />
             </mesh>
 
-            {/* ── Orbital trails (shader-driven) ── */}
             <lineSegments ref={trailsRef} frustumCulled={false}>
                 <bufferGeometry />
                 <shaderMaterial
-                    transparent
-                    depthWrite={false}
-                    blending={THREE.AdditiveBlending}
-                    uniforms={trailUniforms}
-                    vertexShader={`
-                        uniform float uAltitude;
-                        uniform float uSpeed;
-                        uniform float uTrailLength;
-                        attribute vec4 aOrbit;
-                        attribute float aOffset;
-                        varying float vAlpha;
-                        void main() {
-                            // aOrbit.x = satellite's LIVE current angle (updated every frame from JS)
-                            // Trail simply lags BEHIND by aOffset * trailLength radians
-                            vAlpha = 1.0 - aOffset;
-                            float angularLag = aOffset * uTrailLength;
-                            float trailAngle = aOrbit.x - angularLag;
-                            float r = 2.0 + uAltitude + aOrbit.z;
-                            float rawZ = r * sin(trailAngle);
-                            vec3 pos;
-                            pos.x = r * cos(trailAngle);
-                            pos.y = rawZ * sin(aOrbit.y);
-                            pos.z = rawZ * cos(aOrbit.y);
-                            gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-                        }
-                    `}
-                    fragmentShader={`
-                        varying float vAlpha;
-                        void main() {
-                            gl_FragColor = vec4(${threeColor.r.toFixed(3)}, ${threeColor.g.toFixed(3)}, ${threeColor.b.toFixed(3)}, vAlpha * 0.65);
-                        }
-                    `}
+                    transparent depthWrite={false} blending={THREE.AdditiveBlending}
+                    vertexShader={`attribute float aAlpha;varying float vA;void main(){vA=aAlpha;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`}
+                    fragmentShader={`varying float vA;void main(){gl_FragColor=vec4(${threeColor.r.toFixed(3)},${threeColor.g.toFixed(3)},${threeColor.b.toFixed(3)},vA*0.7);}`}
                 />
             </lineSegments>
         </group>

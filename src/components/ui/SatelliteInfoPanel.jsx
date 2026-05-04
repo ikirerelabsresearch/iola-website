@@ -76,7 +76,7 @@ function MiniCubeSat({ color, isZombie }) {
                         color={isZombie ? '#2a2a3a' : '#1a2a3a'}
                         metalness={0.8}
                         roughness={0.3}
-                        emissive={satColor}
+                        emissive={color}
                         emissiveIntensity={isZombie ? 0.05 : 0.15}
                     />
                 </mesh>
@@ -265,11 +265,15 @@ export default function SatelliteInfoPanel({ satellite, onClose }) {
     }
 
     if (!satellite) return null
-    const { designator, model, mission, launchDate, noradId, inclination, telemetry = {}, isZombie, position, constellation } = satellite
+    const { designator, model, mission, launchDate, noradId, telemetry = {}, isZombie, position, constellation } = satellite
 
-    const altKm = ((constellation?.altitude || 1.5) * 400).toFixed(0)
-    const velKmS = ((constellation?.speed || 0.5) * 7.8).toFixed(2)
-    const period = (Math.sqrt(Math.pow((6371 + Number(altKm)) / 6371, 3)) * 84.3).toFixed(1)
+    // Use the satellite's own Keplerian semi-major axis when available
+    const sma_km  = satellite?.a_km ?? 6921            // km (a_km set in buildSatellites)
+    const ecc     = satellite?.e ?? 0.0001
+    const altKm   = (sma_km * (1 - ecc) - 6371).toFixed(0)   // perigee altitude
+    const altApog = (sma_km * (1 + ecc) - 6371).toFixed(0)   // apogee altitude
+    const velKmS  = Math.sqrt(398600.4 / sma_km).toFixed(2)   // circular approx
+    const period  = (2 * Math.PI * Math.sqrt(sma_km ** 3 / 398600.4) / 60).toFixed(1)
     const ecefX = ((position?.x || 0) * 6371).toFixed(0)
     const ecefY = ((position?.y || 0) * 6371).toFixed(0)
     const ecefZ = ((position?.z || 0) * 6371).toFixed(0)
@@ -325,9 +329,13 @@ export default function SatelliteInfoPanel({ satellite, onClose }) {
 
                 <div className="sat-scroll" style={{ maxHeight: 'calc(100vh - 180px)', overflowY: 'auto' }}>
 
-                    {/* Mini 3D preview */}
-                    <div style={{ height: 140, background: 'radial-gradient(ellipse at center, rgba(0,20,40,0.9) 0%, rgba(5,13,26,1) 100%)', position: 'relative', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <Canvas camera={{ position: [2.2, 0.8, 2.2], fov: 42 }} gl={{ antialias: true, alpha: true }} style={{ background: 'transparent' }}>
+                    {/* Mini 3D preview — explicit dimensions required for embedded Canvas */}
+                    <div style={{ height: 140, width: '100%', overflow: 'hidden', background: 'radial-gradient(ellipse at center, rgba(0,20,40,0.9) 0%, rgba(5,13,26,1) 100%)', position: 'relative', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                        <Canvas
+                            camera={{ position: [2.2, 0.8, 2.2], fov: 42 }}
+                            gl={{ antialias: true, alpha: true }}
+                            style={{ position: 'absolute', inset: 0, width: '100% !important', height: '100% !important', background: 'transparent' }}
+                        >
                             <MiniCubeSat color={accentColor} isZombie={isZombie} />
                         </Canvas>
                         {/* Mission badge */}
@@ -349,9 +357,9 @@ export default function SatelliteInfoPanel({ satellite, onClose }) {
                             </div>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 8 }}>
                                 {[
-                                    { label: 'ALTITUDE', value: `${altKm}`, unit: 'km' },
+                                    { label: 'PERIGEE', value: altKm,   unit: 'km' },
                                     { label: 'VELOCITY', value: velKmS, unit: 'km/s' },
-                                    { label: 'PERIOD', value: period, unit: 'min' },
+                                    { label: 'PERIOD',   value: period, unit: 'min' },
                                 ].map((m, i) => (
                                     <div key={i} style={{ background: 'rgba(0,0,0,0.3)', borderRadius: 6, padding: '6px 8px', textAlign: 'center' }}>
                                         <div style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 800, fontSize: 13, color: accentColor }}>{m.value}</div>
@@ -359,9 +367,11 @@ export default function SatelliteInfoPanel({ satellite, onClose }) {
                                     </div>
                                 ))}
                             </div>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 6, marginBottom: 8 }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 5, marginBottom: 8 }}>
                                 {[
-                                    { label: 'INCL', value: `${inclination}°` },
+                                    { label: 'INCL', value: `${satellite?.i_rad != null ? (satellite.i_rad * 57.296).toFixed(1) : satellite?.inc != null ? (satellite.inc * 57.296).toFixed(1) : '—'}°` },
+                                    { label: 'APOGEE', value: `${altApog} km` },
+                                    { label: 'ECC', value: ecc.toFixed(4) },
                                     { label: 'LAUNCHED', value: launchDate },
                                 ].map((m, i) => (
                                     <div key={i} style={{ background: 'rgba(0,0,0,0.3)', borderRadius: 6, padding: '5px 8px' }}>

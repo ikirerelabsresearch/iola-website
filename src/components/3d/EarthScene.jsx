@@ -5,14 +5,13 @@ import ConstellationManager from './ConstellationManager'
 export default function EarthScene({
     constellations,
     onSelectSatellite,
-    selectedSatelliteId
+    selectedSatelliteId,
+    onManeuverEvent,
 }) {
     return (
         <>
             <ambientLight intensity={0.1} />
-            {/* Sunlight - key light from side */}
             <directionalLight position={[-2, 0.5, 1.5]} intensity={2} color="#ffffff" />
-            {/* Fill light */}
             <pointLight position={[10, -5, -10]} intensity={0.3} color="#00F0FF" />
 
             <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={0.5} />
@@ -23,6 +22,7 @@ export default function EarthScene({
                 constellations={constellations}
                 onSelectSatellite={onSelectSatellite}
                 selectedSatelliteId={selectedSatelliteId}
+                onManeuverEvent={onManeuverEvent}
             />
 
             <OrbitControls

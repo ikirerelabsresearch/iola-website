@@ -6,22 +6,43 @@ import ConstellationControlPanel from '../components/ui/ConstellationControlPane
 import SatelliteInfoPanel from '../components/ui/SatelliteInfoPanel'
 import MusicPlayer from '../components/ui/MusicPlayer'
 import { getConstellationColor } from '../components/3d/Constellation'
+import { ORBIT_PRESETS } from '../lib/orbitMath'
 
 const TRANSITION_DURATION = 60
 const generateId = () => `const-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
-const createConstellation = (index) => ({
-    id: generateId(),
-    name: ['Ikirere Alpha','Beta Network','Gamma Array','Delta Mesh','Epsilon Grid','Zeta Cluster'][index % 6],
-    color: getConstellationColor(index),
-    satelliteCount: 24 + (index * 8),
-    altitude: 1.2 + (index * 0.3),
-    inclination: 0.8,
-    speed: 0.5,
-    coordinated: false,
-    visible: true,
-    zombieCount: 0
-})
+// Each new constellation gets a different orbit type and a RAAN offset so
+// planes are visually spread around Earth — matching real multi-operator LEO.
+const ORBIT_SEQUENCE = [
+    { preset: 'LEO_MIDLAT',   raan: 0   },
+    { preset: 'SSO',          raan: 45  },
+    { preset: 'ISS',          raan: 90  },
+    { preset: 'POLAR',        raan: 135 },
+    { preset: 'LEO_EQUATORIAL', raan: 180 },
+    { preset: 'ONEWEB',       raan: 225 },
+    { preset: 'GPS',          raan: 270 },
+    { preset: 'GALILEO',      raan: 315 },
+]
+
+const createConstellation = (index) => {
+    const seq    = ORBIT_SEQUENCE[index % ORBIT_SEQUENCE.length]
+    const preset = ORBIT_PRESETS[seq.preset]
+    return {
+        id:               generateId(),
+        name:             ['Ikirere Alpha','Beta Network','Gamma Array','Delta Mesh','Epsilon Grid','Zeta Cluster'][index % 6],
+        color:            getConstellationColor(index),
+        orbitPreset:      seq.preset,
+        baseRaan:         seq.raan,
+        satelliteCount:   index === 0 ? 24 : 12 + (index * 4),
+        planesCount:      index === 0 ? 4 : Math.max(2, index + 2),
+        walkerF:          preset.walkerF ?? 1,
+        speedMultiplier:  1,
+        coordinated:      false,
+        visible:          true,
+        zombieCount:      0,
+        // altitudeKm, inclinationDeg, eccentricity left undefined → use preset defaults
+    }
+}
 
 // ── Algorithm state mini-feed ──────────────────────────────────────────────────
 function AlgorithmFeed({ coordinated }) {
@@ -115,8 +136,37 @@ export default function Sandbox() {
         setSelectedSatellite(null)
     }, [])
 
+    // ── Uplink log: driven by maneuver events from Constellation.jsx ──────────
+    const [uplinkLog, setUplinkLog] = useState([])
+
+    const handleManeuverEvent = useCallback((evt) => {
+        const ts  = new Date().toISOString().split('T')[1].slice(0, 8)
+        const cst = constellations.find(c => c.id === evt.constellationId)
+        const name = cst?.name ?? evt.label ?? evt.constellationId
+        const p   = evt.planeIdx !== undefined ? `P${evt.planeIdx + 1}` : ''
+
+        const PHASE_MSGS = {
+            QUEUED:      { txt: `[GND→${name}]  ΔV PLAN COMPUTED  ${evt.planes} plane(s) · target: ${evt.targetOrbit}`,     col: '#FFBF00' },
+            UPLINK:      { txt: `[GND→${name}]  UPLINK: BURN SEQUENCE TRANSMITTED  ${p}`,                                    col: '#FFBF00' },
+            ACK:         { txt: `[${name}→GND]  ${p} ACK — ATTITUDE REORIENTATION STARTED`,                                 col: '#00DCFF' },
+            BURN1:       { txt: `[${name}]  ${p} BURN-1 IGNITION ▲  ENTERING HOHMANN TRANSFER ORBIT`,                      col: '#FF6B35' },
+            TRANSFER:    { txt: `[${name}]  ${p} TRANSFER ARC — APOGEE TRANSIT IN PROGRESS`,                               col: 'rgba(245,247,250,0.5)' },
+            BURN2:       { txt: `[${name}]  ${p} BURN-2 CIRCULARIZATION ▲  TARGET ORBIT ACHIEVED`,                         col: '#FF6B35' },
+            CIRCULARIZE: { txt: `[${name}→GND]  ${p} NOMINAL — TELEMETRY CONFIRMED  NEW ORBIT LOCKED`,                     col: '#2ECC71' },
+            COMPLETE:    { txt: `[GND]  ALL PLANES TRANSFERRED  ✓ CONSTELLATION ${name} → ${evt.targetOrbit}  COMPLETE`,    col: '#2ECC71' },
+        }
+        const msg = PHASE_MSGS[evt.phase]
+        if (msg) {
+            setUplinkLog(prev => [
+                { ts, txt: msg.txt, col: msg.col, id: `${ts}-${evt.phase}-${Math.random()}` },
+                ...prev
+            ].slice(0, 40))
+        }
+    }, [constellations])
+
     const riskColor = globalMetrics.risk < 0.2 ? '#00DCFF' : globalMetrics.risk < 0.5 ? '#FFBF00' : '#FF4444'
-    const anyCoordinated = constellations.some(c => c.coordinated)
+    const anyCoordinated  = constellations.some(c => c.coordinated)
+    const isAnyManeuvering = uplinkLog.length > 0 && !uplinkLog[0]?.txt?.includes('COMPLETE')
 
     return (
         <div style={{ position: 'relative', height: '100vh', width: '100%', background: '#020810', overflow: 'hidden' }}>
@@ -137,6 +187,7 @@ export default function Sandbox() {
                         constellations={constellations}
                         onSelectSatellite={handleSelectSatellite}
                         selectedSatelliteId={selectedSatellite?.id}
+                        onManeuverEvent={handleManeuverEvent}
                     />
                 </Suspense>
             </Canvas>
@@ -252,37 +303,58 @@ export default function Sandbox() {
                 </div>
             </div>
 
-            {/* ── LEFT BOTTOM: IkirereMesh algorithm panel ── */}
+            {/* ── LEFT BOTTOM: Uplink log (maneuver) or IkirereMesh feed (idle) ── */}
             <div style={{
-                position: 'absolute', bottom: 90, left: 20, width: 280, zIndex: 40,
-                backdropFilter: 'blur(20px)', background: 'rgba(5,13,26,0.85)',
-                border: '1px solid rgba(0,220,255,0.1)', borderRadius: 12,
-                padding: '10px 14px',
+                position: 'absolute', bottom: 90, left: 20, width: 320, zIndex: 40,
+                backdropFilter: 'blur(20px)', background: 'rgba(5,13,26,0.88)',
+                border: `1px solid ${isAnyManeuvering ? 'rgba(255,165,0,0.3)' : 'rgba(0,220,255,0.1)'}`,
+                borderRadius: 12, padding: '10px 14px',
+                transition: 'border-color 0.4s ease',
             }}>
+                {/* Header */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.2em', color: 'rgba(0,220,255,0.5)', textTransform: 'uppercase' }}>IkirereMesh Engine</div>
-                    <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: anyCoordinated ? '#00DCFF' : 'rgba(245,247,250,0.25)', animation: anyCoordinated ? 'blink 1.5s infinite' : 'none' }}>
-                        {anyCoordinated ? '● ACTIVE' : '○ STANDBY'}
+                    <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.2em', color: isAnyManeuvering ? 'rgba(255,165,0,0.8)' : 'rgba(0,220,255,0.5)', textTransform: 'uppercase' }}>
+                        {isAnyManeuvering ? 'Ground Uplink · Maneuver Log' : 'IkirereMesh Engine'}
+                    </div>
+                    <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: isAnyManeuvering ? '#FF9500' : (anyCoordinated ? '#00DCFF' : 'rgba(245,247,250,0.25)'), animation: (isAnyManeuvering || anyCoordinated) ? 'blink 1.5s infinite' : 'none' }}>
+                        {isAnyManeuvering ? '● MANEUVERING' : anyCoordinated ? '● ACTIVE' : '○ STANDBY'}
                     </div>
                 </div>
-                {[
-                    { label: 'Graph Topology', val: 1.0, color: '#00DCFF' },
-                    { label: 'RL Policy Eval', val: anyCoordinated ? 1.0 : 0.0, color: '#FFBF00' },
-                    { label: 'Safety Shield', val: anyCoordinated ? 1.0 : 0.0, color: '#00DCFF' },
-                    { label: 'Maneuver Plan', val: anyCoordinated ? globalMetrics.coordinated / Math.max(globalMetrics.constellationCount, 1) : 0, color: '#2ECC71' },
-                ].map((l, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
-                        <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: 'rgba(245,247,250,0.35)', width: 86, flexShrink: 0 }}>{l.label}</div>
-                        <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
-                            <div style={{ width: `${l.val * 100}%`, height: '100%', background: l.color, borderRadius: 2, boxShadow: l.val > 0.5 ? `0 0 4px ${l.color}` : 'none', transition: 'width 0.6s ease' }} />
+
+                {isAnyManeuvering ? (
+                    /* Uplink log — scrolling real-time maneuver messages */
+                    <div style={{ maxHeight: 130, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2 }} className="uplink-scroll">
+                        {uplinkLog.slice(0, 12).map((entry) => (
+                            <div key={entry.id} style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, lineHeight: 1.6, color: entry.col, display: 'flex', gap: 6 }}>
+                                <span style={{ color: 'rgba(245,247,250,0.25)', flexShrink: 0 }}>{entry.ts}</span>
+                                <span>{entry.txt}</span>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    /* Normal algorithm feed */
+                    <>
+                        {[
+                            { label: 'Graph Topology', val: 1.0, color: '#00DCFF' },
+                            { label: 'RL Policy Eval', val: anyCoordinated ? 1.0 : 0.0, color: '#FFBF00' },
+                            { label: 'Safety Shield',  val: anyCoordinated ? 1.0 : 0.0, color: '#00DCFF' },
+                            { label: 'Maneuver Plan',  val: anyCoordinated ? globalMetrics.coordinated / Math.max(globalMetrics.constellationCount, 1) : 0, color: '#2ECC71' },
+                        ].map((l, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                                <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: 'rgba(245,247,250,0.35)', width: 86, flexShrink: 0 }}>{l.label}</div>
+                                <div style={{ flex: 1, height: 3, background: 'rgba(255,255,255,0.06)', borderRadius: 2, overflow: 'hidden' }}>
+                                    <div style={{ width: `${l.val * 100}%`, height: '100%', background: l.color, borderRadius: 2, boxShadow: l.val > 0.5 ? `0 0 4px ${l.color}` : 'none', transition: 'width 0.6s ease' }} />
+                                </div>
+                                <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: l.val > 0 ? l.color : 'rgba(245,247,250,0.18)', width: 26, textAlign: 'right', flexShrink: 0 }}>{(l.val * 100).toFixed(0)}%</div>
+                            </div>
+                        ))}
+                        <div style={{ borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 7, marginTop: 4 }}>
+                            <AlgorithmFeed coordinated={anyCoordinated} />
                         </div>
-                        <div style={{ fontFamily: "'Roboto Mono', monospace", fontSize: 8, color: l.val > 0 ? l.color : 'rgba(245,247,250,0.18)', width: 26, textAlign: 'right', flexShrink: 0 }}>{(l.val * 100).toFixed(0)}%</div>
-                    </div>
-                ))}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.04)', paddingTop: 7, marginTop: 4 }}>
-                    <AlgorithmFeed coordinated={anyCoordinated} />
-                </div>
+                    </>
+                )}
             </div>
+            <style>{`.uplink-scroll::-webkit-scrollbar{width:3px}.uplink-scroll::-webkit-scrollbar-track{background:transparent}.uplink-scroll::-webkit-scrollbar-thumb{background:rgba(255,165,0,0.3);border-radius:2px}`}</style>
 
             {/* ── BOTTOM LEFT: Click hint ── */}
             <div style={{ position: 'absolute', bottom: 24, left: 20, zIndex: 50, fontFamily: "'Roboto Mono', monospace", fontSize: 8, letterSpacing: '0.12em', color: 'rgba(245,247,250,0.18)', lineHeight: 1.8, pointerEvents: 'none' }}>

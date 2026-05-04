@@ -79,7 +79,8 @@ export default function ConstellationManager({
     constellations,
     onConstellationsChange,
     onSelectSatellite,
-    selectedSatelliteId
+    selectedSatelliteId,
+    onManeuverEvent,
 }) {
     const positionsRef = useRef({})
     const [collisions, setCollisions] = useState([])
@@ -135,6 +136,7 @@ export default function ConstellationManager({
                     onSatelliteClick={handleSatelliteClick}
                     onPositionsUpdate={handlePositionsUpdate}
                     selectedSatelliteId={selectedSatelliteId}
+                    onManeuverEvent={onManeuverEvent}
                 />
             ))}
         </>
