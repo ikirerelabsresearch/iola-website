@@ -270,32 +270,33 @@ export default function Constellation({ config, onSatelliteClick, onPositionsUpd
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [configKey])
 
-    // ── Orbital ring geometry (from current satellite positions) ───────────────
-    const ringsKey = useMemo(() => {
-        return satelliteRef.current
-            .filter(s => !s.isZombie)
-            .map(s => `${s.plane}-${s.raan.toFixed(3)}-${s.inc.toFixed(3)}-${s.r.toFixed(3)}`)
-            .join(',')
-    }, [configKey]) // eslint-disable-line
-
+    // ── Orbital ring geometry — always from TARGET config, not satellite positions ──
+    // Rings show where satellites ARE GOING, not where they came from.
+    // Satellites then maneuver into the rings — correct operational display.
     const ringGeometries = useMemo(() => {
+        const params = resolveOrbitParams(config)
+        const { inc, P, F, bR, r_scene } = params
+        const walker = walkerConstellation(Math.max(satelliteCount, 1), P, F, bR)
+
         const planes = new Map()
-        satelliteRef.current.forEach(s => {
-            if (!s.isZombie && !planes.has(s.plane))
-                planes.set(s.plane, { r: s.r, inc: s.inc, raan: s.raan })
+        walker.forEach(w => {
+            if (!planes.has(w.plane))
+                planes.set(w.plane, { r: r_scene, inc, raan: w.raan })
         })
-        return Array.from(planes.values()).map(({ r, inc, raan }) => {
+
+        return Array.from(planes.values()).map(({ r, inc: planeInc, raan }) => {
             const pts = []
             for (let i = 0; i <= 128; i++) {
-                const p = satPosition(r, inc, raan, (i / 128) * Math.PI * 2)
+                const p = satPosition(r, planeInc, raan, (i / 128) * Math.PI * 2)
                 pts.push(new THREE.Vector3(p.x, p.y, p.z))
             }
             const geo = new THREE.BufferGeometry().setFromPoints(pts)
             geo.computeBoundingSphere()
             return geo
         })
+    // configKey covers all orbit params — recompute rings whenever orbit type changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [ringsKey])
+    }, [configKey])
 
     // ── Trail buffer ───────────────────────────────────────────────────────────
     const trailCount = useMemo(() => Math.max(satelliteRef.current.length, config.satelliteCount + zombieCount), [config.satelliteCount, zombieCount])
