@@ -156,47 +156,47 @@ const h2Style = { fontVariationSettings: "'wght' 580", letterSpacing: '-0.025em'
 // ── Data ──────────────────────────────────────────────────────────────────────
 const shifts = {
   before: [
-    'One satellite, one mission. A weather satellite does weather. A comms satellite does comms.',
-    'Built by major aerospace contractors. Launch window every few years. $50M–$500M per mission.',
-    'No coordination layer between operators. Collision avoidance is manual and slow.',
-    'Africa operates less than 3% of active satellites despite 17% of the world\'s population.',
+    'One satellite, one mission. A weather satellite does weather. A comms satellite does comms. The category defines the capability.',
+    'Designed and launched by large contractors. Years of lead time. Hundreds of millions per mission.',
+    'No coordination layer across operators. Each constellation manages itself in isolation.',
+    'Africa depends almost entirely on external satellite infrastructure it did not build and does not control.',
   ],
   after: [
-    'One nanosatellite, multiple payloads. Agriculture, climate, connectivity, logistics — same hardware.',
-    'Designed to be assembled by a university lab. Launch via rideshare. Months, not years.',
-    'IkirereMesh: a software coordination layer across a fleet. Safety-verified. RL-planned. Deterministic.',
-    'Built in Africa. For African institutions. Sovereign infrastructure without external permission.',
+    'One platform, multiple missions. The same satellite carries different payloads for different operators at different times.',
+    'Small enough for a university lab. Affordable enough for a research grant. Fast enough to iterate.',
+    'A shared coordination and safety layer that treats satellites as a networked system — not isolated units.',
+    'Sovereign orbital infrastructure, designed in Africa, operated by African institutions, serving African priorities.',
   ],
 }
 
 const stages = [
   {
-    n: '01', title: 'Ground Software', active: true,
-    desc: 'Real orbital mechanics. SGP4 propagation. Conjunction assessment. The IkirereMesh coordination engine. Algorithms proven in simulation before any hardware flies.',
+    n: '01', title: 'Orbital Intelligence', active: true,
+    desc: 'Building the coordination, safety, and simulation systems required to operate nanosatellite networks at scale. The architecture that makes everything else possible.',
   },
   {
-    n: '02', title: 'Onboard Firmware', active: false,
-    desc: 'Port the coordination and safety logic to flight-grade embedded systems. ADCS, telemetry, onboard autonomy. Validated in simulation first.',
+    n: '02', title: 'Onboard Systems', active: false,
+    desc: 'Embedding the coordination and safety architecture directly into the satellite. Intelligence at the edge — no ground station dependency for routine decisions.',
   },
   {
-    n: '03', title: 'Multipurpose Nanosatellites', active: false,
-    desc: 'Programmable CubeSat platforms for African research institutions. Multiple payload configurations. SpaceX rideshare. From assembly to orbit in months.',
+    n: '03', title: 'Multipurpose Platforms', active: false,
+    desc: 'A programmable nanosatellite platform for African research institutions. One vehicle, multiple missions, accessible without a dedicated launch program.',
   },
 ]
 
 const traction = [
-  { icon: <IconDLI />,      desc: "Africa's largest ML research gathering. Early simulation results presented." },
-  { icon: <IconGoogle />,   desc: 'Cloud and AI infrastructure support for training and simulation workloads.' },
-  { icon: <IconNVIDIA />,   desc: 'Jetson compute platform for onboard satellite inference and control.' },
-  { icon: <IconESA />,      desc: 'Alignment on orbital safety standards and conjunction methodology.' },
-  { icon: <IconStationF />, desc: 'Paris deep-tech campus. Access to aerospace and defense network.' },
+  { icon: <IconDLI />,      desc: "Africa's leading ML research community. Where we first presented the coordination thesis." },
+  { icon: <IconGoogle />,   desc: 'Infrastructure support for large-scale simulation and machine learning development.' },
+  { icon: <IconNVIDIA />,   desc: 'Compute platform for onboard orbital intelligence and edge inference.' },
+  { icon: <IconESA />,      desc: 'European Space Agency engagement on orbital safety and coordination standards.' },
+  { icon: <IconStationF />, desc: 'Paris. Deep-tech infrastructure and aerospace network access.' },
 ]
 
 const proofStats = [
-  { n: '15,432', label: 'satellites tracked live' },
-  { n: 'Phase 01', label: 'active — ground software' },
-  { n: '3+', label: 'African institutions in simulation' },
-  { n: '0', label: 'hardware required to prove the physics' },
+  { n: '15,432', label: 'satellites tracked in simulation' },
+  { n: 'Sub-second', label: 'coordination response time' },
+  { n: '3+', label: 'African institutions engaged' },
+  { n: 'Stage 01', label: 'of three — orbital intelligence' },
 ]
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -261,8 +261,8 @@ export default function Home() {
           </h1>
 
           <p className="mb-10" style={{ fontSize: '1.1rem', color: '#64748b', maxWidth: '520px', lineHeight: '1.65' }}>
-            Software-first nanosatellite coordination systems.{' '}
-            Ground software today. Hardware when the physics is proven.
+            The coordination layer for the next generation of multipurpose nanosatellites.
+            Software first. Hardware when the architecture is proven.
           </p>
 
           <div className="flex gap-3 flex-wrap">
@@ -281,11 +281,11 @@ export default function Home() {
               onMouseEnter={e => (e.currentTarget.style.background = '#0d2d7a')}
               onMouseLeave={e => (e.currentTarget.style.background = '#0A2463')}
             >
-              Explore Orbit
+              See it in orbit
               <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7h9M7.5 3l4 4-4 4"/></svg>
             </a>
             <Link
-              to="/research"
+              to="/about"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
                 background: 'transparent', color: '#0A2463',
@@ -297,7 +297,7 @@ export default function Home() {
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#0A2463'; (e.currentTarget as HTMLElement).style.background = '#f0f4f9' }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(10,36,99,0.25)'; (e.currentTarget as HTMLElement).style.background = 'transparent' }}
             >
-              Read the Research
+              Our approach
             </Link>
           </div>
         </div>
@@ -323,12 +323,12 @@ export default function Home() {
       {/* ── The Shift ────────────────────────────────── */}
       <section className="py-24 max-w-[1100px] mx-auto px-8">
         <div ref={shiftRef} className="reveal">
-          <Label>The Shift</Label>
+          <Label>The Transition</Label>
           <h2 className="text-3xl mb-3" style={h2Style}>
             Satellites are still at the mainframe stage.
           </h2>
           <p style={{ color: '#64748b', maxWidth: '580px', fontSize: '0.95rem', marginBottom: '40px', lineHeight: '1.7' }}>
-            In 1960 a computer filled a room, cost millions, and could only do one thing. Then microchips made computation cheap, small, and general-purpose. One device does everything. Satellites haven't had that moment yet.
+            Computers went from room-sized and single-purpose to small, networked, and programmable. One device does everything. Satellites are approaching the same transition — and the bottleneck is not hardware. It is the absence of coordination, safety, and intelligence infrastructure.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 overflow-hidden"
@@ -370,8 +370,8 @@ export default function Home() {
       {/* ── What We're Building ───────────────────────── */}
       <section className="py-24 max-w-[1100px] mx-auto px-8">
         <div ref={stageRef} className="reveal">
-          <Label>What We're Building</Label>
-          <h2 className="text-3xl mb-12" style={h2Style}>Three stages. One architecture.</h2>
+          <Label>The Architecture</Label>
+          <h2 className="text-3xl mb-12" style={h2Style}>Three stages. Built in sequence.</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 overflow-hidden"
             style={{ border: '1px solid #e2e8f0', borderRadius: '10px', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
@@ -399,9 +399,8 @@ export default function Home() {
                       color: '#0A2463', background: 'rgba(10,36,99,0.07)',
                       padding: '4px 12px', borderRadius: '100px',
                     }}>
-                    {/* Solar gold pulse — the logo's sunrise energy */}
                     <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#C8860A', display: 'inline-block', animation: 'pulse 2s ease infinite' }} />
-                    Active now
+                    In development
                   </div>
                 )}
               </div>
@@ -415,10 +414,10 @@ export default function Home() {
       {/* ── Live System ───────────────────────────────── */}
       <section className="py-24 px-8" style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
         <div className="max-w-[1100px] mx-auto">
-          <Label>Live System</Label>
-          <h2 className="text-3xl mb-3" style={h2Style}>15,432 real satellites. Real orbital physics.</h2>
+          <Label>The Simulation</Label>
+          <h2 className="text-3xl mb-3" style={h2Style}>The architecture, running live.</h2>
           <p style={{ fontSize: '0.95rem', color: '#64748b', maxWidth: '520px', marginBottom: '32px', lineHeight: '1.7' }}>
-            The orbit simulation runs on real TLE data from CelesTrak. Watch conjunction risk update in real time. Spawn a constellation. See IkirereMesh coordinate it.
+            15,432 real satellites. Real orbital dynamics. The coordination system operating against actual data — before any hardware has flown.
           </p>
 
           <div style={{
@@ -456,8 +455,8 @@ export default function Home() {
       {/* ── Recognition ──────────────────────────────── */}
       <section className="py-24 max-w-[1100px] mx-auto px-8">
         <div ref={tractRef} className="reveal">
-          <Label>Recognition</Label>
-          <h2 className="text-3xl mb-12" style={h2Style}>Where we've been seen.</h2>
+          <Label>Partners & Recognition</Label>
+          <h2 className="text-3xl mb-12" style={h2Style}>Who we work alongside.</h2>
 
           <div className="grid grid-cols-2 md:grid-cols-5 overflow-hidden"
             style={{ border: '1px solid #e2e8f0', borderRadius: '10px', boxShadow: '0 1px 3px rgba(10,36,99,0.04)' }}>
@@ -488,12 +487,12 @@ export default function Home() {
         <div ref={joinRef} className="reveal">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-10">
             <div style={{ maxWidth: '520px' }}>
-              <Label>Join Us</Label>
+              <Label>Work With Us</Label>
               <h2 className="text-3xl mb-4" style={h2Style}>
-                We're looking for people who want to build real things.
+                The work is long-term.<br />That's deliberate.
               </h2>
               <p style={{ fontSize: '0.95rem', color: '#64748b', lineHeight: '1.7' }}>
-                Orbital mechanics engineers, RL researchers, firmware developers, and aerospace systems specialists. Pre-seed, mission-first. The work is real. The timeline is long. That's the point.
+                We are building orbital infrastructure with a five-year technical roadmap. We need orbital mechanics researchers, systems engineers, RL practitioners, and firmware developers who understand that the most important infrastructure is built slowly and correctly.
               </p>
             </div>
             <Link
