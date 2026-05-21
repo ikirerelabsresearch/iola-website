@@ -66,80 +66,16 @@ function OrbitalArc() {
   )
 }
 
-// ── Partner icons ─────────────────────────────────────────────────────────────
-function IconGoogle() {
-  return (
-    <svg height="18" viewBox="0 0 272 92" fill="currentColor" aria-label="Google">
-      <path d="M115.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18C71.25 34.32 81.24 25 93.5 25s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44S80.99 39.2 80.99 47.18c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"/>
-      <path d="M163.75 47.18c0 12.77-9.99 22.18-22.25 22.18s-22.25-9.41-22.25-22.18c0-12.85 9.99-22.18 22.25-22.18s22.25 9.32 22.25 22.18zm-9.74 0c0-7.98-5.79-13.44-12.51-13.44s-12.51 5.46-12.51 13.44c0 7.9 5.79 13.44 12.51 13.44s12.51-5.55 12.51-13.44z"/>
-      <path d="M209.75 26.34v39.82c0 16.38-9.66 23.07-21.08 23.07-10.75 0-17.22-7.19-19.66-13.07l8.48-3.53c1.51 3.61 5.21 7.87 11.17 7.87 7.31 0 11.84-4.51 11.84-13v-3.19h-.34c-2.18 2.69-6.38 5.04-11.68 5.04-11.09 0-21.25-9.66-21.25-22.09 0-12.52 10.16-22.26 21.25-22.26 5.29 0 9.49 2.35 11.68 4.96h.34v-3.61h9.25zm-8.56 20.92c0-7.81-5.21-13.52-11.84-13.52-6.72 0-12.35 5.71-12.35 13.52 0 7.73 5.63 13.36 12.35 13.36 6.63 0 11.84-5.63 11.84-13.36z"/>
-      <path d="M225 3v65h-9.5V3h9.5z"/>
-      <path d="M262.02 54.48l7.56 5.04c-2.44 3.61-8.32 9.83-18.48 9.83-12.6 0-22.01-9.74-22.01-22.18 0-13.19 9.49-22.18 20.92-22.18 11.51 0 17.14 9.16 18.98 14.11l1.01 2.52-29.65 12.28c2.27 4.45 5.8 6.72 10.75 6.72 4.96 0 8.4-2.44 10.92-6.14zm-23.27-7.98l19.82-8.23c-1.09-2.77-4.37-4.7-8.23-4.7-4.95 0-11.84 4.37-11.59 12.93z"/>
-      <path d="M35.29 41.41V32h34.2c.34 1.76.51 3.84.51 6.09 0 7.57-2.07 16.9-8.73 23.56-6.49 6.74-14.78 10.33-25.78 10.33C16.32 72 0 56.2 0 36.71 0 17.22 16.32 1.42 35.49 1.42c11.26 0 19.29 4.38 25.3 10.1l-7.15 7.15c-4.36-4.04-10.26-7.15-18.15-7.15-14.83 0-26.42 11.93-26.42 26.19 0 14.26 11.59 26.19 26.42 26.19 9.62 0 15.1-3.87 18.61-7.39 2.85-2.85 4.73-6.93 5.47-12.51H35.29z"/>
-    </svg>
-  )
+// ── Partner logos — real assets from /public ─────────────────────────────────
+const logoStyle: React.CSSProperties = {
+  height: '28px',
+  width: 'auto',
+  maxWidth: '120px',
+  objectFit: 'contain',
+  objectPosition: 'left center',
+  filter: 'none',
 }
 
-function IconNVIDIA() {
-  return (
-    <svg height="16" viewBox="0 0 300 58" fill="currentColor" aria-label="NVIDIA">
-      <text y="46" fontFamily="Inter, system-ui, sans-serif" fontSize="50" fontWeight="800" letterSpacing="-1">NVIDIA</text>
-    </svg>
-  )
-}
-
-function IconESA() {
-  return (
-    <svg height="20" viewBox="0 0 120 38" fill="currentColor" aria-label="European Space Agency">
-      <text y="30" fontFamily="Inter, system-ui, sans-serif" fontSize="32" fontWeight="700" letterSpacing="1">ESA</text>
-    </svg>
-  )
-}
-
-function IconStationF() {
-  return (
-    <svg height="14" viewBox="0 0 160 28" fill="currentColor" aria-label="Station F">
-      <text y="22" fontFamily="Inter, system-ui, sans-serif" fontSize="16" fontWeight="600" letterSpacing="3.5">STATION F</text>
-    </svg>
-  )
-}
-
-function IconDLI() {
-  return (
-    <div className="flex items-center gap-2.5">
-      <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-        style={{ background: '#C8860A' }}>
-        <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '8px', fontWeight: 700, color: '#fff', letterSpacing: '0.04em' }}>DLI</span>
-      </div>
-      <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-        DL INDABA
-      </span>
-    </div>
-  )
-}
-
-// ── Card component ────────────────────────────────────────────────────────────
-function Card({ children, className = '', accent = false }: {
-  children: React.ReactNode
-  className?: string
-  accent?: boolean
-}) {
-  return (
-    <div
-      className={className}
-      style={{
-        background: accent ? '#f0f4f9' : '#ffffff',
-        border: `1px solid ${accent ? 'rgba(10,36,99,0.12)' : '#e2e8f0'}`,
-        borderLeft: accent ? '3px solid #0A2463' : undefined,
-        borderRadius: '10px',
-        boxShadow: '0 1px 3px rgba(10,36,99,0.05), 0 1px 2px rgba(0,0,0,0.03)',
-        transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
-      }}
-    >
-      {children}
-    </div>
-  )
-}
 
 // ── Section label ─────────────────────────────────────────────────────────────
 function Label({ children }: { children: React.ReactNode }) {
@@ -162,7 +98,7 @@ const shifts = {
     'Africa depends almost entirely on external satellite infrastructure it did not build and does not control.',
   ],
   after: [
-    'One platform, multiple missions. The same satellite carries different payloads for different operators at different times.',
+    'One satellite, multiple missions. The same satellite carries different payloads for different operators at different times.',
     'Small enough for a university lab. Affordable enough for a research grant. Fast enough to iterate.',
     'A shared coordination and safety layer that treats satellites as a networked system — not isolated units.',
     'Sovereign orbital infrastructure, designed in Africa, operated by African institutions, serving African priorities.',
@@ -185,18 +121,16 @@ const stages = [
 ]
 
 const traction = [
-  { icon: <IconDLI />,      desc: "Africa's leading ML research community. Where we first presented the coordination thesis." },
-  { icon: <IconGoogle />,   desc: 'Infrastructure support for large-scale simulation and machine learning development.' },
-  { icon: <IconNVIDIA />,   desc: 'Compute platform for onboard orbital intelligence and edge inference.' },
-  { icon: <IconESA />,      desc: 'European Space Agency engagement on orbital safety and coordination standards.' },
-  { icon: <IconStationF />, desc: 'Paris. Deep-tech infrastructure and aerospace network access.' },
+  { icon: <img src="/deep-learning-indaba.png" alt="Deep Learning Indaba" style={logoStyle} />, desc: "Africa's leading machine learning research community. First public presentation of the orbital coordination thesis." },
+  { icon: <img src="/google-1-1.svg"           alt="Google"              style={logoStyle} />, desc: 'Cloud and infrastructure ecosystem support through the Deep Learning Indaba network.' },
+  { icon: <img src="/nvidia.svg"               alt="NVIDIA"              style={logoStyle} />, desc: 'Access to accelerated computing and AI infrastructure through the Deep Learning Indaba ecosystem.' },
+  { icon: <img src="/station-f.jpg"            alt="Station F"           style={logoStyle} />, desc: 'European deep-tech ecosystem access across aerospace, infrastructure, and frontier technology networks.' },
 ]
 
-const proofStats = [
-  { n: '15,432', label: 'satellites tracked in simulation' },
-  { n: 'Sub-second', label: 'coordination response time' },
-  { n: '3+', label: 'African institutions engaged' },
-  { n: 'Stage 01', label: 'of three — orbital intelligence' },
+const pillars = [
+  { label: 'Multipurpose',          value: '1 Satellite → Multiple missions' },
+  { label: 'Orbital Intelligence',  value: 'Autonomous coordination infrastructure for next-generation nanosatellite fleets' },
+  { label: 'Software + Hardware',   value: 'Full-stack orbital architecture' },
 ]
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -261,8 +195,7 @@ export default function Home() {
           </h1>
 
           <p className="mb-10" style={{ fontSize: '1.1rem', color: '#64748b', maxWidth: '520px', lineHeight: '1.65' }}>
-            The coordination layer for the next generation of multipurpose nanosatellites.
-            Software first. Hardware when the architecture is proven.
+            Building the full-stack orbital infrastructure powering the next generation of programmable multipurpose nanosatellites.
           </p>
 
           <div className="flex gap-3 flex-wrap">
@@ -303,18 +236,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Proof strip ──────────────────────────────── */}
+      {/* ── Pillars strip ─────────────────────────────── */}
       <div style={{ borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-        <div className="max-w-[1100px] mx-auto px-8 py-8 grid grid-cols-2 md:grid-cols-4"
-          style={{ gap: '0', divideX: '1px solid #e2e8f0' }}>
-          {proofStats.map((s, i) => (
-            <div key={s.n}
-              className={i > 0 ? 'border-l border-[#e2e8f0]' : ''}
-              style={{ padding: '0 32px 0 i === 0 ? 0 : 32px' }}>
-              <div style={{ padding: '0 0 0', paddingLeft: i === 0 ? '0' : '32px', paddingRight: '32px' }}>
-                <p style={{ fontSize: '1.4rem', fontWeight: 600, letterSpacing: '-0.02em', color: '#0A2463', fontVariationSettings: "'wght' 580" }}>{s.n}</p>
-                <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '3px', lineHeight: 1.4 }}>{s.label}</p>
-              </div>
+        <div className="max-w-[1100px] mx-auto px-8 py-9 grid grid-cols-1 md:grid-cols-3">
+          {pillars.map((p, i) => (
+            <div key={p.label}
+              className={i > 0 ? 'border-l border-border' : ''}
+              style={{ padding: i === 0 ? '0 32px 0 0' : '0 32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1E5FA8', marginBottom: '8px' }}>{p.label}</p>
+              <p style={{ fontSize: '15px', fontWeight: 400, color: '#475569', letterSpacing: '-0.01em', lineHeight: 1.5 }}>{p.value}</p>
             </div>
           ))}
         </div>
@@ -325,10 +255,10 @@ export default function Home() {
         <div ref={shiftRef} className="reveal">
           <Label>The Transition</Label>
           <h2 className="text-3xl mb-3" style={h2Style}>
-            Satellites are still at the mainframe stage.
+            Satellites are approaching their computing moment.
           </h2>
           <p style={{ color: '#64748b', maxWidth: '580px', fontSize: '0.95rem', marginBottom: '40px', lineHeight: '1.7' }}>
-            Computers went from room-sized and single-purpose to small, networked, and programmable. One device does everything. Satellites are approaching the same transition — and the bottleneck is not hardware. It is the absence of coordination, safety, and intelligence infrastructure.
+            Computers once filled entire rooms, cost millions, and served a single purpose. Then microprocessors changed everything, systems became smaller, programmable, networked, and massively more capable. Satellite infrastructure is now approaching the same transition.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 overflow-hidden"
@@ -456,16 +386,16 @@ export default function Home() {
       <section className="py-24 max-w-[1100px] mx-auto px-8">
         <div ref={tractRef} className="reveal">
           <Label>Partners & Recognition</Label>
-          <h2 className="text-3xl mb-12" style={h2Style}>Who we work alongside.</h2>
+          <h2 className="text-3xl mb-12" style={h2Style}>Backed by the Ecosystem.</h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 overflow-hidden"
+          <div className="grid grid-cols-2 md:grid-cols-4 overflow-hidden"
             style={{ border: '1px solid #e2e8f0', borderRadius: '10px', boxShadow: '0 1px 3px rgba(10,36,99,0.04)' }}>
             {traction.map((t, i) => (
               <div key={i}
                 style={{
                   padding: '28px 24px',
                   background: '#fff',
-                  borderRight: i < 4 ? '1px solid #e2e8f0' : 'none',
+                  borderRight: i < 3 ? '1px solid #e2e8f0' : 'none',
                   transition: 'background 0.2s',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#f8fafc')}

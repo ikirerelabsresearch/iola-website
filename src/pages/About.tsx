@@ -91,7 +91,7 @@ export default function About() {
             <span style={{ color: '#0A2463' }}>Hardware when proven.</span>
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '500px' }}>
-            A team of AI researchers and aerospace engineers building the coordination infrastructure for the African space age.
+            A team of AI researchers and aerospace engineers building the orbital infrastructure for the African space age.
           </p>
         </div>
       </section>
