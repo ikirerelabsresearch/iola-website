@@ -1,104 +1,75 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* ─────────────────────────────────────────────────────────────
+   IOLA Design System v2
+   Colors extracted from the IOLA logo identity:
+   - Orbital navy  #0A2463  (primary brand, deep orbit)
+   - Aerospace blue #1E5FA8  (secondary, orbit arc highlight)
+   - Solar gold    #C8860A  (accent, sunrise/active state)
+   - Horizon warm  #F5EDD6  (very faint warm surface tint)
+   - Charcoal      #111827  (primary text, heavier than before)
+   - Muted         #64748b  (body text, slightly cooler)
+───────────────────────────────────────────────────────────── */
+
+@theme {
+  --color-navy:         #0A2463;
+  --color-navy-hover:   #0d2d7a;
+  --color-blue:         #1E5FA8;
+  --color-gold:         #C8860A;
+  --color-gold-light:   #F5EDD6;
+  --color-text:         #111827;
+  --color-muted:        #64748b;
+  --color-border:       #e2e8f0;
+  --color-border-faint: #f1f5f9;
+  --color-surface:      #f8fafc;
+  --color-tint:         #f0f4f9;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --shadow-card: 0 1px 3px rgba(10,36,99,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 4px 12px rgba(10,36,99,0.1), 0 2px 4px rgba(0,0,0,0.05);
 }
 
-body {
-  @apply bg-stratosphere text-orbital font-body;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  @apply font-heading font-bold;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-stratosphere;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-teal/30 rounded-full;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-teal/50;
-}
-
-/* Smooth scroll */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Selection */
-::selection {
-  @apply bg-teal/30 text-white;
-}
-
-/* Canvas container */
-.canvas-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: 0;
-  pointer-events: none;
-}
-
-/* Overlay content */
-.content-overlay {
-  position: relative;
-  z-index: 10;
-}
-
-/* Glassmorphism utility */
-.glass {
-  background: rgba(4, 12, 28, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 220, 255, 0.1);
-}
-
-/* Glow effects */
-.glow-teal {
-  box-shadow: 0 0 20px rgba(0, 220, 255, 0.3);
-}
-
-.glow-amber {
-  box-shadow: 0 0 20px rgba(255, 191, 0, 0.5);
-}
-
-/* Text glow */
-.text-glow-teal {
-  text-shadow: 0 0 20px rgba(0, 220, 255, 0.6);
-}
-
-.text-glow-amber {
-  text-shadow: 0 0 20px rgba(255, 191, 0, 0.8);
-}
-
-/* Loading animation */
-@keyframes orbit {
-  from {
-    transform: rotate(0deg) translateX(10px) rotate(0deg);
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
   }
-  to {
-    transform: rotate(360deg) translateX(10px) rotate(-360deg);
+  body {
+    font-family: var(--font-sans);
+    background: #ffffff;
+    color: #111827;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+  a { text-decoration: none; }
+
+  /* Smooth fade-in for all page content */
+  main { animation: pageIn 0.4s ease both; }
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 }
 
-.orbit {
-  animation: orbit 3s linear infinite;
+/* ── Section reveal animation ─────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Orbital line SVG ─────────────────────────────────────── */
+.orbital-line {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.orbital-line.drawn {
+  stroke-dashoffset: 0;
 }
