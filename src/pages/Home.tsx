@@ -400,7 +400,7 @@ export default function Home() {
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,14,26,0.6) 0%, transparent 45%)', pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '20px 24px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', pointerEvents: 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#C8860A', display: 'inline-block', animation: 'pulse 2s ease infinite' }} />
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', animation: 'pulse 2s ease infinite' }} />
                 <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>orbit.ikirere.com — live</span>
               </div>
               <a href="https://orbit.ikirere.com" target="_blank" rel="noopener noreferrer"
