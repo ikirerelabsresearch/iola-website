@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Deep navy background circle -->
+  <circle cx="32" cy="32" r="32" fill="#0A2463"/>
+
+  <!-- Earth/globe base — dark blue -->
+  <circle cx="32" cy="36" r="18" fill="#1E5FA8"/>
+
+  <!-- Africa continent silhouette — simplified, white -->
+  <path d="M29 24 L31 22 L34 22 L36 24 L37 27 L36 30 L38 33 L37 37 L35 40 L33 42 L31 41 L29 38 L28 35 L26 32 L26 29 L27 26 Z" fill="#fff" opacity="0.92"/>
+
+  <!-- Orbital ring arc — gold -->
+  <ellipse cx="32" cy="30" rx="22" ry="8" fill="none" stroke="#C8860A" stroke-width="2.2" stroke-linecap="round"
+    stroke-dasharray="100 20"
+    transform="rotate(-20 32 30)"/>
+
+  <!-- Satellite dot on orbital path -->
+  <circle cx="50" cy="22" r="2.2" fill="#C8860A"/>
+  <!-- Satellite body tiny cross -->
+  <line x1="48" y1="22" x2="52" y2="22" stroke="#C8860A" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="50" y1="20" x2="50" y2="24" stroke="#C8860A" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- Sunrise glow at bottom of globe -->
+  <path d="M14 46 Q32 56 50 46" fill="none" stroke="#C8860A" stroke-width="1.5" opacity="0.6"/>
+</svg>
