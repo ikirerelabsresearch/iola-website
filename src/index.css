@@ -85,16 +85,8 @@
   transform: translateY(0);
 }
 
-/* ── Orbital line SVG ─────────────────────────────────────── */
+/* ── Orbital line SVG — animated via rAF in component ────────── */
 .orbital-line {
-  stroke-dasharray: 600;
-  stroke-dashoffset: 600;
-  transition: stroke-dashoffset 1.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.orbital-line.drawn {
-  stroke-dashoffset: 0;
-}
-/* Undraw transition — slightly faster */
-.orbital-line:not(.drawn) {
-  transition: stroke-dashoffset 0.9s cubic-bezier(0.6, 0, 0.8, 1);
+  stroke-dasharray: 220 580;
+  stroke-dashoffset: 800;
 }

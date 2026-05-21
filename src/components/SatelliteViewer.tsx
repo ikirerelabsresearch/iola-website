@@ -86,7 +86,7 @@ function CubeSat() {
   )
 }
 
-function Scene() {
+function Scene({ transparent = false }: { transparent?: boolean }) {
   return (
     <>
       <OrbitControls
@@ -97,30 +97,37 @@ function Scene() {
         dampingFactor={0.08}
         enableDamping
       />
-      {/* Pure local lights — no network fetches, no HDR loading */}
-      <ambientLight intensity={0.55} />
+      {/* Ambient — slightly warmer when transparent to match hero page tone */}
+      <ambientLight intensity={transparent ? 0.7 : 0.55} color={transparent ? '#f5f0ea' : '#ffffff'} />
 
-      {/* Key: warm upper-left */}
+      {/* Key: warm upper-left — matches hero's gold radial light */}
       <directionalLight
-        position={[-1.2, 1.8, -1.0]} intensity={2.4} color="#f8f3ee"
+        position={[-1.2, 1.8, -1.0]}
+        intensity={transparent ? 2.8 : 2.4}
+        color={transparent ? '#f9f0e4' : '#f8f3ee'}
         castShadow
         shadow-mapSize={[512, 512]}
         shadow-camera-near={0.1} shadow-camera-far={10}
         shadow-camera-left={-0.8} shadow-camera-right={0.8}
         shadow-camera-top={0.8} shadow-camera-bottom={-0.8}
-        shadow-radius={5} shadow-bias={-0.001}
+        shadow-radius={transparent ? 12 : 5}
+        shadow-bias={-0.001}
       />
       {/* Fill: cool right */}
       <directionalLight position={[1.5, 0.5, -0.8]} intensity={0.7} color="#eef2ff" />
       {/* Rim: from behind */}
       <directionalLight position={[0.5, 1.0, 1.8]} intensity={0.9} color="#f0f4ff" />
+      {/* Extra warm bounce from bottom-right — mimics page sunset hue */}
+      {transparent && (
+        <pointLight position={[0.8, -0.5, 0.5]} intensity={0.4} color="#c8860a" />
+      )}
 
       <CubeSat />
 
-      {/* Simple shadow plane */}
+      {/* Shadow plane — transparent when floating on page */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.22, 0]} receiveShadow>
         <planeGeometry args={[4, 4]} />
-        <shadowMaterial transparent opacity={0.22} />
+        <shadowMaterial transparent opacity={transparent ? 0.12 : 0.22} />
       </mesh>
     </>
   )
@@ -141,14 +148,16 @@ const fallbackUI = (
   </div>
 )
 
-export default function SatelliteViewer() {
+export default function SatelliteViewer({ transparent = false }: { transparent?: boolean }) {
   return (
     <div style={{
       width: '100%', height: '100%',
-      background: 'linear-gradient(135deg, #f5f3f0 0%, #edeae4 100%)',
-      borderRadius: '12px', overflow: 'hidden', position: 'relative',
+      // When transparent: no background, no border, blends into hero page
+      background: transparent ? 'transparent' : 'linear-gradient(135deg, #f5f3f0 0%, #edeae4 100%)',
+      borderRadius: transparent ? '0' : '12px',
+      overflow: 'hidden', position: 'relative',
     }}>
-      <SatelliteErrorBoundary fallback={fallbackUI}>
+      <SatelliteErrorBoundary fallback={transparent ? null : fallbackUI}>
         <Canvas
           shadows
           dpr={[1, 1.5]}
@@ -157,27 +166,31 @@ export default function SatelliteViewer() {
             antialias: true,
             powerPreference: 'default',
             failIfMajorPerformanceCaveat: false,
+            alpha: transparent,          // WebGL alpha channel for transparent bg
             toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.08,
+            toneMappingExposure: transparent ? 1.3 : 1.08,
             outputColorSpace: THREE.SRGBColorSpace,
           }}
+          style={transparent ? { background: 'transparent' } : {}}
         >
-          <Scene />
+          <Scene transparent={transparent} />
         </Canvas>
       </SatelliteErrorBoundary>
 
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        padding: '10px 14px',
-        background: 'linear-gradient(to top, rgba(240,237,232,0.85) 0%, transparent 100%)',
-        display: 'flex', alignItems: 'center', gap: '6px',
-        pointerEvents: 'none',
-      }}>
-        <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-        <span style={{ fontSize: '10px', color: 'rgba(30,30,30,0.5)', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-          3U CubeSat
-        </span>
-      </div>
+      {!transparent && (
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          padding: '10px 14px',
+          background: 'linear-gradient(to top, rgba(240,237,232,0.85) 0%, transparent 100%)',
+          display: 'flex', alignItems: 'center', gap: '6px',
+          pointerEvents: 'none',
+        }}>
+          <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
+          <span style={{ fontSize: '10px', color: 'rgba(30,30,30,0.5)', fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            3U CubeSat
+          </span>
+        </div>
+      )}
     </div>
   )
 }

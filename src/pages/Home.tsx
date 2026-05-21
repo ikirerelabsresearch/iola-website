@@ -3,19 +3,6 @@ import { Link } from 'react-router'
 
 const SatelliteViewer = lazy(() => import('../components/SatelliteViewer'))
 
-// Placeholder shown while Three.js loads
-function SatellitePlaceholder() {
-  return (
-    <div style={{
-      width: '100%', height: '100%',
-      background: 'linear-gradient(135deg, #f5f3f0 0%, #ede9e4 100%)',
-      borderRadius: '12px',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-    }}>
-      <div style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #0A2463', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
-    </div>
-  )
-}
 
 // ── Scroll reveal hook ────────────────────────────────────────────────────────
 function useReveal() {
@@ -39,17 +26,29 @@ function OrbitalArc() {
   useEffect(() => {
     const el = ref.current
     if (!el) return
+    // Travelling wave: dasharray = [visible segment, gap]
+    // Animate dashoffset from 1200 → 0 continuously — the segment
+    // appears to travel left-to-right across the path
+    const LENGTH = 600
+    const SEG    = 220   // length of the visible travelling segment
+    const GAP    = LENGTH - SEG
 
-    // Animate draw → undraw → draw on a 3-second loop
-    const draw = () => {
-      el.classList.add('drawn')
-      setTimeout(() => {
-        el.classList.remove('drawn')
-        setTimeout(draw, 400) // brief pause before re-drawing
-      }, 2200) // hold drawn state
+    el.style.strokeDasharray  = `${SEG} ${GAP + SEG}`
+    el.style.strokeDashoffset = `${SEG + GAP}`
+    el.style.transition = 'none'
+    el.style.opacity    = '1'
+
+    let offset = SEG + GAP
+    let rafId: number
+
+    const step = () => {
+      offset -= 1.6  // speed: pixels per frame
+      if (offset < -SEG) offset = SEG + GAP   // seamless loop
+      el.style.strokeDashoffset = String(offset)
+      rafId = requestAnimationFrame(step)
     }
-    const t = setTimeout(draw, 300)
-    return () => clearTimeout(t)
+    rafId = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(rafId)
   }, [])
   return (
     <svg
@@ -260,10 +259,10 @@ export default function Home() {
             </div>
           </div>
 
-          {/* ── Right: live 3D satellite ────────────────────────── */}
-          <div style={{ flex: '1 1 0', minWidth: 0, height: '480px' }}>
-            <Suspense fallback={<SatellitePlaceholder />}>
-              <SatelliteViewer />
+          {/* ── Right: live 3D satellite — floats on hero, no box ── */}
+          <div style={{ flex: '1 1 0', minWidth: 0, height: '480px', position: 'relative' }}>
+            <Suspense fallback={null}>
+              <SatelliteViewer transparent />
             </Suspense>
           </div>
 
@@ -363,7 +362,7 @@ export default function Home() {
                       color: '#0A2463', background: 'rgba(10,36,99,0.07)',
                       padding: '4px 12px', borderRadius: '100px',
                     }}>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#C8860A', display: 'inline-block', animation: 'pulse 2s ease infinite' }} />
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', animation: 'pulse 2s ease infinite' }} />
                     In development
                   </div>
                 )}
