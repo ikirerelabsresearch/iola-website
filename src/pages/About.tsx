@@ -87,11 +87,10 @@ export default function About() {
             <Label>About IOLA</Label>
           </div>
           <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontVariationSettings: "'wght' 600", letterSpacing: '-0.03em', lineHeight: '1.12', color: '#111827', marginBottom: '16px' }}>
-            Building the full-stack orbital infrastructure powering the next generation of<br />
-            <span style={{ color: '#0A2463' }}>programmable multipurpose nanosatellites.</span>
+            Who we are
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '540px' }}>
-            A team of AI researchers and aerospace engineers building autonomous nanosatellite systems for climate, agriculture, Earth observation, logistics, and connectivity across Africa.
+            A team of AI researchers and aerospace engineers building the full-stack orbital infrastructure powering the next generation of autonomous nanosatellite systems for climate, agriculture, Earth observation, logistics, and connectivity across Africa.
           </p>
         </div>
       </section>
