@@ -26,13 +26,13 @@ function Label({ children }: { children: React.ReactNode }) {
 const h2Style = { fontVariationSettings: "'wght' 580", letterSpacing: '-0.025em', color: '#111827' }
 
 const roles = [
-  { title: 'Orbital Mechanics', desc: 'SGP4/SDP4 propagation, conjunction geometry, manoeuvre planning. Python or C++.' },
-  { title: 'Aerospace Systems Engineering', desc: 'CubeSat platform design, subsystem integration, mission analysis. ESA, NASA, or university lab experience preferred.' },
-  { title: 'Embedded Systems & Firmware', desc: 'Flight software for space systems. C/C++, RTOS, Linux RT. Onboard autonomy and fault management.' },
-  { title: 'Reinforcement Learning', desc: 'Multi-agent RL for coordination and safety-constrained optimisation. PyTorch or JAX. Research background preferred.' },
-  { title: 'Simulation Engineering', desc: 'High-fidelity orbital simulation. Physics-based modelling. Integration between simulation and flight software environments.' },
-  { title: 'Ground Systems', desc: 'Ground station architecture, telemetry and command protocols, pass scheduling. Open-source ground system stacks a plus.' },
-  { title: 'ADCS and Control Systems', desc: 'Attitude determination and control. Reaction wheels, star trackers, magnetic torquers. GNC algorithms.' },
+  { title: 'Orbital Mechanics', desc: 'Orbital propagation, conjunction analysis, mission planning, and satellite state modelling.' },
+  { title: 'Aerospace Systems Engineering', desc: 'Nanosatellite architecture, subsystem integration, mission systems design, and operational spacecraft engineering.' },
+  { title: 'Embedded Systems & Flight Software', desc: 'Onboard autonomy, flight systems engineering, and spacecraft software infrastructure.' },
+  { title: 'Autonomous Systems & Machine Learning', desc: 'Reinforcement learning, autonomous coordination systems, orbital intelligence, and distributed decision architectures.' },
+  { title: 'Simulation Engineering', desc: 'High-fidelity orbital simulation environments, physics-based modelling, and validation infrastructure.' },
+  { title: 'Ground Systems', desc: 'Telemetry infrastructure, mission operations, communication systems, and orbital support architecture.' },
+  { title: 'Guidance, Navigation & Control', desc: 'Attitude determination, orbital control systems, and autonomous spacecraft stabilization architectures.' },
 ]
 
 export default function Careers() {
@@ -61,7 +61,7 @@ export default function Careers() {
             Build Africa's Orbital<br />Infrastructure With Us
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '500px' }}>
-            Pre-seed, research-driven, and mission-first. The work is technical, the timeline is long, and the problem is real.
+            A frontier aerospace research program building autonomous orbital infrastructure and programmable nanosatellite systems from Africa.
           </p>
         </div>
       </section>
@@ -75,10 +75,13 @@ export default function Careers() {
           </div>
           <div style={{ padding: '24px 28px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8' }}>
-              IOLA is not offering salaries. We are not a startup with a seed round and an office. We are a research team building foundational infrastructure with a five-year technical roadmap. The people who join now are joining because they believe in the mission and want to work on something that matters at the ground floor.
+              IOLA is an early-stage aerospace research company operating pre-revenue and pre-funding. We are building long-horizon orbital infrastructure systems that require deep technical work, patience, and first-principles engineering.
             </p>
             <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8' }}>
-              What we offer: meaningful work on real problems. Attribution on research. A direct line to the people building the system. The kind of technical depth that only comes from building something from scratch with no existing template to follow.
+              The people joining now are not joining for startup perks. They are joining to help architect foundational systems at the earliest stage of the company's formation.
+            </p>
+            <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8' }}>
+              In return, contributors gain direct exposure to frontier orbital systems development, applied aerospace research, and the opportunity to help shape the technical foundations of a long-term space infrastructure program.
             </p>
           </div>
         </div>
@@ -120,14 +123,18 @@ export default function Careers() {
             <a href="mailto:jason@ikirere.com?subject=IOLA — " style={{ color: '#0A2463', textDecoration: 'underline', textDecorationColor: 'rgba(10,36,99,0.3)' }}>
               jason@ikirere.com
             </a>{' '}
-            with the subject line: <strong style={{ color: '#111827' }}>IOLA — [Your Area]</strong>{' '}
-            (e.g. "IOLA — Orbital Mechanics").
+            with the subject: <strong style={{ color: '#111827' }}>IOLA — [Your Area]</strong>
           </p>
-          <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8', marginBottom: '10px' }}>
-            Include a brief description of what you've built, what you want to work on, and why this mission. No CV required — link to anything technical you've done: code, papers, projects.
-          </p>
-          <p style={{ fontSize: '12px', color: '#94a3b8', marginBottom: '28px' }}>
-            We respond to every serious technical inquiry. No recruiter, no ATS. You'll hear back from Jason directly.
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', margin: '16px 0 20px 0' }}>
+            {['what you've built', 'what you want to work on', 'links to technical work, research, code, or projects'].map((item) => (
+              <div key={item} style={{ display: 'flex', gap: '10px', alignItems: 'baseline' }}>
+                <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#0A2463', flexShrink: 0, display: 'inline-block', marginTop: '2px' }} />
+                <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.7' }}>{item}</p>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8', marginBottom: '28px' }}>
+            We care far more about demonstrated technical curiosity and systems thinking than formal credentials. Every serious technical inquiry is reviewed directly by the founding team.
           </p>
           <a
             href="mailto:jason@ikirere.com?subject=IOLA — "
