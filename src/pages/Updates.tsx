@@ -28,22 +28,23 @@ const updates = [
     date: 'May 2026',
     phase: 'Phase 1',
     phaseColor: '#0A2463',
-    title: 'Phase 1 Complete — 15,432 Real Satellites Live',
+    title: 'Phase 1 Complete — Live Orbital Simulation Environment',
     body: [
-      'The orbital simulation at orbit.ikirere.com now runs on real TLE data ingested from CelesTrak. SGP4 propagation is computing live positions for every tracked object in low Earth orbit. The simulation renders at 60fps in-browser using Three.js with a custom orbital mechanics engine built to production engineering standards.',
-      'Walker-T/P/F constellation geometry is fully implemented. Spawn a constellation at any inclination — equatorial, ISS-like, polar, sun-synchronous, Molniya — set the orbital planes, adjust eccentricity, and watch the satellites manoeuvre from one orbit to another using a Hohmann transfer simulation with per-plane stagger sequencing and ground uplink logging. The conjunction risk engine updates in real time.',
-      'This is the production simulation environment. Every algorithm that ships in firmware will first run here.',
+      "IOLA's orbital simulation environment is now operating against live orbital datasets, tracking more than 15,000 active objects across low Earth orbit in real time.",
+      'The platform supports constellation modelling, orbital manoeuvre simulation, conjunction monitoring, and distributed coordination testing within a unified orbital environment designed for large-scale validation.',
+      'This system forms the foundation of the broader IOLA architecture. Every onboard coordination and autonomy system will be validated within this environment before deployment to flight hardware.',
     ],
   },
   {
     date: 'June 2026',
     phase: 'Phase 2',
     phaseColor: '#64748b',
-    title: 'Phase 2 Begins — Conjunction Assessment and Orbital Intelligence',
+    title: 'Phase 2 Begins — Orbital Intelligence and Autonomous Coordination',
     body: [
-      'Phase 2 work has started. The focus is conjunction assessment: computing closest approach distances between all satellite pairs over rolling time windows, generating conjunction data messages, and building the probability-of-collision estimation that feeds into the IkirereMesh coordination engine.',
-      'This is the hardest technical problem in the stack. The computation scales as O(n²) across 15,000 objects. The target is a real-time risk score — updated every 60 seconds — that reflects actual conjunction geometry, not a simplified approximation. Implementing in Python first, architecture designed to port to Rust for the onboard firmware. Targeting a working prototype in Q3 2026.',
-      'The IkirereMesh RL coordination engine begins parallel development this month. Multi-agent PPO training environment setup. Research paper targeting NeurIPS 2026 workshop track.',
+      'Development has begun on the next layer of the IOLA architecture: orbital intelligence and autonomous coordination systems for distributed nanosatellite operations.',
+      'Current work focuses on conjunction assessment, orbital risk analysis, and real-time coordination systems capable of operating across dense satellite environments.',
+      'The long-term objective is a shared coordination and safety layer that enables autonomous nanosatellite fleets to operate as adaptive orbital networks rather than isolated spacecraft.',
+      'Parallel work has also begun on the IkirereMesh coordination architecture and the underlying simulation systems required for large-scale validation.',
     ],
   },
 ]
@@ -73,7 +74,7 @@ export default function Updates() {
             What we've built.<br />What comes next.
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '440px' }}>
-            Short, technical updates from the team. No marketing. Just progress.
+            Development milestones, research progress, and system architecture updates across the IOLA orbital stack.
           </p>
         </div>
       </section>
