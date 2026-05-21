@@ -126,7 +126,7 @@ export default function Careers() {
             with the subject: <strong style={{ color: '#111827' }}>IOLA — [Your Area]</strong>
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', margin: '16px 0 20px 0' }}>
-            {['what you've built', 'what you want to work on', 'links to technical work, research, code, or projects'].map((item) => (
+            {["what you've built", 'what you want to work on', 'links to technical work, research, code, or projects'].map((item) => (
               <div key={item} style={{ display: 'flex', gap: '10px', alignItems: 'baseline' }}>
                 <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#0A2463', flexShrink: 0, display: 'inline-block', marginTop: '2px' }} />
                 <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.7' }}>{item}</p>
