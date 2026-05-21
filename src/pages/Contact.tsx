@@ -34,7 +34,7 @@ export default function Contact() {
       ),
     },
     {
-      type: 'Orbit',
+      type: 'Live Simulation',
       content: (
         <a href="https://orbit.ikirere.com" target="_blank" rel="noopener noreferrer"
           style={{ color: '#0A2463', fontSize: '15px', fontWeight: 500, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', transition: 'opacity 0.15s' }}
@@ -69,7 +69,7 @@ export default function Contact() {
             Get in touch
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '400px' }}>
-            We respond to serious technical and partnership inquiries.
+            Technical collaboration, research partnerships, institutional engagement, and mission-aligned inquiries.
           </p>
         </div>
       </section>
@@ -102,11 +102,7 @@ export default function Contact() {
         </div>
 
         <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: '24px', maxWidth: '400px', lineHeight: '1.7' }}>
-          For careers inquiries, use the subject line format described on the{' '}
-          <Link to="/careers" style={{ color: '#0A2463', textDecoration: 'underline', textDecorationColor: 'rgba(10,36,99,0.3)' }}>
-            Careers page
-          </Link>
-          . For technical collaboration, include a brief description of your work and what you're proposing.
+          For technical collaboration or research engagement, include a brief overview of your background, area of interest, and what you're proposing. Serious inquiries are reviewed directly by the team.
         </p>
       </section>
     </>

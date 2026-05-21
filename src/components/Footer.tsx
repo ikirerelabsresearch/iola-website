@@ -9,7 +9,7 @@ export default function Footer() {
             <img src="/iola-logo-light.png" alt="Ikirere Orbital Labs Africa" className="h-14 w-14 object-contain" />
             <p className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">Africa's Access to Space</p>
             <p className="text-xs text-[#94a3b8] leading-relaxed">
-              Building autonomous orbital infrastructure and programmable nanosatellite systems for the African space age.
+              Building the full-stack orbital infrastructure powering the next generation of autonomous nanosatellite systems for the African space age.
             </p>
           </div>
 
