@@ -1,5 +1,21 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, Suspense, lazy } from 'react'
 import { Link } from 'react-router'
+
+const SatelliteViewer = lazy(() => import('../components/SatelliteViewer'))
+
+// Placeholder shown while Three.js loads
+function SatellitePlaceholder() {
+  return (
+    <div style={{
+      width: '100%', height: '100%',
+      background: 'linear-gradient(135deg, #f5f3f0 0%, #ede9e4 100%)',
+      borderRadius: '12px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <div style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #0A2463', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+    </div>
+  )
+}
 
 // ── Scroll reveal hook ────────────────────────────────────────────────────────
 function useReveal() {
@@ -146,7 +162,7 @@ export default function Home() {
       <section
         className="relative overflow-hidden"
         style={{
-          paddingTop: '112px',
+          paddingTop: '60px',
           paddingBottom: '96px',
           borderBottom: '1px solid #e2e8f0',
           /* Dot grid — very subtle */
@@ -169,70 +185,79 @@ export default function Home() {
           aria-hidden
         />
 
-        <div className="max-w-[1100px] mx-auto px-8 relative z-10">
-          {/* Eyebrow */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-6 h-px" style={{ background: 'linear-gradient(to right, transparent, #1E5FA8)' }} />
-            <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#1E5FA8' }}>
-              Ikirere Orbital Labs Africa
+        <div className="max-w-[1100px] mx-auto px-8 relative z-10 flex items-center gap-10">
+
+          {/* ── Left: copy ─────────────────────────────────────── */}
+          <div style={{ flex: '0 0 auto', maxWidth: '460px' }}>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-6 h-px" style={{ background: 'linear-gradient(to right, transparent, #1E5FA8)' }} />
+              <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#1E5FA8' }}>
+                Ikirere Orbital Labs Africa
+              </p>
+            </div>
+
+            <h1
+              className="mb-6"
+              style={{
+                fontSize: 'clamp(2.2rem, 4.5vw, 3.6rem)',
+                fontVariationSettings: "'wght' 600",
+                letterSpacing: '-0.035em',
+                lineHeight: '1.05',
+                color: '#111827',
+              }}
+            >
+              Building Africa's<br />
+              <span style={{ color: '#0A2463' }}>Orbital Infrastructure</span>
+            </h1>
+
+            <p className="mb-10" style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.65' }}>
+              Building the full-stack orbital infrastructure powering the next generation of programmable multipurpose nanosatellites.
             </p>
+
+            <div className="flex gap-3 flex-wrap">
+              <a
+                href="https://orbit.ikirere.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  background: '#0A2463', color: '#fff',
+                  fontSize: '13px', fontWeight: 500, letterSpacing: '0.01em',
+                  padding: '10px 22px', borderRadius: '7px',
+                  boxShadow: '0 1px 3px rgba(10,36,99,0.3)',
+                  transition: 'background 0.2s ease',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#0d2d7a')}
+                onMouseLeave={e => (e.currentTarget.style.background = '#0A2463')}
+              >
+                See it in orbit
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7h9M7.5 3l4 4-4 4"/></svg>
+              </a>
+              <Link
+                to="/about"
+                style={{
+                  display: 'inline-flex', alignItems: 'center',
+                  background: 'transparent', color: '#0A2463',
+                  fontSize: '13px', fontWeight: 500,
+                  padding: '10px 22px', borderRadius: '7px',
+                  border: '1px solid rgba(10,36,99,0.25)',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#0A2463'; (e.currentTarget as HTMLElement).style.background = '#f0f4f9' }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(10,36,99,0.25)'; (e.currentTarget as HTMLElement).style.background = 'transparent' }}
+              >
+                Our approach
+              </Link>
+            </div>
           </div>
 
-          {/* Headline */}
-          <h1
-            className="mb-6"
-            style={{
-              fontSize: 'clamp(2.6rem, 5.5vw, 4rem)',
-              fontVariationSettings: "'wght' 600",
-              letterSpacing: '-0.035em',
-              lineHeight: '1.03',
-              color: '#111827',
-              maxWidth: '760px',
-            }}
-          >
-            Building Africa's<br />
-            <span style={{ color: '#0A2463' }}>Orbital Infrastructure</span>
-          </h1>
-
-          <p className="mb-10" style={{ fontSize: '1.1rem', color: '#64748b', maxWidth: '520px', lineHeight: '1.65' }}>
-            Building the full-stack orbital infrastructure powering the next generation of programmable multipurpose nanosatellites.
-          </p>
-
-          <div className="flex gap-3 flex-wrap">
-            <a
-              href="https://orbit.ikirere.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                background: '#0A2463', color: '#fff',
-                fontSize: '13px', fontWeight: 500, letterSpacing: '0.01em',
-                padding: '10px 22px', borderRadius: '7px',
-                boxShadow: '0 1px 3px rgba(10,36,99,0.3), 0 1px 2px rgba(0,0,0,0.1)',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#0d2d7a')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#0A2463')}
-            >
-              See it in orbit
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7h9M7.5 3l4 4-4 4"/></svg>
-            </a>
-            <Link
-              to="/about"
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                background: 'transparent', color: '#0A2463',
-                fontSize: '13px', fontWeight: 500,
-                padding: '10px 22px', borderRadius: '7px',
-                border: '1px solid rgba(10,36,99,0.25)',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = '#0A2463'; (e.currentTarget as HTMLElement).style.background = '#f0f4f9' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(10,36,99,0.25)'; (e.currentTarget as HTMLElement).style.background = 'transparent' }}
-            >
-              Our approach
-            </Link>
+          {/* ── Right: live 3D satellite ────────────────────────── */}
+          <div style={{ flex: '1 1 0', minWidth: 0, height: '480px' }}>
+            <Suspense fallback={<SatellitePlaceholder />}>
+              <SatelliteViewer />
+            </Suspense>
           </div>
+
         </div>
       </section>
 
