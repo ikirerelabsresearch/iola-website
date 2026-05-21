@@ -30,28 +30,28 @@ const team = [
     initials: 'JQ',
     name: 'Jason Quist',
     role: 'Founder & CEO · Kigali, Rwanda',
-    bio: 'AI researcher focused on reinforcement learning for autonomous systems. Leads product, research, and company strategy. Building IOLA because Africa\'s access to space infrastructure shouldn\'t depend on external permission.',
+    bio: 'Founder and systems architect focused on autonomous orbital infrastructure, reinforcement learning systems, and next-generation nanosatellite coordination architectures. Leads product, research, and company strategy.',
   },
   {
     initials: 'AD',
     name: 'Alph Doamekpor',
     role: 'Strategy & Aerospace Advisor · Germany',
-    bio: 'Over two decades across ESA, NASA, and EUMETSAT. Bridges IOLA\'s software-first approach with the real constraints of aerospace systems engineering. Ensures the architecture is grounded in actual mission physics.',
+    bio: 'Over two decades across ESA, NASA, and EUMETSAT. Advises on orbital systems engineering, mission architecture, and aerospace operational constraints across the IOLA roadmap.',
   },
 ]
 
 const beliefs = [
   {
     heading: 'Safety is not a feature.',
-    body: 'Orbital safety — guaranteed minimum separation, verified manoeuvre planning, deterministic collision avoidance — is the foundation everything else runs on. We don\'t ship coordination algorithms that can\'t be formally verified. The sky is shared infrastructure.',
+    body: 'Orbital safety — guaranteed minimum separation, verified manoeuvre planning, deterministic collision avoidance — is the foundation everything else runs on. We don\'t ship coordination algorithms that can\'t be formally verified. Orbital space is shared infrastructure.',
   },
   {
     heading: 'Simulation is not a prototype.',
-    body: 'The simulation environment is the production system in development. Every algorithm that ships runs there first. Real TLE data. Real conjunction geometry. Real orbital mechanics. When we say something works, we mean it works on 15,000 satellites simultaneously.',
+    body: 'The simulation environment is the production system in development. Every algorithm that ships runs there first. Real TLE data. Real conjunction geometry. Real orbital mechanics. Systems are validated against live orbital datasets and large-scale constellation environments before hardware deployment.',
   },
   {
     heading: 'Africa is not a market. It\'s the mission.',
-    body: 'We are not building a product for African universities and governments. We are part of the same institutions we serve. The infrastructure we build will be operated by African engineers, run on African ground stations, serve African research objectives.',
+    body: 'We are not building a product for African universities and governments. The infrastructure is being designed for African operational realities, institutions, and long-term sovereignty. The infrastructure we build will be operated by African engineers, run on African ground stations, serve African research objectives.',
   },
   {
     heading: 'Long timelines are honest timelines.',
@@ -86,12 +86,12 @@ export default function About() {
             <div className="w-5 h-px" style={{ background: 'linear-gradient(to right, transparent, #1E5FA8)' }} />
             <Label>About IOLA</Label>
           </div>
-          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontVariationSettings: "'wght' 600", letterSpacing: '-0.03em', lineHeight: '1.08', color: '#111827', marginBottom: '16px' }}>
-            Software first.<br />
-            <span style={{ color: '#0A2463' }}>Hardware when proven.</span>
+          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontVariationSettings: "'wght' 600", letterSpacing: '-0.03em', lineHeight: '1.12', color: '#111827', marginBottom: '16px' }}>
+            Building the full-stack orbital infrastructure powering the next generation of<br />
+            <span style={{ color: '#0A2463' }}>programmable multipurpose nanosatellites.</span>
           </h1>
-          <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '500px' }}>
-            A team of AI researchers and aerospace engineers building the orbital infrastructure for the African space age.
+          <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '540px' }}>
+            A team of AI researchers and aerospace engineers building autonomous nanosatellite systems for climate, agriculture, Earth observation, logistics, and connectivity across Africa.
           </p>
         </div>
       </section>
@@ -104,30 +104,30 @@ export default function About() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', fontSize: '0.95rem', color: '#475569', lineHeight: '1.8' }}>
             <p>Africa has 17% of the world's population and less than 3% of active satellites. The infrastructure deficit is not a technology problem — it's a capital allocation and access problem. IOLA's job is to reduce the cost and complexity of getting a satellite into orbit and operating it effectively, until African institutions can do it themselves without depending on external systems or permissions.</p>
-            <p>We are not a satellite imagery company. We are not building another comms constellation. We are building the software layer that makes all of those things cheaper, safer, and more accessible — and eventually, the hardware platform that runs it.</p>
+            <p>Existing satellite systems are expensive, fragmented, and built for single-purpose missions. IOLA is building a new model: programmable multipurpose nanosatellites coordinated through a shared orbital intelligence layer designed for African institutions, governments, and research ecosystems.</p>
           </div>
 
           <div style={{ height: '1px', background: '#e2e8f0', margin: '40px 0' }} />
 
           <h2 className="text-2xl mb-6" style={h2}>Why software first</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', fontSize: '0.95rem', color: '#475569', lineHeight: '1.8' }}>
-            <p>Hardware development in aerospace has a failure mode: you build the satellite, launch it, and discover that the coordination, autonomy, and safety logic doesn't work at scale. You can't fix it in orbit. IOLA's approach inverts this. We build and validate the full software stack — orbital mechanics, conjunction assessment, multi-satellite coordination, safety-verified manoeuvre planning — in simulation, against real data, before a single piece of hardware is fabricated.</p>
+            <p>Space hardware is expensive to iterate. A satellite launched with flawed coordination or autonomy systems cannot simply be patched in orbit. IOLA solves this by validating orbital intelligence, autonomous coordination, and safety systems in simulation before deployment to flight hardware.</p>
             <p>When the firmware ships, it ports directly from the simulation environment. When the satellite launches, the operational logic has already run millions of simulated orbits. The hardware is the last variable, not the first.</p>
           </div>
 
           <div style={{ height: '1px', background: '#e2e8f0', margin: '40px 0' }} />
 
           <h2 className="text-2xl mb-6" style={h2}>The two-track architecture</h2>
-          <p style={{ fontSize: '0.95rem', color: '#475569', lineHeight: '1.8', marginBottom: '20px' }}>IOLA runs two parallel development tracks that converge at launch:</p>
+          <p style={{ fontSize: '0.95rem', color: '#475569', lineHeight: '1.8', marginBottom: '20px' }}>IOLA develops its orbital systems through two converging tracks:</p>
 
           <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
             <div style={{ padding: '24px 28px', borderBottom: '1px solid #e2e8f0', background: '#f0f4f9', borderLeft: '3px solid #0A2463' }}>
-              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1E5FA8', marginBottom: '8px' }}>Software track — forward</p>
-              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.7' }}>Build the ground simulation, prove the coordination algorithms, port to onboard firmware, validate in hardware-in-the-loop testing.</p>
+              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1E5FA8', marginBottom: '8px' }}>Software track</p>
+              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.7' }}>Build the orbital intelligence layer, validate coordination systems in simulation, and transition proven architectures into onboard flight systems.</p>
             </div>
             <div style={{ padding: '24px 28px', background: '#fff', borderLeft: '3px solid transparent' }}>
-              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px' }}>Hardware track — reverse</p>
-              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.7' }}>Start from the final mission capability and reverse-engineer the minimum hardware that delivers it. 3U or 6U CubeSat. NVIDIA Jetson compute. Off-the-shelf where possible, custom where necessary.</p>
+              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px' }}>Hardware track</p>
+              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.7' }}>Engineer compact, modular nanosatellite platforms capable of supporting multiple missions through shared onboard infrastructure and programmable payload systems.</p>
             </div>
           </div>
         </div>
