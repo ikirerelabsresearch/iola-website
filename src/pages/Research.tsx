@@ -34,10 +34,10 @@ const areas = [
         <line x1="2" y1="10" x2="5" y2="10"/><line x1="15" y1="10" x2="18" y2="10"/>
       </svg>
     ),
-    title: 'Orbital Mechanics',
+    title: 'Orbital Intelligence',
     status: 'Active',
     statusColor: '#0A2463',
-    desc: 'SGP4/SDP4 propagation. TLE ingestion from CelesTrak. Keplerian element transformation. ECI coordinate systems. Position accuracy target: under 1 km error at 24-hour propagation horizon.',
+    desc: 'Autonomous coordination, manoeuvre planning, orbital safety, and constellation-scale decision systems for next-generation satellite networks.',
   },
   {
     icon: (
@@ -50,7 +50,7 @@ const areas = [
     title: 'Conjunction Assessment',
     status: 'Phase 2',
     statusColor: '#64748b',
-    desc: 'Closest approach computation across all satellite pairs over rolling time windows. Probability of collision estimation. Conjunction data message (CDM) generation.',
+    desc: 'Real-time orbital risk analysis and collision prediction systems for dense nanosatellite environments.',
   },
   {
     icon: (
@@ -62,10 +62,10 @@ const areas = [
         <line x1="5" y1="15" x2="8.5" y2="11.5"/><line x1="15" y1="15" x2="11.5" y2="11.5"/>
       </svg>
     ),
-    title: 'IkirereMesh — RL Coordination',
+    title: 'Autonomous Coordination Systems',
     status: 'Phase 2',
     statusColor: '#64748b',
-    desc: 'Multi-agent reinforcement learning for constellation coordination. PPO-based trajectory optimisation. Deterministic safety shields using interval arithmetic and reachability analysis.',
+    desc: 'Multi-agent coordination architectures for distributed satellite fleets operating as adaptive orbital networks.',
   },
   {
     icon: (
@@ -75,10 +75,10 @@ const areas = [
         <circle cx="14" cy="10" r="2"/>
       </svg>
     ),
-    title: 'Simulation Architecture',
+    title: 'Simulation Infrastructure',
     status: 'Active',
     statusColor: '#0A2463',
-    desc: 'Real-time WebGL orbital visualisation. Walker-T/P/F constellation geometry. Per-plane Hohmann transfer manoeuvre simulation. CelesTrak data pipeline and update cadence.',
+    desc: 'High-fidelity orbital simulation environments used to validate coordination, safety, and autonomy systems before hardware deployment.',
   },
   {
     icon: (
@@ -91,7 +91,7 @@ const areas = [
     title: 'Hardware Systems',
     status: 'Phase 3',
     statusColor: '#94a3b8',
-    desc: '3U and 6U CubeSat platform design. NVIDIA Jetson Orin NX onboard compute. ADCS, UHF/S-Band communications, triple-junction solar. SpaceX rideshare qualification requirements.',
+    desc: 'Compact programmable nanosatellite platforms designed for multipurpose missions across communications, sensing, and Earth observation.',
   },
   {
     icon: (
@@ -104,7 +104,7 @@ const areas = [
     title: 'Ground Systems',
     status: 'Phase 2',
     statusColor: '#64748b',
-    desc: 'Ground station network architecture for sub-Saharan Africa. Telemetry and command protocol design. Pass scheduling and contact window optimisation.',
+    desc: 'Ground communication, telemetry, and mission control infrastructure supporting autonomous orbital operations across Africa.',
   },
 ]
 
@@ -128,13 +128,13 @@ export default function Research() {
         <div className="max-w-[1100px] mx-auto px-8 relative z-10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-5 h-px" style={{ background: 'linear-gradient(to right, transparent, #1E5FA8)' }} />
-            <Label>Technical Foundation</Label>
+            <Label>Research</Label>
           </div>
           <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontVariationSettings: "'wght' 600", letterSpacing: '-0.03em', lineHeight: '1.08', color: '#111827', marginBottom: '16px' }}>
             Research
           </h1>
-          <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '500px' }}>
-            Architecture notes, orbital mechanics documentation, and system design references. The work behind the system.
+          <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '520px' }}>
+            Applied research across orbital intelligence, autonomous coordination systems, simulation infrastructure, and next-generation nanosatellite architectures.
           </p>
         </div>
       </section>
@@ -143,7 +143,7 @@ export default function Research() {
       <section className="py-20 max-w-[1100px] mx-auto px-8">
         <div ref={areasRef} className="reveal">
           <Label>Research Areas</Label>
-          <h2 className="text-2xl mb-10" style={h2Style}>Six technical tracks.</h2>
+          <h2 className="text-2xl mb-10" style={h2Style}>Core research domains driving the IOLA architecture.</h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1px', background: '#e2e8f0', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
             {areas.map(a => (
@@ -168,32 +168,20 @@ export default function Research() {
               </div>
             ))}
           </div>
-
-          <div style={{ marginTop: '32px', padding: '16px 20px', background: '#f0f4f9', borderRadius: '0 8px 8px 0', border: '1px solid #e2e8f0', borderLeft: '3px solid #0A2463' }}>
-            <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.7' }}>
-              <strong style={{ color: '#111827', fontWeight: 600 }}>Research papers in progress.</strong>{' '}
-              Targeting ICML and NeurIPS workshops for the IkirereMesh coordination engine and safety verification work.{' '}
-              Contact{' '}
-              <a href="mailto:jason@ikirere.com" style={{ color: '#0A2463', textDecoration: 'underline', textDecorationColor: 'rgba(10,36,99,0.3)' }}>
-                jason@ikirere.com
-              </a>{' '}
-              for collaboration or early access to working notes.
-            </p>
-          </div>
         </div>
       </section>
 
       <div style={{ borderTop: '1px solid #e2e8f0' }} />
 
-      {/* ── Technical stack ───────────────────────────── */}
+      {/* ── Validation Infrastructure ─────────────────── */}
       <section className="py-20 max-w-[720px] mx-auto px-8">
         <div ref={stackRef} className="reveal">
-          <Label>Technical Stack</Label>
-          <h2 className="text-2xl mb-8" style={h2Style}>What the simulation runs on.</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', fontSize: '0.9rem', color: '#475569', lineHeight: '1.8' }}>
-            <p>The live orbit system at orbit.ikirere.com is built on Three.js with React Three Fiber for real-time 3D rendering. Orbital mechanics use SGP4 propagation. TLE data is ingested from CelesTrak on a 6-hour refresh cycle. The coordination simulation runs entirely in-browser — no server-side computation.</p>
-            <p>The IkirereMesh engine is implemented in Python for the research track and will be ported to Rust for the onboard firmware. The simulation environment serves as the validation harness: algorithms that pass simulation review against real data are candidates for firmware porting.</p>
-            <p>All simulation code is being written to a production engineering standard from the start. The codebase will become the firmware codebase. That constraint shapes every architecture decision.</p>
+          <Label>Infrastructure</Label>
+          <h2 className="text-2xl mb-8" style={h2Style}>Validation Infrastructure</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', fontSize: '0.95rem', color: '#475569', lineHeight: '1.8' }}>
+            <p>IOLA's simulation environment acts as the validation layer for the entire orbital stack. Autonomous coordination systems, orbital safety logic, and constellation behaviours are tested against live orbital datasets before deployment to onboard systems.</p>
+            <p>The environment supports large-scale constellation simulation, orbital manoeuvre modelling, conjunction analysis, and distributed coordination testing across thousands of active objects in orbit.</p>
+            <p>Architecturally, the simulation layer is designed to transition directly into onboard flight systems, reducing the gap between research validation and operational deployment.</p>
           </div>
         </div>
       </section>
