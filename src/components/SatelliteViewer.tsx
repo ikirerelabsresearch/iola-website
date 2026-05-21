@@ -1,4 +1,4 @@
-import { useRef, Component, ReactNode } from 'react'
+import { useRef, Component, type ReactNode } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
