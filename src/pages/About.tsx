@@ -72,8 +72,8 @@ export default function About() {
         style={{
           padding: '80px 0 64px',
           borderBottom: '1px solid #e2e8f0',
-          backgroundImage: 'radial-gradient(circle, rgba(10,36,99,0.04) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
+          
+          
         }}
       >
         <div

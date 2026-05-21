@@ -47,8 +47,8 @@ export default function Careers() {
         style={{
           padding: '80px 0 64px',
           borderBottom: '1px solid #e2e8f0',
-          backgroundImage: 'radial-gradient(circle, rgba(10,36,99,0.04) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
+          
+          
         }}
       >
         <div className="absolute pointer-events-none" style={{ top: '-60px', right: '-40px', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(200,134,10,0.05) 0%, transparent 65%)', borderRadius: '50%' }} aria-hidden />

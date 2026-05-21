@@ -39,7 +39,16 @@ function OrbitalArc() {
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    const t = setTimeout(() => el.classList.add('drawn'), 300)
+
+    // Animate draw → undraw → draw on a 3-second loop
+    const draw = () => {
+      el.classList.add('drawn')
+      setTimeout(() => {
+        el.classList.remove('drawn')
+        setTimeout(draw, 400) // brief pause before re-drawing
+      }, 2200) // hold drawn state
+    }
+    const t = setTimeout(draw, 300)
     return () => clearTimeout(t)
   }, [])
   return (
@@ -166,7 +175,7 @@ export default function Home() {
           paddingBottom: '96px',
           borderBottom: '1px solid #e2e8f0',
           /* Dot grid — very subtle */
-          backgroundImage: 'radial-gradient(circle, rgba(10,36,99,0.055) 1px, transparent 1px)',
+          backgroundImage: 'radial-gradient(circle, rgba(10,36,99,0.030) 1px, transparent 1px)',
           backgroundSize: '28px 28px',
         }}
       >
