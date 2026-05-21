@@ -6,6 +6,7 @@ import Research from './pages/Research'
 import Careers from './pages/Careers'
 import Updates from './pages/Updates'
 import Contact from './pages/Contact'
+import Hardware from './pages/Hardware'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/"          element={<Home />} />
           <Route path="/about"     element={<About />} />
           <Route path="/research"  element={<Research />} />
+          <Route path="/hardware"  element={<Hardware />} />
           <Route path="/careers"   element={<Careers />} />
           <Route path="/updates"   element={<Updates />} />
           <Route path="/contact"   element={<Contact />} />

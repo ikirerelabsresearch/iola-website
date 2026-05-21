@@ -20,6 +20,7 @@ export default function Footer() {
                 {[
                   { label: 'About',    to: '/about' },
                   { label: 'Research', to: '/research' },
+                  { label: 'Hardware', to: '/hardware' },
                   { label: 'Careers',  to: '/careers' },
                   { label: 'Updates',  to: '/updates' },
                   { label: 'Contact',  to: '/contact' },
