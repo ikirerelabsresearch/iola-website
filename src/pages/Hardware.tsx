@@ -300,8 +300,8 @@ function DeployablePanel({
   // Seg3 folds 180° back onto seg2 → stacks flat on seg2
   // Net result: all 3 panels stacked at z ≈ +SEG/2, thin stack alongside body face.
   const s1Stow = -side * Math.PI / 2   // 90° — root swings to +Z body face
-  const s2Stow = -Math.PI              // 180° opposite direction → Z-fold
-  const s3Stow =  Math.PI              // 180° opposite to seg2 → back the other way
+  const s2Stow =  side * Math.PI       // 180° opposite to seg1, mirrored per side
+  const s3Stow = -side * Math.PI       // 180° opposite to seg2, mirrored per side
 
   const cfg = { mass: 2.8, tension: 52, friction: 20 }
 
