@@ -216,7 +216,121 @@ function usePart(id: string, base: [number, number, number], exploded: boolean) 
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const AM = animated('mesh' as any) as any
+const AM  = animated('mesh'  as any) as any
+const AG  = animated('group' as any) as any
+
+// ── Deployable solar panel with spring-animated hinge rotation ───────────────
+// Physics:
+//   Stowed  → panel lies flat against body face (rotation.z = 0)
+//   Deployed→ panel swings 90° outward around the body edge (rotation.z = ±π/2)
+//   The GROUP is positioned AT the hinge (body edge).
+//   The panel mesh is offset PW/2 in local +X from the hinge so it rotates like a door.
+function DeployablePanel({
+  side,        // +1 = port (+X),  -1 = starboard (-X)
+  deployed,
+  exploded,
+  selected,
+  onSelect,
+}: {
+  side: 1 | -1
+  deployed: boolean
+  exploded: boolean
+  selected: string | null
+  onSelect: (id: string | null) => void
+}) {
+  const id   = side === 1 ? 'panelL' : 'panelR'
+  const BX   = 0.100
+  const PW   = 0.220   // panel width (span direction)
+  const PH   = 0.340   // panel height = body height
+  const PT   = 0.006   // panel thickness
+
+  // Hinge sits exactly at the body edge: x = ±BX/2
+  const HINGE_X = side * BX / 2
+
+  // Stowed: panel face-to-face with body side (needs to sit just outside body)
+  // The panel's local-X centre when stowed = PT/2 (just proud of hinge)
+  // Deployed: panel swings to local-X centre = PW/2
+
+  // Spring on hinge rotation (Z-axis):
+  //   Stowed   = 0 rad  → panel is parallel to body face (pointing in ±X)
+  //   Deployed = ±π/2   → panel is perpendicular to body (pointing in ±Y)
+  // When exploded, push further out in X too
+  const deployAngle  = side * Math.PI / 2   // +π/2 for port, -π/2 for starboard
+  const explodeShift = exploded ? side * 0.38 : 0
+
+  const { rotZ } = useSpring({
+    rotZ: deployed ? deployAngle : 0,
+    config: {
+      mass:      2.5,           // heavy — spring loaded but damped
+      tension:   55,            // slow, deliberate deployment
+      friction:  18,
+    },
+  })
+
+  const { posX } = useSpring({
+    posX: HINGE_X + explodeShift,
+    config: { mass: 1.2, tension: 130, friction: 22 },
+  })
+
+  const isSelected = selected === id
+  const mat = isSelected ? highlightMat : solarMat
+
+  // When deployed the panel mesh centre is at local (PW/2, 0, 0) from hinge
+  // When stowed it is at local (PT/2, 0, 0) — just outside the body face
+  // We always keep it at PW/2 in local X; the rotation handles the geometry.
+  // A thin hinge bracket mesh at origin of this group
+  const HINGE_W = 0.008
+  const HINGE_H = 0.028
+
+  return (
+    // Outer group translates the whole assembly (including explode offset)
+    <AG position-x={posX} position-y={0} position-z={0}>
+      {/* Hinge bracket — static, always visible */}
+      <mesh material={aluMat} castShadow>
+        <boxGeometry args={[HINGE_W, HINGE_H, HINGE_W]} />
+      </mesh>
+
+      {/* Rotating group — pivots around Z at hinge origin */}
+      <AG rotation-z={rotZ}>
+        {/* Panel mesh — offset PW/2 outward in local +X */}
+        <AM
+          position-x={side * PW / 2}
+          position-y={0}
+          position-z={0}
+          material={mat}
+          castShadow
+          onClick={(e: any) => { e.stopPropagation(); onSelect(isSelected ? null : id) }}
+        >
+          <boxGeometry args={[PW, PH, PT]} />
+        </AM>
+
+        {/* Top edge frame */}
+        <mesh
+          position={[side * PW / 2, PH / 2 + 0.003, 0]}
+          material={aluMat}
+        >
+          <boxGeometry args={[PW + 0.002, 0.005, PT + 0.002]} />
+        </mesh>
+
+        {/* Bottom edge frame */}
+        <mesh
+          position={[side * PW / 2, -PH / 2 - 0.003, 0]}
+          material={aluMat}
+        >
+          <boxGeometry args={[PW + 0.002, 0.005, PT + 0.002]} />
+        </mesh>
+
+        {/* Tip edge frame strip */}
+        <mesh
+          position={[side * PW, 0, 0]}
+          material={aluMat}
+        >
+          <boxGeometry args={[0.004, PH, PT + 0.002]} />
+        </mesh>
+      </AG>
+    </AG>
+  )
+}
 
 // ── Per-part callout offset: label sits here, line points back to part ────────
 // [dx, dy] in screen-ish HTML space (pixels from part center)
@@ -320,11 +434,13 @@ function PartLabel({ id, position, exploded, selected, onSelect }:
 // ── Satellite mesh ─────────────────────────────────────────────────────────────
 function Satellite({
   exploded,
+  deployed,
   selected,
   onSelect,
   rotating,
 }: {
   exploded: boolean
+  deployed: boolean
   selected: string | null
   onSelect: (id: string | null) => void
   rotating: boolean
@@ -338,11 +454,7 @@ function Satellite({
   })
 
   const BX = 0.10, BZ = 0.34, BY = 0.10
-  const PW = 0.22, PH = BZ, PT = 0.006
-  const PX = BX / 2 + PT / 2
 
-  const posL    = usePart('panelL', [PX,  0, 0], exploded)
-  const posR    = usePart('panelR', [-PX, 0, 0], exploded)
   const posA0   = usePart('ant0',   [0.036,  BZ/2+0.046,  0.036], exploded)
   const posA1   = usePart('ant1',   [-0.036, BZ/2+0.046,  0.036], exploded)
   const posPatch= usePart('patch',  [-0.018, BZ/2+0.003,  0.010], exploded)
@@ -379,20 +491,9 @@ function Satellite({
         <boxGeometry args={[BX+0.001, 0.0018, BY+0.001]} />
       </AM>
 
-      {/* Solar panels */}
-      <AM position={posL} material={getMatFor('panelL', selected, solarMat)} castShadow onClick={click('panelL')}>
-        <boxGeometry args={[PT, PH, PW]} />
-      </AM>
-      <AM position={posR} material={getMatFor('panelR', selected, solarMat)} castShadow onClick={click('panelR')}>
-        <boxGeometry args={[PT, PH, PW]} />
-      </AM>
-
-      {/* Panel frame edges — not interactive */}
-      {[-1, 1].map(sign => [-1, 1].map(tb => (
-        <mesh key={`fe${sign}${tb}`} position={[sign*PX, tb*(PH/2+0.003), 0]} material={aluMat}>
-          <boxGeometry args={[PT+0.002, 0.005, PW+0.002]} />
-        </mesh>
-      )))}
+      {/* Deployable solar panels — hinge-rotated spring animation */}
+      <DeployablePanel side={1}  deployed={deployed} exploded={exploded} selected={selected} onSelect={onSelect} />
+      <DeployablePanel side={-1} deployed={deployed} exploded={exploded} selected={selected} onSelect={onSelect} />
 
       {/* Antennas */}
       <AM position={posA0} material={getMatFor('ant0', selected, darkMat)} onClick={click('ant0')}>
@@ -421,10 +522,10 @@ function Satellite({
         <coneGeometry args={[0.012, 0.018, 10]} />
       </AM>
 
-      {/* 3D floating labels when exploded */}
-      {Object.keys(EXPLODE_OFFSETS).map(id => {
+      {/* 3D floating labels when exploded — panels handled by DeployablePanel */}
+      {(['ant0','ant1','patch','dome','thr0','thr1','thr2','sep0','sep1'] as const).map(id => {
         const posMap: Record<string, any> = {
-          panelL: posL, panelR: posR, ant0: posA0, ant1: posA1,
+          ant0: posA0, ant1: posA1,
           patch: posPatch, dome: posDome,
           thr0: posT0, thr1: posT1, thr2: posT2,
           sep0: posS0, sep1: posS1,
@@ -537,10 +638,13 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
 
 // ── Toolbar ────────────────────────────────────────────────────────────────────
 function Toolbar({
-  exploded, onExplode, onReset, selected, rotating, onToggleRotation,
+  exploded, onExplode, deployed, onToggleDeploy,
+  onReset, selected, rotating, onToggleRotation,
 }: {
   exploded: boolean
   onExplode: () => void
+  deployed: boolean
+  onToggleDeploy: () => void
   onReset: () => void
   selected: string | null
   rotating: boolean
@@ -571,6 +675,31 @@ function Toolbar({
         transition: 'all 0.2s',
       }}>
         {exploded ? 'Assemble' : 'Disassemble'}
+      </button>
+
+      <div style={{ width: '1px', height: '16px', background: '#e2e8f0' }} />
+
+      {/* Deploy / Stow solar panels */}
+      <button onClick={onToggleDeploy} style={{
+        background: deployed ? 'rgba(200,134,10,0.1)' : 'transparent',
+        color: deployed ? '#C8860A' : '#64748b',
+        border: '1px solid',
+        borderColor: deployed ? 'rgba(200,134,10,0.4)' : 'transparent',
+        borderRadius: '100px',
+        padding: '5px 14px',
+        fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em',
+        textTransform: 'uppercase', cursor: 'pointer',
+        transition: 'all 0.2s',
+        display: 'flex', alignItems: 'center', gap: '5px',
+      }}>
+        {/* Solar panel icon */}
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+          <rect x="1" y="4" width="10" height="4" rx="0.5"/>
+          <line x1="4" y1="4" x2="4" y2="8"/>
+          <line x1="8" y1="4" x2="8" y2="8"/>
+          <line x1="1" y1="6" x2="11" y2="6"/>
+        </svg>
+        {deployed ? 'Stow Arrays' : 'Deploy Arrays'}
       </button>
 
       <div style={{ width: '1px', height: '16px', background: '#e2e8f0' }} />
@@ -644,6 +773,7 @@ function HintBar({ dismissed, onDismiss }: { dismissed: boolean; onDismiss: () =
 // ── Page ───────────────────────────────────────────────────────────────────────
 export default function Hardware() {
   const [exploded, setExploded]   = useState(false)
+  const [deployed, setDeployed]   = useState(true)   // panels deployed by default
   const [selected, setSelected]   = useState<string | null>(null)
   const [resetTrigger, setReset]  = useState(0)
   const [hintDismissed, setHint]  = useState(false)
@@ -727,7 +857,7 @@ export default function Hardware() {
         <directionalLight position={[0.5, 1.0, 1.8]} intensity={1.0} color="#f0f4ff" />
         <pointLight position={[0.8, -0.5, 0.5]} intensity={0.3} color="#c8860a" />
 
-        <Satellite exploded={exploded} selected={selected} onSelect={setSelected} rotating={rotating} />
+        <Satellite exploded={exploded} deployed={deployed} selected={selected} onSelect={setSelected} rotating={rotating} />
 
         {/* Shadow catcher */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.28, 0]} receiveShadow>
@@ -748,6 +878,8 @@ export default function Hardware() {
       <Toolbar
         exploded={exploded}
         onExplode={() => setExploded(e => !e)}
+        deployed={deployed}
+        onToggleDeploy={() => setDeployed(d => !d)}
         onReset={handleReset}
         selected={selected}
         rotating={rotating}
