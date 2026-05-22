@@ -28,12 +28,14 @@ const h2 = { fontVariationSettings: "'wght' 580", letterSpacing: '-0.025em', col
 const team = [
   {
     initials: 'JQ',
+    photo: '/jason-ggle.jpg',
     name: 'Jason Quist',
     role: 'Founder & CEO · Kigali, Rwanda',
     bio: 'Founder and systems architect focused on autonomous orbital infrastructure, reinforcement learning systems, and next-generation nanosatellite coordination architectures. Leads product, research, and company strategy.',
   },
   {
     initials: 'AD',
+    photo: '/alph.jpg',
     name: 'Alph Doamekpor',
     role: 'Strategy & Aerospace Advisor · Germany',
     bio: 'Over two decades across ESA, NASA, and EUMETSAT. Advises on orbital systems engineering, mission architecture, and aerospace operational constraints across the IOLA roadmap.',
@@ -143,11 +145,28 @@ export default function About() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
             {team.map((m, i) => (
               <div key={m.name} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', padding: '28px 28px', background: '#fff', borderBottom: i < team.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
+                <img
+                  src={m.photo}
+                  alt={m.name}
+                  onError={(e) => {
+                    const t = e.currentTarget
+                    t.style.display = 'none'
+                    const fb = t.nextSibling as HTMLElement
+                    if (fb) fb.style.display = 'flex'
+                  }}
+                  style={{
+                    width: '56px', height: '56px', borderRadius: '50%',
+                    objectFit: 'cover', objectPosition: 'center top',
+                    flexShrink: 0, display: 'block',
+                    border: '2px solid #e2e8f0',
+                  }}
+                />
+                {/* Initials fallback — hidden when photo loads */}
                 <div style={{
-                  width: '44px', height: '44px', borderRadius: '50%',
+                  width: '56px', height: '56px', borderRadius: '50%',
                   background: 'linear-gradient(135deg, #0A2463, #1E5FA8)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#fff', fontWeight: 600, fontSize: '13px', flexShrink: 0,
+                  display: 'none', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontWeight: 600, fontSize: '14px', flexShrink: 0,
                   letterSpacing: '0.04em',
                 }}>
                   {m.initials}
