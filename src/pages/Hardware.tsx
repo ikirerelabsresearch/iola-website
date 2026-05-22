@@ -322,17 +322,18 @@ function Satellite({
   exploded,
   selected,
   onSelect,
+  rotating,
 }: {
   exploded: boolean
   selected: string | null
   onSelect: (id: string | null) => void
+  rotating: boolean
 }) {
   const group = useRef<THREE.Group>(null)
   const isDragging = useRef(false)
-  const autoRotate = useRef(true)
 
   useFrame((_, delta) => {
-    if (!group.current || !autoRotate.current || isDragging.current) return
+    if (!group.current || !rotating || isDragging.current) return
     group.current.rotation.y += delta * 0.14
   })
 
@@ -354,8 +355,6 @@ function Satellite({
 
   const click = (id: string) => (e: any) => {
     e.stopPropagation()
-    autoRotate.current = false
-    setTimeout(() => { autoRotate.current = true }, 3000)
     onSelect(selected === id ? null : id)
   }
 
@@ -538,12 +537,14 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
 
 // ── Toolbar ────────────────────────────────────────────────────────────────────
 function Toolbar({
-  exploded, onExplode, onReset, selected,
+  exploded, onExplode, onReset, selected, rotating, onToggleRotation,
 }: {
   exploded: boolean
   onExplode: () => void
   onReset: () => void
   selected: string | null
+  rotating: boolean
+  onToggleRotation: () => void
 }) {
   return (
     <div style={{
@@ -570,6 +571,26 @@ function Toolbar({
         transition: 'all 0.2s',
       }}>
         {exploded ? 'Assemble' : 'Disassemble'}
+      </button>
+
+      <div style={{ width: '1px', height: '16px', background: '#e2e8f0' }} />
+
+      {/* Rotation toggle */}
+      <button onClick={onToggleRotation} style={{
+        background: 'transparent',
+        color: rotating ? '#64748b' : '#0A2463',
+        border: 'none', borderRadius: '100px',
+        padding: '5px 12px',
+        fontSize: '11px', fontWeight: 500, cursor: 'pointer',
+        letterSpacing: '0.04em', textTransform: 'uppercase',
+        display: 'flex', alignItems: 'center', gap: '5px',
+      }}>
+        {/* Simple rotation icon */}
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <path d="M10 6A4 4 0 1 1 6 2"/>
+          <path d="M10 2v4h-4"/>
+        </svg>
+        {rotating ? 'Stop' : 'Rotate'}
       </button>
 
       <div style={{ width: '1px', height: '16px', background: '#e2e8f0' }} />
@@ -626,6 +647,7 @@ export default function Hardware() {
   const [selected, setSelected]   = useState<string | null>(null)
   const [resetTrigger, setReset]  = useState(0)
   const [hintDismissed, setHint]  = useState(false)
+  const [rotating, setRotating]   = useState(true)
 
   const handleDoubleClick = useCallback(() => {
     setExploded(e => !e)
@@ -705,7 +727,7 @@ export default function Hardware() {
         <directionalLight position={[0.5, 1.0, 1.8]} intensity={1.0} color="#f0f4ff" />
         <pointLight position={[0.8, -0.5, 0.5]} intensity={0.3} color="#c8860a" />
 
-        <Satellite exploded={exploded} selected={selected} onSelect={setSelected} />
+        <Satellite exploded={exploded} selected={selected} onSelect={setSelected} rotating={rotating} />
 
         {/* Shadow catcher */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.28, 0]} receiveShadow>
@@ -728,6 +750,8 @@ export default function Hardware() {
         onExplode={() => setExploded(e => !e)}
         onReset={handleReset}
         selected={selected}
+        rotating={rotating}
+        onToggleRotation={() => setRotating(r => !r)}
       />
 
       {/* Panel slide-in animation */}
