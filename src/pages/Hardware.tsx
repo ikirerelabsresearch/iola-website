@@ -284,21 +284,32 @@ function DeployablePanel({
   const PH  = 0.340
   const PT  = 0.005
 
-  // Stow angles — alternating for Z-fold accordion
-  // port side (+1): seg1 = +π, seg2 = -π, seg3 = +π
-  // star side (-1): seg1 = -π, seg2 = +π, seg3 = -π
-  const s1Stow =  side * Math.PI
-  const s2Stow = -side * Math.PI
-  const s3Stow =  side * Math.PI
+  // ── Correct accordion / Z-fold stow angles ──────────────────────────────────
+  // Seg1 root hinge is at the body edge (x = ±BX/2).
+  // When STOWED, seg1 must rotate 90° so it lies against the body's +Z face —
+  // i.e., away from the body interior, NEVER through it.
+  //
+  // In Three.js (right-handed, Y-up):
+  //   rotY = -π/2 maps local +X → world +Z  (panel swings forward)
+  //   rotY = +π/2 maps local +X → world -Z  (panel swings backward)
+  //
+  // For side = +1 (port):  rotY = -π/2  → panel lies at (BX/2, 0, +SEG/2) ✓ clear of body
+  // For side = -1 (star):  rotY = +π/2  → panel lies at (-BX/2, 0, +SEG/2) ✓ clear of body
+  //
+  // Seg2 then folds 180° BACK onto seg1 (in seg1's local frame) → stacks flat on seg1
+  // Seg3 folds 180° back onto seg2 → stacks flat on seg2
+  // Net result: all 3 panels stacked at z ≈ +SEG/2, thin stack alongside body face.
+  const s1Stow = -side * Math.PI / 2   // 90° fold — root segment away from body to +Z face
+  const s2Stow =  Math.PI              // 180° fold back onto seg1 (same for both sides)
+  const s3Stow =  Math.PI              // 180° fold back onto seg2
 
-  // Staggered spring configs — each slightly delayed via different tension
-  const cfg1 = { mass: 2.5, tension: 48,  friction: 19 }
-  const cfg2 = { mass: 2.5, tension: 40,  friction: 19 }  // slightly slower
-  const cfg3 = { mass: 2.5, tension: 33,  friction: 19 }  // slowest — outer tip
+  const cfg = { mass: 2.8, tension: 52, friction: 20 }
 
-  const { r1 } = useSpring({ r1: deployed ? 0 : s1Stow, config: cfg1 })
-  const { r2 } = useSpring({ r2: deployed ? 0 : s2Stow, config: cfg2, delay: deployed ? 120 : 0 })
-  const { r3 } = useSpring({ r3: deployed ? 0 : s3Stow, config: cfg3, delay: deployed ? 240 : 0 })
+  // Deploy: inner → outer (seg1 first, seg3 last — natural cascade)
+  // Stow:   outer → inner (seg3 first, seg1 last — fold tip in before root)
+  const { r1 } = useSpring({ r1: deployed ? 0 : s1Stow, config: cfg, delay: deployed ? 0   : 380 })
+  const { r2 } = useSpring({ r2: deployed ? 0 : s2Stow, config: cfg, delay: deployed ? 160 : 190 })
+  const { r3 } = useSpring({ r3: deployed ? 0 : s3Stow, config: cfg, delay: deployed ? 320 : 0   })
 
   const { posX } = useSpring({
     posX: side * BX / 2 + (exploded ? side * 0.42 : 0),
