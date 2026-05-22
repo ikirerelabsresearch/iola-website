@@ -53,6 +53,20 @@ const updates = [
       'The platform no longer just tracks orbit. It understands orbital relationships, predicts future state, and produces actionable operational intelligence.',
     ],
   },
+  {
+    date: 'Q4 2026',
+    phase: 'Upcoming',
+    phaseColor: '#22c55e',
+    title: 'Phase 3 Begins — IkirereMesh Autonomous Coordination',
+    body: [
+      'Phase 3 transitions IOLA from orbital intelligence infrastructure into autonomous constellation coordination systems.',
+      'The focus shifts from understanding orbital state to coordinating satellite behavior dynamically across distributed nanosatellite fleets. This includes autonomous scheduling, multi-satellite orchestration, coverage optimization, anomaly response, and reinforcement learning driven operational coordination.',
+      'IkirereMesh introduces the coordination layer for programmable orbital infrastructure: a distributed intelligence system capable of managing satellite relationships, mission priorities, telemetry awareness, and operational decision-making across an entire constellation.',
+      'Core research areas entering active development include multi-satellite coordination policies, autonomous collision avoidance, adaptive coverage optimisation, fuel-aware manoeuvre planning, reinforcement learning coordination systems, distributed telemetry intelligence, constellation-wide operational memory, and subsystem health and degradation analytics.',
+      'The long-term objective is a constellation architecture capable of autonomous operational behavior while maintaining deterministic safety constraints and verifiable orbital coordination guarantees.',
+      'This phase establishes the foundation for self-coordinating multipurpose nanosatellite infrastructure operating as a unified orbital system rather than isolated spacecraft.',
+    ],
+  },
 ]
 
 export default function Updates() {

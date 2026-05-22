@@ -219,14 +219,54 @@ function usePart(id: string, base: [number, number, number], exploded: boolean) 
 const AM  = animated('mesh'  as any) as any
 const AG  = animated('group' as any) as any
 
-// ── Deployable solar panel with spring-animated hinge rotation ───────────────
-// Physics:
-//   Stowed  → panel lies flat against body face (rotation.z = 0)
-//   Deployed→ panel swings 90° outward around the body edge (rotation.z = ±π/2)
-//   The GROUP is positioned AT the hinge (body edge).
-//   The panel mesh is offset PW/2 in local +X from the hinge so it rotates like a door.
+// ── Single panel segment ──────────────────────────────────────────────────────
+function PanelSegment({
+  side, segW, PH, PT, mat, onClick, children,
+}: {
+  side: 1 | -1; segW: number; PH: number; PT: number
+  mat: THREE.Material; onClick: (e: any) => void; children?: React.ReactNode
+}) {
+  return (
+    <>
+      {/* Solar face */}
+      <AM
+        position-x={side * segW / 2} position-y={0} position-z={0}
+        material={mat} castShadow onClick={onClick}
+      >
+        <boxGeometry args={[segW, PH, PT]} />
+      </AM>
+      {/* Top/bottom frame edges */}
+      <mesh position={[side * segW / 2,  PH/2 + 0.0025, 0]} material={aluMat}>
+        <boxGeometry args={[segW + 0.001, 0.004, PT + 0.001]} />
+      </mesh>
+      <mesh position={[side * segW / 2, -PH/2 - 0.0025, 0]} material={aluMat}>
+        <boxGeometry args={[segW + 0.001, 0.004, PT + 0.001]} />
+      </mesh>
+      {/* Hinge knuckle at tip */}
+      <mesh position={[side * segW, 0, 0]} material={aluMat}>
+        <boxGeometry args={[0.006, 0.022, 0.006]} />
+      </mesh>
+      {/* Children = next segment group, positioned at tip */}
+      <group position={[side * segW, 0, 0]}>{children}</group>
+    </>
+  )
+}
+
+// ── Tri-fold deployable solar array ──────────────────────────────────────────
+// Accordion / Z-fold: 3 segments of equal width.
+// Each hinge rotates in the opposite direction to the previous (Z-fold).
+//
+// Deployed:  all hinges at 0° → array fully extended in ±X
+// Stowed:    seg1 folds back against body (rotY = ±π)
+//            seg2 folds back on seg1 (rotY = ∓π — opposite)
+//            seg3 folds back on seg2 (rotY = ±π — same as seg1)
+//            Result: compact stack of 3 panels stowed flat against body
+//
+// Sequential deployment: seg1 deploys first (delay 0ms),
+//                        seg2 follows (delay 200ms),
+//                        seg3 follows (delay 400ms)
 function DeployablePanel({
-  side,        // +1 = port (+X),  -1 = starboard (-X)
+  side,
   deployed,
   exploded,
   selected,
@@ -238,95 +278,62 @@ function DeployablePanel({
   selected: string | null
   onSelect: (id: string | null) => void
 }) {
-  const id   = side === 1 ? 'panelL' : 'panelR'
-  const BX   = 0.100
-  const PW   = 0.220   // panel width (span direction)
-  const PH   = 0.340   // panel height = body height
-  const PT   = 0.006   // panel thickness
+  const id  = side === 1 ? 'panelL' : 'panelR'
+  const BX  = 0.100
+  const SEG = 0.080   // each segment width — 3 × 80mm = 240mm total span
+  const PH  = 0.340
+  const PT  = 0.005
 
-  // Hinge sits exactly at the body edge: x = ±BX/2
-  const HINGE_X = side * BX / 2
+  // Stow angles — alternating for Z-fold accordion
+  // port side (+1): seg1 = +π, seg2 = -π, seg3 = +π
+  // star side (-1): seg1 = -π, seg2 = +π, seg3 = -π
+  const s1Stow =  side * Math.PI
+  const s2Stow = -side * Math.PI
+  const s3Stow =  side * Math.PI
 
-  // Stowed: panel face-to-face with body side (needs to sit just outside body)
-  // The panel's local-X centre when stowed = PT/2 (just proud of hinge)
-  // Deployed: panel swings to local-X centre = PW/2
+  // Staggered spring configs — each slightly delayed via different tension
+  const cfg1 = { mass: 2.5, tension: 48,  friction: 19 }
+  const cfg2 = { mass: 2.5, tension: 40,  friction: 19 }  // slightly slower
+  const cfg3 = { mass: 2.5, tension: 33,  friction: 19 }  // slowest — outer tip
 
-  // Spring on hinge rotation (Z-axis):
-  //   Stowed   = 0 rad  → panel is parallel to body face (pointing in ±X)
-  //   Deployed = ±π/2   → panel is perpendicular to body (pointing in ±Y)
-  // When exploded, push further out in X too
-  const deployAngle  = side * Math.PI / 2   // +π/2 for port, -π/2 for starboard
-  const explodeShift = exploded ? side * 0.38 : 0
-
-  const { rotZ } = useSpring({
-    rotZ: deployed ? deployAngle : 0,
-    config: {
-      mass:      2.5,           // heavy — spring loaded but damped
-      tension:   55,            // slow, deliberate deployment
-      friction:  18,
-    },
-  })
+  const { r1 } = useSpring({ r1: deployed ? 0 : s1Stow, config: cfg1 })
+  const { r2 } = useSpring({ r2: deployed ? 0 : s2Stow, config: cfg2, delay: deployed ? 120 : 0 })
+  const { r3 } = useSpring({ r3: deployed ? 0 : s3Stow, config: cfg3, delay: deployed ? 240 : 0 })
 
   const { posX } = useSpring({
-    posX: HINGE_X + explodeShift,
+    posX: side * BX / 2 + (exploded ? side * 0.42 : 0),
     config: { mass: 1.2, tension: 130, friction: 22 },
   })
 
   const isSelected = selected === id
   const mat = isSelected ? highlightMat : solarMat
-
-  // When deployed the panel mesh centre is at local (PW/2, 0, 0) from hinge
-  // When stowed it is at local (PT/2, 0, 0) — just outside the body face
-  // We always keep it at PW/2 in local X; the rotation handles the geometry.
-  // A thin hinge bracket mesh at origin of this group
-  const HINGE_W = 0.008
-  const HINGE_H = 0.028
+  const click = (e: any) => { e.stopPropagation(); onSelect(isSelected ? null : id) }
 
   return (
-    // Outer group translates the whole assembly (including explode offset)
+    // Root: hinge knuckle sits at body edge
     <AG position-x={posX} position-y={0} position-z={0}>
-      {/* Hinge bracket — static, always visible */}
+      {/* Body-edge hinge bracket */}
       <mesh material={aluMat} castShadow>
-        <boxGeometry args={[HINGE_W, HINGE_H, HINGE_W]} />
+        <boxGeometry args={[0.007, 0.024, 0.007]} />
       </mesh>
 
-      {/* Rotating group — pivots around Z at hinge origin */}
-      <AG rotation-z={rotZ}>
-        {/* Panel mesh — offset PW/2 outward in local +X */}
-        <AM
-          position-x={side * PW / 2}
-          position-y={0}
-          position-z={0}
-          material={mat}
-          castShadow
-          onClick={(e: any) => { e.stopPropagation(); onSelect(isSelected ? null : id) }}
-        >
-          <boxGeometry args={[PW, PH, PT]} />
-        </AM>
+      {/* Segment 1 — hinges at body edge, rotates around Y */}
+      <AG rotation-y={r1}>
+        <PanelSegment side={side} segW={SEG} PH={PH} PT={PT} mat={mat} onClick={click}>
 
-        {/* Top edge frame */}
-        <mesh
-          position={[side * PW / 2, PH / 2 + 0.003, 0]}
-          material={aluMat}
-        >
-          <boxGeometry args={[PW + 0.002, 0.005, PT + 0.002]} />
-        </mesh>
+          {/* Segment 2 — hinges at tip of seg1, rotates opposite */}
+          <AG rotation-y={r2}>
+            <PanelSegment side={side} segW={SEG} PH={PH} PT={PT} mat={mat} onClick={click}>
 
-        {/* Bottom edge frame */}
-        <mesh
-          position={[side * PW / 2, -PH / 2 - 0.003, 0]}
-          material={aluMat}
-        >
-          <boxGeometry args={[PW + 0.002, 0.005, PT + 0.002]} />
-        </mesh>
+              {/* Segment 3 — hinges at tip of seg2 */}
+              <AG rotation-y={r3}>
+                <PanelSegment side={side} segW={SEG} PH={PH} PT={PT} mat={mat} onClick={click} />
+              </AG>
 
-        {/* Tip edge frame strip */}
-        <mesh
-          position={[side * PW, 0, 0]}
-          material={aluMat}
-        >
-          <boxGeometry args={[0.004, PH, PT + 0.002]} />
-        </mesh>
+            </PanelSegment>
+          </AG>
+
+        </PanelSegment>
       </AG>
     </AG>
   )
