@@ -1,8 +1,11 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
-import { useSpring, animated } from '@react-spring/three'
 import * as THREE from 'three'
+import {
+  aluMat, bodyMat, darkMat, steelMat, highlightMat,
+  AM, DeployablePanel, usePart,
+} from '../components/CubeSatModel'
 
 // ── Component catalogue ────────────────────────────────────────────────────────
 // Every clickable part: id, display name, category, one-line status, full description, specs
@@ -168,187 +171,13 @@ const CAT_COLOR: Record<string, string> = {
   Propulsion:     '#22c55e',
 }
 
-// ── Materials ─────────────────────────────────────────────────────────────────
-const bodyMat  = new THREE.MeshStandardMaterial({ color: '#e5e4e2', roughness: 0.50, metalness: 0.0 })
-const aluMat   = new THREE.MeshStandardMaterial({ color: '#a6a6a8', roughness: 0.18, metalness: 1.0 })
-const steelMat = new THREE.MeshStandardMaterial({ color: '#9a9a9c', roughness: 0.10, metalness: 1.0 })
-const darkMat  = new THREE.MeshStandardMaterial({ color: '#080808', roughness: 0.60, metalness: 0.0 })
-const solarMat = new THREE.MeshStandardMaterial({ color: '#b04d06', roughness: 0.20, metalness: 0.0 })
-
-// Highlight material for selected part
-const highlightMat = new THREE.MeshStandardMaterial({
-  color: '#ffffff',
-  roughness: 0.15,
-  metalness: 0.1,
-  emissive: new THREE.Color('#1E5FA8'),
-  emissiveIntensity: 0.45,
-})
+// Materials, AM, AG, PanelSegment, DeployablePanel, usePart — all from CubeSatModel
 
 function getMatFor(id: string, selected: string | null, base: THREE.Material) {
   return id === selected ? highlightMat : base
 }
 
-// ── Exploded offsets ──────────────────────────────────────────────────────────
-const EXPLODE_OFFSETS: Record<string, [number, number, number]> = {
-  panelL: [0.60, 0,    0   ],
-  panelR: [-0.60,0,    0   ],
-  ant0:   [0.10, 0.38, 0   ],
-  ant1:   [-0.10,0.38, 0   ],
-  patch:  [0,    0.32,-0.05],
-  dome:   [0.14, 0.32, 0   ],
-  thr0:   [0.10,-0.38, 0.08],
-  thr1:   [-0.10,-0.38,0.08],
-  thr2:   [0,   -0.38,-0.08],
-  sep0:   [0,   -0.18, 0   ],
-  sep1:   [0,    0.18, 0   ],
-}
-
-function usePart(id: string, base: [number, number, number], exploded: boolean) {
-  const offset = EXPLODE_OFFSETS[id] ?? [0, 0, 0]
-  const target: [number, number, number] = exploded
-    ? [base[0] + offset[0], base[1] + offset[1], base[2] + offset[2]]
-    : base
-  const { position } = useSpring({
-    position: target,
-    config: { mass: 1.2, tension: 130, friction: 22 },
-  })
-  return position
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const AM  = animated('mesh'  as any) as any
-const AG  = animated('group' as any) as any
-
-// ── Single panel segment ──────────────────────────────────────────────────────
-function PanelSegment({
-  side, segW, PH, PT, mat, onClick, children,
-}: {
-  side: 1 | -1; segW: number; PH: number; PT: number
-  mat: THREE.Material; onClick: (e: any) => void; children?: React.ReactNode
-}) {
-  return (
-    <>
-      {/* Solar face */}
-      <AM
-        position-x={side * segW / 2} position-y={0} position-z={0}
-        material={mat} castShadow onClick={onClick}
-      >
-        <boxGeometry args={[segW, PH, PT]} />
-      </AM>
-      {/* Top/bottom frame edges */}
-      <mesh position={[side * segW / 2,  PH/2 + 0.0025, 0]} material={aluMat}>
-        <boxGeometry args={[segW + 0.001, 0.004, PT + 0.001]} />
-      </mesh>
-      <mesh position={[side * segW / 2, -PH/2 - 0.0025, 0]} material={aluMat}>
-        <boxGeometry args={[segW + 0.001, 0.004, PT + 0.001]} />
-      </mesh>
-      {/* Hinge knuckle at tip */}
-      <mesh position={[side * segW, 0, 0]} material={aluMat}>
-        <boxGeometry args={[0.006, 0.022, 0.006]} />
-      </mesh>
-      {/* Children = next segment group, positioned at tip */}
-      <group position={[side * segW, 0, 0]}>{children}</group>
-    </>
-  )
-}
-
-// ── Tri-fold deployable solar array ──────────────────────────────────────────
-// Accordion / Z-fold: 3 segments of equal width.
-// Each hinge rotates in the opposite direction to the previous (Z-fold).
-//
-// Deployed:  all hinges at 0° → array fully extended in ±X
-// Stowed:    seg1 folds back against body (rotY = ±π)
-//            seg2 folds back on seg1 (rotY = ∓π — opposite)
-//            seg3 folds back on seg2 (rotY = ±π — same as seg1)
-//            Result: compact stack of 3 panels stowed flat against body
-//
-// Sequential deployment: seg1 deploys first (delay 0ms),
-//                        seg2 follows (delay 200ms),
-//                        seg3 follows (delay 400ms)
-function DeployablePanel({
-  side,
-  deployed,
-  exploded,
-  selected,
-  onSelect,
-}: {
-  side: 1 | -1
-  deployed: boolean
-  exploded: boolean
-  selected: string | null
-  onSelect: (id: string | null) => void
-}) {
-  const id  = side === 1 ? 'panelL' : 'panelR'
-  const BX  = 0.100
-  const SEG = 0.080   // each segment width — 3 × 80mm = 240mm total span
-  const PH  = 0.340
-  const PT  = 0.005
-
-  // ── Correct accordion / Z-fold stow angles ──────────────────────────────────
-  // Seg1 root hinge is at the body edge (x = ±BX/2).
-  // When STOWED, seg1 must rotate 90° so it lies against the body's +Z face —
-  // i.e., away from the body interior, NEVER through it.
-  //
-  // In Three.js (right-handed, Y-up):
-  //   rotY = -π/2 maps local +X → world +Z  (panel swings forward)
-  //   rotY = +π/2 maps local +X → world -Z  (panel swings backward)
-  //
-  // For side = +1 (port):  rotY = -π/2  → panel lies at (BX/2, 0, +SEG/2) ✓ clear of body
-  // For side = -1 (star):  rotY = +π/2  → panel lies at (-BX/2, 0, +SEG/2) ✓ clear of body
-  //
-  // Seg2 then folds 180° BACK onto seg1 (in seg1's local frame) → stacks flat on seg1
-  // Seg3 folds 180° back onto seg2 → stacks flat on seg2
-  // Net result: all 3 panels stacked at z ≈ +SEG/2, thin stack alongside body face.
-  const s1Stow = -side * Math.PI / 2   // 90° — root swings to +Z body face
-  const s2Stow =  side * Math.PI       // 180° opposite to seg1, mirrored per side
-  const s3Stow = -side * Math.PI       // 180° opposite to seg2, mirrored per side
-
-  const cfg = { mass: 2.8, tension: 52, friction: 20 }
-
-  // Deploy: inner → outer (seg1 first, seg3 last — natural cascade)
-  // Stow:   outer → inner (seg3 first, seg1 last — fold tip in before root)
-  const { r1 } = useSpring({ r1: deployed ? 0 : s1Stow, config: cfg, delay: deployed ? 0   : 380 })
-  const { r2 } = useSpring({ r2: deployed ? 0 : s2Stow, config: cfg, delay: deployed ? 160 : 190 })
-  const { r3 } = useSpring({ r3: deployed ? 0 : s3Stow, config: cfg, delay: deployed ? 320 : 0   })
-
-  const { posX } = useSpring({
-    posX: side * BX / 2 + (exploded ? side * 0.42 : 0),
-    config: { mass: 1.2, tension: 130, friction: 22 },
-  })
-
-  const isSelected = selected === id
-  const mat = isSelected ? highlightMat : solarMat
-  const click = (e: any) => { e.stopPropagation(); onSelect(isSelected ? null : id) }
-
-  return (
-    // Root: hinge knuckle sits at body edge
-    <AG position-x={posX} position-y={0} position-z={0}>
-      {/* Body-edge hinge bracket */}
-      <mesh material={aluMat} castShadow>
-        <boxGeometry args={[0.007, 0.024, 0.007]} />
-      </mesh>
-
-      {/* Segment 1 — hinges at body edge, rotates around Y */}
-      <AG rotation-y={r1}>
-        <PanelSegment side={side} segW={SEG} PH={PH} PT={PT} mat={mat} onClick={click}>
-
-          {/* Segment 2 — hinges at tip of seg1, rotates opposite */}
-          <AG rotation-y={r2}>
-            <PanelSegment side={side} segW={SEG} PH={PH} PT={PT} mat={mat} onClick={click}>
-
-              {/* Segment 3 — hinges at tip of seg2 */}
-              <AG rotation-y={r3}>
-                <PanelSegment side={side} segW={SEG} PH={PH} PT={PT} mat={mat} onClick={click} />
-              </AG>
-
-            </PanelSegment>
-          </AG>
-
-        </PanelSegment>
-      </AG>
-    </AG>
-  )
-}
+// AM, AG, PanelSegment, DeployablePanel, usePart — imported from CubeSatModel
 
 // ── Per-part callout offset: label sits here, line points back to part ────────
 // [dx, dy] in screen-ish HTML space (pixels from part center)
