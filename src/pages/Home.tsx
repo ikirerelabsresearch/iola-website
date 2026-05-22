@@ -172,7 +172,6 @@ export default function Home() {
         style={{
           paddingTop: 'clamp(40px, 8vw, 60px)',
           paddingBottom: 'clamp(40px, 8vw, 96px)',
-          paddingBottom: '96px',
           borderBottom: '1px solid #e2e8f0',
           /* Dot grid — very subtle */
           backgroundImage: 'radial-gradient(circle, rgba(10,36,99,0.030) 1px, transparent 1px)',
