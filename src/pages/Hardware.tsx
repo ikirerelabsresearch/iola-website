@@ -218,38 +218,99 @@ function usePart(id: string, base: [number, number, number], exploded: boolean) 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const AM = animated('mesh' as any) as any
 
-// ── Label in 3D space (only visible when exploded) ────────────────────────────
+// ── Per-part callout offset: label sits here, line points back to part ────────
+// [dx, dy] in screen-ish HTML space (pixels from part center)
+const LABEL_OFFSETS: Record<string, [number, number, string]> = {
+  // [x-offset px, y-offset px, anchor side for the pointer line]
+  panelL:  [-110,   0,  'right' ],
+  panelR:  [ 110,   0,  'left'  ],
+  ant0:    [  60, -70,  'bottom'],
+  ant1:    [ -60, -70,  'bottom'],
+  patch:   [  90, -55,  'bottom'],
+  dome:    [ -90, -55,  'bottom'],
+  thr0:    [  90,  55,  'top'   ],
+  thr1:    [ -90,  55,  'top'   ],
+  thr2:    [   0,  80,  'top'   ],
+  sep0:    [ 110,  30,  'left'  ],
+  sep1:    [ 110, -30,  'left'  ],
+}
+
+// ── Callout label — offset pill with pointer line ─────────────────────────────
 function PartLabel({ id, position, exploded, selected, onSelect }:
   { id: string; position: any; exploded: boolean; selected: string | null; onSelect: (id: string) => void }
 ) {
   const comp = COMPONENTS[id]
-  if (!comp || !exploded) return null
+  const offset = LABEL_OFFSETS[id]
+  if (!comp || !exploded || !offset) return null
+
+  const [dx, dy, anchor] = offset
+  const isSelected = id === selected
+  const catColor = CAT_COLOR[comp.category] ?? '#1E5FA8'
+
+  // Pointer line: from label edge back toward the part center
+  // We draw it as an SVG absolutely positioned over the label container
   return (
     <AM position={position}>
       <Html
-        center
-        style={{ pointerEvents: 'none', whiteSpace: 'nowrap', userSelect: 'none' }}
+        center={false}
+        style={{ pointerEvents: 'none', overflow: 'visible', userSelect: 'none' }}
         distanceFactor={2.2}
       >
-        <div
-          onClick={() => onSelect(id)}
-          style={{
-            background: id === selected ? 'rgba(30,95,168,0.92)' : 'rgba(10,14,26,0.82)',
-            color: '#fff',
-            fontSize: '9px',
-            fontWeight: 600,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            padding: '3px 8px',
-            borderRadius: '3px',
-            border: `1px solid ${id === selected ? '#1E5FA8' : 'rgba(255,255,255,0.12)'}`,
-            pointerEvents: 'all',
-            cursor: 'pointer',
-            backdropFilter: 'blur(4px)',
-            transition: 'background 0.2s',
-          }}
-        >
-          {comp.name}
+        {/* Outer container — positioned so (0,0) is the part centre */}
+        <div style={{ position: 'relative', width: 0, height: 0, overflow: 'visible' }}>
+
+          {/* Pointer line — SVG drawn from origin to label offset */}
+          <svg
+            style={{
+              position: 'absolute',
+              overflow: 'visible',
+              pointerEvents: 'none',
+              left: 0, top: 0,
+            }}
+            width="1" height="1"
+          >
+            <line
+              x1={0} y1={0}
+              x2={dx} y2={dy}
+              stroke={isSelected ? catColor : 'rgba(10,36,99,0.35)'}
+              strokeWidth={isSelected ? '1.5' : '1'}
+              strokeDasharray={isSelected ? 'none' : '4 3'}
+            />
+            {/* Dot at the part end */}
+            <circle cx={0} cy={0} r="2.5" fill={isSelected ? catColor : 'rgba(10,36,99,0.4)'} />
+          </svg>
+
+          {/* Label pill — positioned at offset from part */}
+          <div
+            onClick={() => onSelect(id)}
+            style={{
+              position: 'absolute',
+              left: dx, top: dy,
+              transform: anchor === 'right'  ? 'translate(0, -50%)'  :
+                         anchor === 'left'   ? 'translate(-100%, -50%)' :
+                         anchor === 'bottom' ? 'translate(-50%, 0)' :
+                                              'translate(-50%, -100%)',
+              background: isSelected
+                ? `linear-gradient(135deg, ${catColor}ee, ${catColor}cc)`
+                : 'rgba(10,14,26,0.82)',
+              color: isSelected ? '#fff' : '#f0f4ff',
+              fontSize: '9.5px',
+              fontWeight: 600,
+              letterSpacing: '0.07em',
+              textTransform: 'uppercase',
+              padding: '4px 10px',
+              borderRadius: '4px',
+              border: `1px solid ${isSelected ? catColor : 'rgba(255,255,255,0.15)'}`,
+              pointerEvents: 'all',
+              cursor: 'pointer',
+              backdropFilter: 'blur(8px)',
+              whiteSpace: 'nowrap',
+              transition: 'background 0.2s, border-color 0.2s',
+              boxShadow: isSelected ? `0 2px 12px ${catColor}44` : '0 1px 4px rgba(0,0,0,0.3)',
+            }}
+          >
+            {comp.name}
+          </div>
         </div>
       </Html>
     </AM>
