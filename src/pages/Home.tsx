@@ -170,7 +170,8 @@ export default function Home() {
       <section
         className="relative overflow-hidden"
         style={{
-          paddingTop: '60px',
+          paddingTop: 'clamp(40px, 8vw, 60px)',
+          paddingBottom: 'clamp(40px, 8vw, 96px)',
           paddingBottom: '96px',
           borderBottom: '1px solid #e2e8f0',
           /* Dot grid — very subtle */
@@ -193,10 +194,10 @@ export default function Home() {
           aria-hidden
         />
 
-        <div className="max-w-[1100px] mx-auto px-8 relative z-10 flex items-center gap-10">
+        <div className="max-w-[1100px] mx-auto px-8 relative z-10 flex flex-col md:flex-row items-center gap-10">
 
           {/* ── Left: copy ─────────────────────────────────────── */}
-          <div style={{ flex: '0 0 auto', maxWidth: '460px' }}>
+          <div style={{ flex: '0 0 auto', width: '100%', maxWidth: '460px' }}>
             <div className="flex items-center gap-3 mb-8">
               <div className="w-6 h-px" style={{ background: 'linear-gradient(to right, transparent, #1E5FA8)' }} />
               <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#1E5FA8' }}>
@@ -260,7 +261,7 @@ export default function Home() {
           </div>
 
           {/* ── Right: live 3D satellite — floats on hero, no box ── */}
-          <div style={{ flex: '1 1 0', minWidth: 0, height: '480px', position: 'relative' }}>
+          <div style={{ flex: '1 1 0', minWidth: 0, width: '100%', height: 'clamp(280px, 45vw, 480px)', position: 'relative' }}>
             <Suspense fallback={null}>
               <SatelliteViewer transparent />
             </Suspense>

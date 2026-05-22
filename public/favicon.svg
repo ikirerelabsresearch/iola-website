@@ -1,31 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Rounded square background — white, like the light logo -->
+  <defs>
+    <clipPath id="r">
+      <rect width="64" height="64" rx="14" ry="14"/>
+    </clipPath>
+  </defs>
   <rect width="64" height="64" rx="14" ry="14" fill="#ffffff"/>
-
-  <!-- Globe — blue gradient approximation -->
-  <circle cx="32" cy="28" r="18" fill="#1E5FA8"/>
-
-  <!-- Darker lower half of globe -->
-  <path d="M14 28 Q14 46 32 46 Q50 46 50 28 Z" fill="#0A2463"/>
-
-  <!-- Africa silhouette — simplified, dark -->
-  <path d="M29 20 L31 18 L34 18 L36 20 L37 23 L36 26 L38 29 L37 33 L35 36 L33 38 L31 37 L29 34 L28 31 L26 28 L26 25 L27 22 Z" fill="#0A2463" opacity="0.85"/>
-
-  <!-- Stars — small white dots -->
-  <circle cx="20" cy="16" r="1" fill="#fff" opacity="0.8"/>
-  <circle cx="38" cy="13" r="0.8" fill="#fff" opacity="0.8"/>
-  <circle cx="44" cy="19" r="0.7" fill="#fff" opacity="0.7"/>
-
-  <!-- Orbital arc — gold -->
-  <ellipse cx="32" cy="26" rx="22" ry="7" fill="none" stroke="#C8860A" stroke-width="2"
-    stroke-dasharray="28 8"
-    transform="rotate(-18 32 26)"/>
-
-  <!-- Satellite on arc -->
-  <circle cx="49" cy="18" r="1.8" fill="#C8860A"/>
-  <line x1="47" y1="18" x2="51" y2="18" stroke="#C8860A" stroke-width="1.2" stroke-linecap="round"/>
-  <line x1="49" y1="16" x2="49" y2="20" stroke="#C8860A" stroke-width="1.2" stroke-linecap="round"/>
-
-  <!-- Sunrise glow at horizon -->
-  <path d="M15 35 Q32 44 49 35" fill="none" stroke="#C8860A" stroke-width="1.5" opacity="0.55"/>
+  <image href="/iola-logo-light.png" width="64" height="64" clip-path="url(#r)"/>
 </svg>
