@@ -41,8 +41,8 @@ const updates = [
   {
     date: 'June 2026',
     phase: 'Phase 2',
-    phaseColor: '#64748b',
-    title: 'Phase 2 Begins — Orbital Intelligence Infrastructure',
+    phaseColor: '#0A2463',
+    title: 'Phase 2 Complete — Orbital Intelligence Infrastructure',
     body: [
       'Phase 2 focuses on transforming the IOLA platform from an orbital state engine into a predictive orbital intelligence system capable of understanding, forecasting, and reasoning about satellite behavior in real time.',
       'Current development includes conjunction assessment, closest-approach prediction, orbital forecasting, communication window analysis, coverage estimation, and deterministic operational risk modelling across large-scale satellite environments.',
@@ -54,8 +54,8 @@ const updates = [
     ],
   },
   {
-    date: 'Q4 2026',
-    phase: 'Upcoming',
+    date: 'May 2026',
+    phase: 'Phase 3',
     phaseColor: '#22c55e',
     title: 'Phase 3 Begins — IkirereMesh Autonomous Coordination',
     body: [

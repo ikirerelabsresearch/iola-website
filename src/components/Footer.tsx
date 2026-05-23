@@ -50,7 +50,7 @@ export default function Footer() {
           <p className="text-xs text-[#94a3b8]">© 2026 Ikirere Orbital Labs Africa. Kigali, Rwanda.</p>
           <div className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            <p className="text-xs text-[#94a3b8]">Phase 01 active — ground software</p>
+            <p className="text-xs text-[#94a3b8]">Phase 03 active — IkirereMesh coordination</p>
           </div>
         </div>
       </div>
