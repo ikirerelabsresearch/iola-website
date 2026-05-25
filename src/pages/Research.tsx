@@ -48,7 +48,7 @@ const areas = [
       </svg>
     ),
     title: 'Conjunction Assessment',
-    status: 'Phase 2',
+    status: 'Active',
     statusColor: '#64748b',
     desc: 'Real-time orbital risk analysis and collision prediction systems for dense nanosatellite environments.',
   },
@@ -63,7 +63,7 @@ const areas = [
       </svg>
     ),
     title: 'Autonomous Coordination Systems',
-    status: 'Phase 2',
+    status: 'Phase 3',
     statusColor: '#64748b',
     desc: 'Multi-agent coordination architectures for distributed satellite fleets operating as adaptive orbital networks.',
   },
@@ -102,7 +102,7 @@ const areas = [
       </svg>
     ),
     title: 'Ground Systems',
-    status: 'Phase 2',
+    status: 'Phase 3',
     statusColor: '#64748b',
     desc: 'Ground communication, telemetry, and mission control infrastructure supporting autonomous orbital operations across Africa.',
   },

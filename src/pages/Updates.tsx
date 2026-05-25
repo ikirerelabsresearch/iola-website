@@ -39,7 +39,7 @@ const updates = [
     ],
   },
   {
-    date: 'June 2026',
+    date: 'May 2026',
     phase: 'Phase 2',
     phaseColor: '#0A2463',
     title: 'Phase 2 Complete — Orbital Intelligence Infrastructure',
