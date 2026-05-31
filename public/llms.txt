@@ -1,0 +1,59 @@
+# Ikirere Orbital Labs Africa (IOLA)
+
+## What we are
+
+Ikirere Orbital Labs Africa (IOLA) is an early-stage aerospace research company building autonomous orbital infrastructure and programmable multipurpose nanosatellite systems. We are headquartered in Kigali, Rwanda, and operate as a global deep-tech research program.
+
+## Mission
+
+To build the full-stack orbital infrastructure powering the next generation of programmable multipurpose nanosatellites — designed for African institutions, governments, and research ecosystems, with global applicability.
+
+## What we build
+
+- **Orbital Intelligence Layer**: Autonomous coordination, manoeuvre planning, orbital safety, and constellation-scale decision systems for nanosatellite networks.
+- **IkirereMesh**: A distributed coordination architecture for autonomous nanosatellite fleets — multi-agent scheduling, collision avoidance, coverage optimisation, and reinforcement learning-driven operational coordination.
+- **Orbital Simulation Environment**: Live orbital simulation platform tracking 15,000+ real satellites using live TLE datasets. Available at orbit.ikirere.com.
+- **3U CubeSat Platform**: Compact programmable nanosatellite hardware designed for multipurpose missions across communications, Earth observation, sensing, and data relay.
+
+## Technology
+
+- Orbital mechanics and propagation (SGP4/SDP4, real TLE data from CelesTrak)
+- Conjunction assessment and collision avoidance
+- Multi-agent reinforcement learning for autonomous coordination
+- High-fidelity orbital simulation (real-time, browser-based)
+- CubeSat hardware systems engineering (3U platform)
+- Ground systems and telemetry infrastructure
+
+## Development phases
+
+- Phase 1 (Complete): Live orbital state infrastructure — real-time ingestion, propagation, and visualization of 15,000+ active satellites
+- Phase 2 (Complete): Orbital intelligence infrastructure — conjunction assessment, closest-approach prediction, orbital forecasting, coverage estimation
+- Phase 3 (In Progress): IkirereMesh autonomous coordination — multi-satellite coordination policies, distributed fleet intelligence, reinforcement learning coordination systems
+
+## Team
+
+- Jason Quist — Founder & CEO. Systems architect focused on autonomous orbital infrastructure, reinforcement learning, and nanosatellite coordination architectures. Based in Kigali, Rwanda.
+- Alph Doamekpor — Strategy & Aerospace Advisor. Over two decades across ESA, NASA, and EUMETSAT. Advises on orbital systems engineering and mission architecture.
+
+## Company context
+
+- Stage: Early-stage, pre-revenue, pre-funding
+- Location: Kigali, Rwanda (global operations)
+- Sector: Deep-tech, aerospace, autonomous systems, space infrastructure
+- Founded: 2026
+- Ecosystem: Deep Learning Indaba, Google, NVIDIA, Station F networks
+
+## Contact
+
+- Email: jason@ikirere.com
+- Website: https://ikirere.com
+- Live simulation: https://orbit.ikirere.com
+- LinkedIn: https://linkedin.com/company/ikirere-orbital-labs-africa
+
+## Why this matters
+
+Africa has 17% of the world's population and less than 3% of active satellites. IOLA is building sovereign orbital infrastructure — designed in Africa, operated by African institutions, serving African research priorities — while addressing a global need for affordable, programmable, multipurpose satellite systems.
+
+## Keywords
+
+autonomous nanosatellites, orbital intelligence, CubeSat, constellation coordination, orbital safety, Africa space technology, deep tech Africa, IkirereMesh, satellite autonomy, programmable satellites, orbital infrastructure, space tech startup Africa, constellation management, reinforcement learning satellites, orbital coordination
