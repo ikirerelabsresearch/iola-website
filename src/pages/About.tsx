@@ -31,7 +31,7 @@ const team = [
     initials: 'JQ',
     photo: '/jason-ggle.jpg',
     name: 'Jason Quist',
-    role: 'Co-Founder & CEO · Kigali, Rwanda',
+    role: 'Founder & CEO · Kigali, Rwanda',
     bio: 'Founder and systems architect focused on autonomous orbital infrastructure, reinforcement learning systems, and next-generation nanosatellite coordination architectures. Leads product, research, and company strategy.',
   },
   {
