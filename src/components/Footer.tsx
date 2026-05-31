@@ -43,6 +43,19 @@ export default function Footer() {
                 <span className="text-sm text-[#94a3b8]">Ground Software</span>
               </div>
             </div>
+            <div>
+              <p className="text-[10px] font-semibold tracking-[0.12em] uppercase text-[#94a3b8] mb-3">Connect</p>
+              <div className="flex flex-col gap-2">
+                <a href="https://www.linkedin.com/company/ikirere-orbital-labs-africa" target="_blank" rel="noopener noreferrer"
+                  className="text-sm text-muted hover:text-navy transition-colors">
+                  LinkedIn ↗
+                </a>
+                <a href="mailto:jason@ikirere.com"
+                  className="text-sm text-muted hover:text-navy transition-colors">
+                  jason@ikirere.com
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 

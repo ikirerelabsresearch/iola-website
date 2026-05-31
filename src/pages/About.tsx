@@ -31,8 +31,15 @@ const team = [
     initials: 'JQ',
     photo: '/jason-ggle.jpg',
     name: 'Jason Quist',
-    role: 'Founder & CEO · Kigali, Rwanda',
+    role: 'Co-Founder & CEO · Kigali, Rwanda',
     bio: 'Founder and systems architect focused on autonomous orbital infrastructure, reinforcement learning systems, and next-generation nanosatellite coordination architectures. Leads product, research, and company strategy.',
+  },
+  {
+    initials: 'MM',
+    photo: '/mayank.jpeg',
+    name: 'Mayank Mutha',
+    role: 'Co-Founder & Aerospace Systems Engineer · India',
+    bio: 'Aerospace systems engineer focused on spacecraft mission architecture, autonomous orbital operations, and simulation-driven satellite system design. Works across ADCS and mission planning for CubeSat-class spacecraft. Ex-Dhruva Space.',
   },
   {
     initials: 'AD',
@@ -92,6 +99,17 @@ export default function About() {
             "description": "Founder and systems architect focused on autonomous orbital infrastructure, reinforcement learning systems, and next-generation nanosatellite coordination architectures.",
             "image": "https://ikirere.com/jason-ggle.jpg",
             "url": "https://ikirere.com/about"
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Mayank Mutha",
+            "jobTitle": "Co-Founder & Aerospace Systems Engineer",
+            "worksFor": { "@id": "https://ikirere.com/#organization" },
+            "description": "Aerospace systems engineer focused on spacecraft mission architecture, autonomous orbital operations, and simulation-driven satellite system design. Works across ADCS and mission planning for CubeSat-class spacecraft. Ex-Dhruva Space.",
+            "image": "https://ikirere.com/mayank.jpeg",
+            "url": "https://ikirere.com/about",
+            "alumniOf": { "@type": "Organization", "name": "Dhruva Space" }
           },
           {
             "@context": "https://schema.org",

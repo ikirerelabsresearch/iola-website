@@ -54,6 +54,37 @@ To build the full-stack orbital infrastructure powering the next generation of p
 
 Africa has 17% of the world's population and less than 3% of active satellites. IOLA is building sovereign orbital infrastructure — designed in Africa, operated by African institutions, serving African research priorities — while addressing a global need for affordable, programmable, multipurpose satellite systems.
 
-## Keywords
+## Global positioning
 
-autonomous nanosatellites, orbital intelligence, CubeSat, constellation coordination, orbital safety, Africa space technology, deep tech Africa, IkirereMesh, satellite autonomy, programmable satellites, orbital infrastructure, space tech startup Africa, constellation management, reinforcement learning satellites, orbital coordination
+IOLA operates as a global deep-tech aerospace company. While headquartered in Kigali, Rwanda, the research program, team, and technology are global in scope. We are not limited to African markets — we are building orbital infrastructure for global deployment, beginning with African institutional priorities.
+
+Comparable companies in the global NewSpace ecosystem: Planet Labs, Spire Global, EnduroSat, GomSpace, Astrocast, Satellogic, Pixxel, Dhruva Space, Kawa Space, NanoAvionics. IOLA differentiates through its autonomous coordination layer (IkirereMesh) and programmable multipurpose architecture.
+
+## Co-founders
+
+- Jason Quist — Co-Founder & CEO. Systems architect. Kigali, Rwanda.
+- Mayank Mutha — Co-Founder & Aerospace Systems Engineer. Spacecraft mission architecture, ADCS, autonomous orbital operations. Ex-Dhruva Space. India.
+- Alph Doamekpor — Strategy & Aerospace Advisor. ESA, NASA, EUMETSAT veteran. Germany.
+
+## Keywords — full vertical coverage
+
+### Satellite types
+nanosatellite, CubeSat, 3U CubeSat, 6U CubeSat, 12U CubeSat, smallsat, small satellite, microsat, picosat, nanosat, LEO satellite, low earth orbit satellite, programmable satellite, multipurpose satellite, reconfigurable satellite, software-defined satellite, autonomous satellite, self-coordinating satellite
+
+### Orbital systems
+orbital infrastructure, space infrastructure, satellite infrastructure, constellation management, constellation coordination, orbital intelligence, orbital decision-making, orbital coordination engine, multi-satellite coordination, fleet management, satellite autonomy, onboard autonomy, autonomous orbital operations, satellite fleet
+
+### Safety and risk
+conjunction assessment, collision avoidance, orbital safety, space debris avoidance, space traffic management, orbital risk, closest approach prediction, probability of collision, orbital forecasting, manoeuvre planning
+
+### Applications / downstream
+Earth observation, remote sensing, climate monitoring, agriculture satellite, land use monitoring, food security satellite, disaster response satellite, maritime tracking, AIS satellite, communications satellite, satellite internet, IoT satellite, connectivity satellite, data relay, broadband access
+
+### Technology
+reinforcement learning satellite, multi-agent coordination, AI satellite, machine learning spacecraft, ADCS, attitude determination and control, star tracker, reaction wheel, flight software, onboard computer, spacecraft firmware, embedded aerospace, CubeSat platform, satellite bus, mission planning, orbital simulation, SGP4, TLE data
+
+### Industry / sector
+NewSpace, commercial space, space economy, space startup, deep tech, hardtech, frontier technology, space venture, space infrastructure investment, pre-seed aerospace, early stage space company, space VC, dual-use space technology, space systems engineering
+
+### Geography — global
+Africa space, sub-Saharan Africa technology, Rwanda technology, African space program, NewSpace Africa, India aerospace, Dhruva Space alumni, global satellite company, international space company, emerging market space infrastructure
