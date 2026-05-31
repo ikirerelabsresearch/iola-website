@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import PageSEO from '../components/PageSEO'
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
@@ -41,6 +42,21 @@ export default function Careers() {
 
   return (
     <>
+      <PageSEO
+        title="Careers — Join the Orbital Infrastructure Program"
+        description="IOLA is recruiting aerospace engineers, orbital mechanics specialists, embedded systems engineers, and autonomous systems researchers to build next-generation nanosatellite infrastructure from Africa."
+        path="/careers"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": "Aerospace Research Contributor",
+          "description": "IOLA seeks orbital mechanics specialists, embedded systems engineers, autonomous systems researchers, and aerospace systems engineers to build programmable nanosatellite infrastructure.",
+          "hiringOrganization": { "@id": "https://ikirere.com/#organization" },
+          "jobLocation": { "@type": "Place", "name": "Remote / Kigali, Rwanda" },
+          "employmentType": "CONTRACTOR",
+          "datePosted": "2026-01-01"
+        }}
+      />
       {/* ── Page hero ─────────────────────────────────── */}
       <section
         className="relative overflow-hidden"

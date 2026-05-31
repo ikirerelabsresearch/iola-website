@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import PageSEO from '../components/PageSEO'
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
@@ -68,6 +69,42 @@ export default function About() {
 
   return (
     <>
+      <PageSEO
+        title="About — Who We Are"
+        description="Ikirere Orbital Labs Africa: a frontier aerospace research program building autonomous orbital infrastructure from Africa. Learn about our mission, team, and philosophy."
+        path="/about"
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            "url": "https://ikirere.com/about",
+            "name": "About Ikirere Orbital Labs Africa",
+            "description": "About the team and mission behind IOLA — building autonomous nanosatellite infrastructure from Africa.",
+            "isPartOf": { "@id": "https://ikirere.com/#website" },
+            "about": { "@id": "https://ikirere.com/#organization" }
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Jason Quist",
+            "jobTitle": "Founder & CEO",
+            "worksFor": { "@id": "https://ikirere.com/#organization" },
+            "description": "Founder and systems architect focused on autonomous orbital infrastructure, reinforcement learning systems, and next-generation nanosatellite coordination architectures.",
+            "image": "https://ikirere.com/jason-ggle.jpg",
+            "url": "https://ikirere.com/about"
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Alph Doamekpor",
+            "jobTitle": "Strategy & Aerospace Advisor",
+            "worksFor": { "@id": "https://ikirere.com/#organization" },
+            "description": "Over two decades across ESA, NASA, and EUMETSAT. Advises on orbital systems engineering, mission architecture, and aerospace operational constraints.",
+            "image": "https://ikirere.com/alph.jpg",
+            "url": "https://ikirere.com/about"
+          }
+        ]}
+      />
       {/* ── Page hero ─────────────────────────────────── */}
       <section
         className="relative overflow-hidden"

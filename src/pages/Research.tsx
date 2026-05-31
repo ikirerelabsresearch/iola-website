@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import PageSEO from '../components/PageSEO'
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
@@ -114,6 +115,20 @@ export default function Research() {
 
   return (
     <>
+      <PageSEO
+        title="Research — Orbital Intelligence & Autonomous Systems"
+        description="IOLA research spans orbital intelligence, conjunction assessment, autonomous coordination, simulation infrastructure, hardware systems, and ground systems for next-generation nanosatellite networks."
+        path="/research"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "ResearchProject",
+          "name": "IOLA Orbital Intelligence Research",
+          "url": "https://ikirere.com/research",
+          "description": "Applied research across orbital intelligence, autonomous coordination systems, simulation infrastructure, and next-generation nanosatellite architectures.",
+          "funder": { "@id": "https://ikirere.com/#organization" },
+          "keywords": "orbital intelligence, conjunction assessment, autonomous coordination, CubeSat, constellation management, reinforcement learning, satellite safety"
+        }}
+      />
       {/* ── Page hero ─────────────────────────────────── */}
       <section
         className="relative overflow-hidden"

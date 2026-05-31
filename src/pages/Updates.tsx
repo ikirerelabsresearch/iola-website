@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import PageSEO from '../components/PageSEO'
 
 function useReveal() {
   const ref = useRef<HTMLDivElement>(null)
@@ -74,6 +75,19 @@ export default function Updates() {
 
   return (
     <>
+      <PageSEO
+        title="Updates — Development Milestones"
+        description="IOLA development milestones: Phase 1 live orbital infrastructure complete, Phase 2 orbital intelligence complete, Phase 3 IkirereMesh autonomous coordination now in active development."
+        path="/updates"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": "IOLA Development Updates",
+          "url": "https://ikirere.com/updates",
+          "description": "Development milestones, research progress, and system architecture updates across the IOLA orbital stack.",
+          "publisher": { "@id": "https://ikirere.com/#organization" }
+        }}
+      />
       {/* ── Page hero ─────────────────────────────────── */}
       <section
         className="relative overflow-hidden"

@@ -1,3 +1,4 @@
+import PageSEO from '../components/PageSEO'
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
@@ -48,6 +49,18 @@ export default function Contact() {
 
   return (
     <>
+      <PageSEO
+        title="Contact — Get in Touch"
+        description="Technical collaboration, research partnerships, institutional engagement, and mission-aligned inquiries. Contact Ikirere Orbital Labs Africa at jason@ikirere.com."
+        path="/contact"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "url": "https://ikirere.com/contact",
+          "name": "Contact Ikirere Orbital Labs Africa",
+          "isPartOf": { "@id": "https://ikirere.com/#website" }
+        }}
+      />
       {/* ── Page hero ─────────────────────────────────── */}
       <section
         className="relative overflow-hidden"

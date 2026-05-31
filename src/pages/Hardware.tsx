@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
+import PageSEO from '../components/PageSEO'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -638,6 +639,20 @@ export default function Hardware() {
 
   return (
     <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 64px)', overflow: 'hidden', background: '#faf9f7' }}>
+      <PageSEO
+        title="Hardware — IOLA 3U CubeSat Platform"
+        description="Interactive 3D model of the IOLA 3U CubeSat. Explore the structural bus, deployable GaAs solar arrays, UHF/VHF antennas, star tracker, cold gas thrusters, and onboard systems."
+        path="/hardware"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": "IOLA 3U CubeSat Platform",
+          "description": "Compact programmable 3U nanosatellite platform designed for multipurpose missions. Features deployable GaAs solar arrays, autonomous coordination systems, UHF/VHF communications, and cold gas propulsion.",
+          "manufacturer": { "@id": "https://ikirere.com/#organization" },
+          "category": "Nanosatellite / CubeSat",
+          "keywords": "3U CubeSat, nanosatellite, deployable solar panels, GaAs solar cells, autonomous satellite, orbital hardware"
+        }}
+      />
 
       {/* Page title — top left */}
       <div style={{

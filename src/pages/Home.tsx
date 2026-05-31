@@ -1,5 +1,6 @@
 import { useEffect, useRef, Suspense, lazy } from 'react'
 import { Link } from 'react-router'
+import PageSEO from '../components/PageSEO'
 
 const SatelliteViewer = lazy(() => import('../components/SatelliteViewer'))
 
@@ -166,6 +167,24 @@ export default function Home() {
 
   return (
     <>
+      <PageSEO
+        title="Autonomous Nanosatellite Infrastructure"
+        description="Ikirere Orbital Labs Africa builds autonomous orbital infrastructure and programmable multipurpose nanosatellite systems. Orbital intelligence, IkirereMesh coordination, and 3U CubeSat platforms for Africa and global operations."
+        path="/"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": "Ikirere Orbital Labs Africa — Home",
+          "url": "https://ikirere.com/",
+          "description": "Building the full-stack orbital infrastructure powering the next generation of programmable multipurpose nanosatellites.",
+          "isPartOf": { "@id": "https://ikirere.com/#website" },
+          "about": { "@id": "https://ikirere.com/#organization" },
+          "breadcrumb": {
+            "@type": "BreadcrumbList",
+            "itemListElement": [{ "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ikirere.com/" }]
+          }
+        }}
+      />
       {/* ── Hero ─────────────────────────────────────── */}
       <section
         className="relative overflow-hidden"
