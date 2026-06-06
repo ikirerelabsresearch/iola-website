@@ -44,7 +44,7 @@ export default function Careers() {
     <>
       <PageSEO
         title="Careers — Join the Orbital Infrastructure Program"
-        description="IOLA is recruiting aerospace engineers, orbital mechanics specialists, embedded systems engineers, and autonomous systems researchers to build next-generation nanosatellite infrastructure from Africa."
+        description="Join Ikirere Orbital Labs. We are building the infrastructure required for the next generation of orbital operations — and need orbital mechanics engineers, systems engineers, simulation engineers, and autonomous systems researchers."
         path="/careers"
         schema={{
           "@context": "https://schema.org",
@@ -74,10 +74,10 @@ export default function Careers() {
             <Label>Careers</Label>
           </div>
           <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontVariationSettings: "'wght' 600", letterSpacing: '-0.03em', lineHeight: '1.08', color: '#111827', marginBottom: '16px' }}>
-            Build Africa's Orbital<br />Infrastructure With Us
+            Join the mission.
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '500px' }}>
-            A frontier aerospace research program building autonomous orbital infrastructure and programmable nanosatellite systems from Africa.
+            We are building the infrastructure required for the next generation of orbital operations. The work is technical, the timeline is long, and the mission is real.
           </p>
         </div>
       </section>
@@ -87,25 +87,25 @@ export default function Careers() {
         {/* Honest context */}
         <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', marginBottom: '48px', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
           <div style={{ padding: '12px 20px', background: '#f0f4f9', borderBottom: '1px solid #e2e8f0', borderLeft: '3px solid #0A2463' }}>
-            <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1E5FA8' }}>Honest context</p>
+            <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1E5FA8' }}>Current context</p>
           </div>
           <div style={{ padding: '24px 28px', background: '#fff', display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8' }}>
-              IOLA is an early-stage aerospace research company operating pre-revenue and pre-funding. We are building long-horizon orbital infrastructure systems that require deep technical work, patience, and first-principles engineering.
+              Ikirere Orbital Labs is an early-stage aerospace company. We are pre-revenue and pre-funding. We are building long-horizon orbital infrastructure that requires deep technical work, patience, and first-principles engineering.
             </p>
             <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8' }}>
-              The people joining now are not joining for startup perks. They are joining to help architect foundational systems at the earliest stage of the company's formation.
+              The people working with us now are doing so because they want to build real systems at the earliest stage of a long-term space infrastructure program.
             </p>
             <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8' }}>
-              In return, contributors gain direct exposure to frontier orbital systems development, applied aerospace research, and the opportunity to help shape the technical foundations of a long-term space infrastructure program.
+              What we offer is direct involvement in technical development, meaningful ownership of the problems you work on, and early positioning in a company building toward significant infrastructure.
             </p>
           </div>
         </div>
 
         {/* Roles */}
         <div ref={rolesRef} className="reveal">
-          <Label>Areas of need</Label>
-          <h2 className="text-2xl mb-8" style={h2Style}>Where we need help.</h2>
+          <Label>Open Areas</Label>
+          <h2 className="text-2xl mb-8" style={h2Style}>Where we need people.</h2>
 
           <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
             {roles.map((r, i) => (
@@ -136,8 +136,8 @@ export default function Careers() {
           <h2 className="text-2xl mb-5" style={h2Style}>Apply directly.</h2>
           <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8', marginBottom: '10px' }}>
             Send an email to{' '}
-            <a href="mailto:jason@ikirere.com?subject=IOLA — " style={{ color: '#0A2463', textDecoration: 'underline', textDecorationColor: 'rgba(10,36,99,0.3)' }}>
-              jason@ikirere.com
+            <a href="mailto:research@ikirere.com?subject=IOLA — " style={{ color: '#0A2463', textDecoration: 'underline', textDecorationColor: 'rgba(10,36,99,0.3)' }}>
+              research@ikirere.com
             </a>{' '}
             with the subject: <strong style={{ color: '#111827' }}>IOLA — [Your Area]</strong>
           </p>
@@ -150,10 +150,10 @@ export default function Careers() {
             ))}
           </div>
           <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8', marginBottom: '28px' }}>
-            We care far more about demonstrated technical curiosity and systems thinking than formal credentials. Every serious technical inquiry is reviewed directly by the founding team.
+            Credentials matter less than evidence. Show us what you've built, what you understand, and what you want to work on. Every serious inquiry is reviewed directly by the founding team.
           </p>
           <a
-            href="mailto:jason@ikirere.com?subject=IOLA — "
+            href="mailto:research@ikirere.com?subject=IOLA — "
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               background: '#0A2463', color: '#fff',

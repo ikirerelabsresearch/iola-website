@@ -26,6 +26,13 @@ function Label({ children }: { children: React.ReactNode }) {
 
 const h2Style = { fontVariationSettings: "'wght' 580", letterSpacing: '-0.025em', color: '#111827' }
 
+// Status colour map: Active = navy, Development = slate, Long-Term = muted
+const STATUS_COLOR: Record<string, string> = {
+  'Active':      '#0A2463',
+  'Development': '#64748b',
+  'Long-Term':   '#94a3b8',
+}
+
 const areas = [
   {
     icon: (
@@ -35,23 +42,9 @@ const areas = [
         <line x1="2" y1="10" x2="5" y2="10"/><line x1="15" y1="10" x2="18" y2="10"/>
       </svg>
     ),
-    title: 'Orbital Intelligence',
+    title: 'Orbital Operations & Autonomy',
     status: 'Active',
-    statusColor: '#0A2463',
-    desc: 'Autonomous coordination, manoeuvre planning, orbital safety, and constellation-scale decision systems for next-generation satellite networks.',
-  },
-  {
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
-        <path d="M10 2L10 6M10 14L10 18M2 10L6 10M14 10L18 10"/>
-        <circle cx="10" cy="10" r="3"/>
-        <path d="M4.9 4.9l2.8 2.8M12.3 12.3l2.8 2.8M15.1 4.9l-2.8 2.8M7.7 12.3l-2.8 2.8"/>
-      </svg>
-    ),
-    title: 'Conjunction Assessment',
-    status: 'Active',
-    statusColor: '#64748b',
-    desc: 'Real-time orbital risk analysis and collision prediction systems for dense nanosatellite environments.',
+    desc: 'Mission planning, orbital safety, conjunction assessment, spacecraft scheduling, and autonomous operational decision systems.',
   },
   {
     icon: (
@@ -63,10 +56,9 @@ const areas = [
         <line x1="5" y1="15" x2="8.5" y2="11.5"/><line x1="15" y1="15" x2="11.5" y2="11.5"/>
       </svg>
     ),
-    title: 'Autonomous Coordination Systems',
-    status: 'Phase 3',
-    statusColor: '#64748b',
-    desc: 'Multi-agent coordination architectures for distributed satellite fleets operating as adaptive orbital networks.',
+    title: 'Constellation Coordination',
+    status: 'Active',
+    desc: 'Distributed coordination architectures for multi-spacecraft operations, autonomous task allocation, and long-duration mission management.',
   },
   {
     icon: (
@@ -76,10 +68,9 @@ const areas = [
         <circle cx="14" cy="10" r="2"/>
       </svg>
     ),
-    title: 'Simulation Infrastructure',
+    title: 'Orbital Simulation Infrastructure',
     status: 'Active',
-    statusColor: '#0A2463',
-    desc: 'High-fidelity orbital simulation environments used to validate coordination, safety, and autonomy systems before hardware deployment.',
+    desc: 'High-fidelity simulation environments used to validate mission architectures, operational procedures, and autonomous coordination systems before deployment.',
   },
   {
     icon: (
@@ -89,10 +80,9 @@ const areas = [
         <path d="M6 17h8"/><line x1="10" y1="14" x2="10" y2="17"/>
       </svg>
     ),
-    title: 'Hardware Systems',
-    status: 'Phase 3',
-    statusColor: '#94a3b8',
-    desc: 'Compact programmable nanosatellite platforms designed for multipurpose missions across communications, sensing, and Earth observation.',
+    title: 'Spacecraft Systems',
+    status: 'Development',
+    desc: 'Multipurpose nanosatellite architectures, subsystem integration, payload flexibility, and software-defined spacecraft design.',
   },
   {
     icon: (
@@ -102,22 +92,34 @@ const areas = [
         <circle cx="18" cy="5" r="1.2" fill="currentColor" stroke="none"/>
       </svg>
     ),
-    title: 'Ground Systems',
-    status: 'Phase 3',
-    statusColor: '#64748b',
-    desc: 'Ground communication, telemetry, and mission control infrastructure supporting autonomous orbital operations across Africa.',
+    title: 'Ground Infrastructure',
+    status: 'Development',
+    desc: 'Ground systems, mission operations, telemetry workflows, communications infrastructure, and command architectures supporting orbital missions.',
+  },
+  {
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+        <path d="M10 2 L10 6 M17 10 L13 10 M10 18 L10 14"/>
+        <circle cx="10" cy="10" r="3"/>
+        <path d="M4 4 L7 7 M4 16 L7 13 M16 4 L13 7"/>
+      </svg>
+    ),
+    title: 'Future Orbital Infrastructure',
+    status: 'Long-Term',
+    desc: 'Research into technologies that may support future orbital economies, cislunar operations, and autonomous space infrastructure beyond Earth orbit.',
   },
 ]
 
 export default function Research() {
   const areasRef = useReveal()
   const stackRef = useReveal()
+  const philoRef = useReveal()
 
   return (
     <>
       <PageSEO
-        title="Research — Orbital Intelligence & Autonomous Systems"
-        description="IOLA research spans orbital intelligence, conjunction assessment, autonomous coordination, simulation infrastructure, hardware systems, and ground systems for next-generation nanosatellite networks."
+        title="Research — Applied Orbital Infrastructure Research"
+        description="Ikirere Orbital Labs conducts applied research across orbital operations, autonomous systems, spacecraft architecture, constellation coordination, and simulation environments — all tied to real-world deployment."
         path="/research"
         schema={{
           "@context": "https://schema.org",
@@ -149,7 +151,7 @@ export default function Research() {
             Research
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '520px' }}>
-            Applied research across orbital intelligence, autonomous coordination systems, simulation infrastructure, and next-generation nanosatellite architectures.
+            Research that advances autonomous orbital infrastructure. Ikirere Orbital Labs conducts applied research across orbital operations, autonomous systems, spacecraft architecture, and simulation environments. Every research effort supports technologies intended for real-world deployment.
           </p>
         </div>
       </section>
@@ -158,7 +160,7 @@ export default function Research() {
       <section className="py-20 max-w-[1100px] mx-auto px-8">
         <div ref={areasRef} className="reveal">
           <Label>Research Areas</Label>
-          <h2 className="text-2xl mb-10" style={h2Style}>Core research domains driving the IOLA architecture.</h2>
+          <h2 className="text-2xl mb-10" style={h2Style}>Research areas.</h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1px', background: '#e2e8f0', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
             {areas.map(a => (
@@ -171,7 +173,7 @@ export default function Research() {
                   <div style={{ color: '#334155', opacity: 0.7 }}>{a.icon}</div>
                   <span style={{
                     fontSize: '9px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
-                    color: a.statusColor,
+                    color: STATUS_COLOR[a.status] ?? '#94a3b8',
                     background: a.status === 'Active' ? 'rgba(10,36,99,0.07)' : '#f1f5f9',
                     padding: '3px 9px', borderRadius: '100px', whiteSpace: 'nowrap', flexShrink: 0,
                   }}>
@@ -188,15 +190,37 @@ export default function Research() {
 
       <div style={{ borderTop: '1px solid #e2e8f0' }} />
 
-      {/* ── Validation Infrastructure ─────────────────── */}
+      {/* ── Simulation Environment ────────────────────── */}
       <section className="py-20 max-w-[720px] mx-auto px-8">
         <div ref={stackRef} className="reveal">
-          <Label>Infrastructure</Label>
-          <h2 className="text-2xl mb-8" style={h2Style}>Validation Infrastructure</h2>
+          <Label>Simulation</Label>
+          <h2 className="text-2xl mb-8" style={h2Style}>Simulation environment.</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', fontSize: '0.95rem', color: '#475569', lineHeight: '1.8' }}>
-            <p>IOLA's simulation environment acts as the validation layer for the entire orbital stack. Autonomous coordination systems, orbital safety logic, and constellation behaviours are tested against live orbital datasets before deployment to onboard systems.</p>
-            <p>The environment supports large-scale constellation simulation, orbital manoeuvre modelling, conjunction analysis, and distributed coordination testing across thousands of active objects in orbit.</p>
-            <p>Architecturally, the simulation layer is designed to transition directly into onboard flight systems, reducing the gap between research validation and operational deployment.</p>
+            <p>The simulation environment serves as the development and validation layer for IOLA's orbital systems.</p>
+            <p>Satellite operations, orbital safety logic, mission planning, and autonomous coordination algorithms are tested extensively in simulation before hardware deployment.</p>
+            <p>The environment enables large-scale modelling of spacecraft behaviour, orbital interactions, communications workflows, and mission execution across thousands of active objects.</p>
+            <p>By validating systems before deployment, simulation reduces risk, accelerates iteration, and provides a direct pathway from research to operational infrastructure.</p>
+          </div>
+        </div>
+      </section>
+
+      <div style={{ borderTop: '1px solid #e2e8f0' }} />
+
+      {/* ── Research Philosophy ───────────────────────── */}
+      <section className="py-20 max-w-[720px] mx-auto px-8">
+        <div ref={philoRef} className="reveal">
+          <Label>Philosophy</Label>
+          <h2 className="text-2xl mb-8" style={h2Style}>Research philosophy.</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', fontSize: '0.95rem', color: '#475569', lineHeight: '1.8' }}>
+            <p>We do not pursue research for publication alone.</p>
+            <p>Research is valuable when it improves real systems, reduces operational risk, enables new capabilities, or advances the infrastructure required for future space operations.</p>
+            <p>Every research program at IOLA is tied to a deployment pathway.</p>
+            <p>Our engineering philosophy is rooted in first-principles thinking. Assumptions are challenged before they become requirements. Requirements are questioned before systems are built. Complexity is treated as a cost rather than a feature.</p>
+            <p>When designing spacecraft, software, simulations, or operational systems, we follow a simple progression:</p>
+            <p style={{ fontWeight: 600, color: '#111827', letterSpacing: '-0.01em' }}>Question. Simplify. Optimize. Automate.</p>
+            <p>We first challenge the problem itself and verify that the requirement is real. We then remove unnecessary components, processes, and constraints. Only after simplification do we optimize performance. Automation comes last.</p>
+            <p>This approach allows small teams to build ambitious systems efficiently while avoiding unnecessary complexity, cost, and technical debt.</p>
+            <p>The goal is not to build more technology. The goal is to build the minimum infrastructure required to accomplish the mission.</p>
           </div>
         </div>
       </section>

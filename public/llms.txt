@@ -45,7 +45,7 @@ To build the full-stack orbital infrastructure powering the next generation of p
 
 ## Contact
 
-- Email: jason@ikirere.com
+- Email: research@ikirere.com
 - Website: https://ikirere.com
 - Live simulation: https://orbit.ikirere.com
 - LinkedIn: https://linkedin.com/company/ikirere-orbital-labs-africa

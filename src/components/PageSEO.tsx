@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async'
 
 const BASE_URL = 'https://ikirere.com'
 const DEFAULT_IMAGE = `${BASE_URL}/iola-logo-space.png`
-const SITE_NAME = 'Ikirere Orbital Labs Africa'
+const SITE_NAME = 'Ikirere Orbital Labs'
 
 interface PageSEOProps {
   title: string

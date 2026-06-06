@@ -32,40 +32,33 @@ const team = [
     photo: '/jason-ggle.jpg',
     name: 'Jason Quist',
     role: 'Founder & CEO · Kigali, Rwanda',
-    bio: 'Founder and systems architect focused on autonomous orbital infrastructure, reinforcement learning systems, and next-generation nanosatellite coordination architectures. Leads product, research, and company strategy.',
-  },
-  {
-    initials: 'MM',
-    photo: '/mayank.jpeg',
-    name: 'Mayank Mutha',
-    role: 'Co-Founder & Aerospace Systems Engineer · India',
-    bio: 'Aerospace systems engineer focused on spacecraft mission architecture, autonomous orbital operations, and simulation-driven satellite system design. Works across ADCS and mission planning for CubeSat-class spacecraft. Ex-Dhruva Space.',
+    bio: 'Founder of Ikirere Orbital Labs. Focused on autonomous orbital infrastructure, AI systems, orbital software, and long-term space infrastructure development.',
   },
   {
     initials: 'AD',
     photo: '/alph.jpg',
     name: 'Alph Doamekpor',
-    role: 'Strategy & Aerospace Advisor · Germany',
-    bio: 'Over two decades across ESA, NASA, and EUMETSAT. Advises on orbital systems engineering, mission architecture, and aerospace operational constraints across the IOLA roadmap.',
+    role: 'Strategic Aerospace Advisor · Germany',
+    bio: 'More than two decades across ESA, NASA, EUMETSAT, Airbus, and ATG Europe. Provides guidance across mission architecture, spacecraft systems, orbital operations, and industry partnerships.',
   },
 ]
 
 const beliefs = [
   {
-    heading: 'Safety is not a feature.',
-    body: 'Orbital safety — guaranteed minimum separation, verified manoeuvre planning, deterministic collision avoidance — is the foundation everything else runs on. We don\'t ship coordination algorithms that can\'t be formally verified. Orbital space is shared infrastructure.',
+    heading: 'Infrastructure matters.',
+    body: 'The future space economy will be built on infrastructure that enables others to operate, innovate, and expand beyond Earth.',
   },
   {
-    heading: 'Simulation is not a prototype.',
-    body: 'The simulation environment is the production system in development. Every algorithm that ships runs there first. Real TLE data. Real conjunction geometry. Real orbital mechanics. Systems are validated against live orbital datasets and large-scale constellation environments before hardware deployment.',
+    heading: 'Software before hardware.',
+    body: 'Simulation, validation, and autonomous operations reduce risk and accelerate development. We build and test in software before committing to hardware.',
   },
   {
-    heading: 'Africa is not a market. It\'s the mission.',
-    body: 'We are not building a product for African universities and governments. The infrastructure is being designed for African operational realities, institutions, and long-term sovereignty. The infrastructure we build will be operated by African engineers, run on African ground stations, serve African research objectives.',
+    heading: 'Long-term thinking wins.',
+    body: 'Building meaningful space infrastructure requires patience, discipline, and sustained execution over decades. We are building for that timeline.',
   },
   {
-    heading: 'Long timelines are honest timelines.',
-    body: 'Getting a satellite into orbit takes years. Operating a constellation safely takes decades of institutional knowledge. The software will be validated in two years. The firmware will be flight-ready in four. The first constellation will launch when the physics is proven.',
+    heading: 'Build for the future.',
+    body: 'The systems required for future orbital, lunar, and deep-space operations will not appear overnight. They must be built deliberately, one layer at a time.',
   },
 ]
 
@@ -77,16 +70,16 @@ export default function About() {
   return (
     <>
       <PageSEO
-        title="About — Who We Are"
-        description="Ikirere Orbital Labs Africa: a frontier aerospace research program building autonomous orbital infrastructure from Africa. Learn about our mission, team, and philosophy."
+        title="About — Building Autonomous Orbital Infrastructure"
+        description="Ikirere Orbital Labs builds the software, systems, and satellite infrastructure required for the next generation of orbital operations. Building from Africa for a global future."
         path="/about"
         schema={[
           {
             "@context": "https://schema.org",
             "@type": "AboutPage",
             "url": "https://ikirere.com/about",
-            "name": "About Ikirere Orbital Labs Africa",
-            "description": "About the team and mission behind IOLA — building autonomous nanosatellite infrastructure from Africa.",
+            "name": "About Ikirere Orbital Labs",
+            "description": "Ikirere Orbital Labs builds autonomous orbital infrastructure — from ground systems and mission coordination software to multipurpose nanosatellite platforms.",
             "isPartOf": { "@id": "https://ikirere.com/#website" },
             "about": { "@id": "https://ikirere.com/#organization" }
           },
@@ -96,28 +89,17 @@ export default function About() {
             "name": "Jason Quist",
             "jobTitle": "Founder & CEO",
             "worksFor": { "@id": "https://ikirere.com/#organization" },
-            "description": "Founder and systems architect focused on autonomous orbital infrastructure, reinforcement learning systems, and next-generation nanosatellite coordination architectures.",
+            "description": "Founder of Ikirere Orbital Labs. Focused on autonomous orbital infrastructure, AI systems, orbital software, and long-term space infrastructure development.",
             "image": "https://ikirere.com/jason-ggle.jpg",
             "url": "https://ikirere.com/about"
           },
           {
             "@context": "https://schema.org",
             "@type": "Person",
-            "name": "Mayank Mutha",
-            "jobTitle": "Co-Founder & Aerospace Systems Engineer",
-            "worksFor": { "@id": "https://ikirere.com/#organization" },
-            "description": "Aerospace systems engineer focused on spacecraft mission architecture, autonomous orbital operations, and simulation-driven satellite system design. Works across ADCS and mission planning for CubeSat-class spacecraft. Ex-Dhruva Space.",
-            "image": "https://ikirere.com/mayank.jpeg",
-            "url": "https://ikirere.com/about",
-            "alumniOf": { "@type": "Organization", "name": "Dhruva Space" }
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "Person",
             "name": "Alph Doamekpor",
-            "jobTitle": "Strategy & Aerospace Advisor",
+            "jobTitle": "Strategic Aerospace Advisor",
             "worksFor": { "@id": "https://ikirere.com/#organization" },
-            "description": "Over two decades across ESA, NASA, and EUMETSAT. Advises on orbital systems engineering, mission architecture, and aerospace operational constraints.",
+            "description": "More than two decades across ESA, NASA, EUMETSAT, Airbus, and ATG Europe. Provides guidance across mission architecture, spacecraft systems, orbital operations, and industry partnerships.",
             "image": "https://ikirere.com/alph.jpg",
             "url": "https://ikirere.com/about"
           }
@@ -141,13 +123,16 @@ export default function About() {
         <div className="max-w-[720px] mx-auto px-8 relative z-10">
           <div className="flex items-center gap-3 mb-6">
             <div className="w-5 h-px" style={{ background: 'linear-gradient(to right, transparent, #1E5FA8)' }} />
-            <Label>About IOLA</Label>
+            <Label>About</Label>
           </div>
           <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontVariationSettings: "'wght' 600", letterSpacing: '-0.03em', lineHeight: '1.12', color: '#111827', marginBottom: '16px' }}>
-            Who we are
+            Why we exist.
           </h1>
           <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '540px' }}>
-            A team of AI researchers and aerospace engineers building the full-stack orbital infrastructure powering the next generation of autonomous nanosatellite systems for climate, agriculture, Earth observation, logistics, and connectivity across Africa.
+            Ikirere Orbital Labs is building the software, systems, and satellite infrastructure required for the next generation of orbital operations. Our work spans ground infrastructure, autonomous mission coordination, and multipurpose nanosatellite systems designed to support future orbital economies.
+          </p>
+          <p style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.7', maxWidth: '540px', marginTop: '16px' }}>
+            Existing satellite systems are expensive, fragmented, and built for single-purpose missions. IOLA is building a new model: programmable multipurpose nanosatellites coordinated through a shared orbital intelligence layer designed for African institutions, governments, and research ecosystems.
           </p>
         </div>
       </section>
@@ -159,31 +144,38 @@ export default function About() {
           <h2 className="text-2xl mb-6" style={h2}>Why we exist</h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', fontSize: '0.95rem', color: '#475569', lineHeight: '1.8' }}>
-            <p>Africa has 17% of the world's population and less than 3% of active satellites. The infrastructure deficit is not a technology problem — it's a capital allocation and access problem. IOLA's job is to reduce the cost and complexity of getting a satellite into orbit and operating it effectively, until African institutions can do it themselves without depending on external systems or permissions.</p>
-            <p>Existing satellite systems are expensive, fragmented, and built for single-purpose missions. IOLA is building a new model: programmable multipurpose nanosatellites coordinated through a shared orbital intelligence layer designed for African institutions, governments, and research ecosystems.</p>
+            <p>Access to space infrastructure remains concentrated among a small number of countries and organizations.</p>
+            <p>As orbital activity expands, the world will require new infrastructure capable of coordinating increasingly complex spacecraft, missions, and data systems.</p>
+            <p>Ikirere Orbital Labs exists to help build that future. We believe the next generation of orbital infrastructure should be more autonomous, more accessible, and more capable of supporting global participation in the space economy.</p>
+            <p>We are building from Africa with a long-term vision that extends beyond individual satellites toward the infrastructure layer that powers space operations.</p>
           </div>
 
           <div style={{ height: '1px', background: '#e2e8f0', margin: '40px 0' }} />
 
           <h2 className="text-2xl mb-6" style={h2}>Why software first</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', fontSize: '0.95rem', color: '#475569', lineHeight: '1.8' }}>
-            <p>Space hardware is expensive to iterate. A satellite launched with flawed coordination or autonomy systems cannot simply be patched in orbit. IOLA solves this by validating orbital intelligence, autonomous coordination, and safety systems in simulation before deployment to flight hardware.</p>
-            <p>When the firmware ships, it ports directly from the simulation environment. When the satellite launches, the operational logic has already run millions of simulated orbits. The hardware is the last variable, not the first.</p>
+            <p>Space hardware is expensive to build and difficult to iterate.</p>
+            <p>Software allows us to validate mission concepts, operational logic, and coordination systems before hardware enters production.</p>
+            <p>By building and testing in simulation first, we reduce risk, accelerate learning, and create a foundation that can scale from individual spacecraft to future constellations.</p>
+            <p>Simulation is not the destination. It is how we build better infrastructure.</p>
           </div>
 
           <div style={{ height: '1px', background: '#e2e8f0', margin: '40px 0' }} />
 
-          <h2 className="text-2xl mb-6" style={h2}>The two-track architecture</h2>
-          <p style={{ fontSize: '0.95rem', color: '#475569', lineHeight: '1.8', marginBottom: '20px' }}>IOLA develops its orbital systems through two converging tracks:</p>
+          <h2 className="text-2xl mb-6" style={h2}>Our architecture</h2>
 
           <div style={{ border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
             <div style={{ padding: '24px 28px', borderBottom: '1px solid #e2e8f0', background: '#f0f4f9', borderLeft: '3px solid #0A2463' }}>
-              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1E5FA8', marginBottom: '8px' }}>Software track</p>
-              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.7' }}>Build the orbital intelligence layer, validate coordination systems in simulation, and transition proven architectures into onboard flight systems.</p>
+              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1E5FA8', marginBottom: '8px' }}>IOLA Orbit</p>
+              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.7' }}>Autonomous mission planning, spacecraft operations, and orbital coordination software.</p>
+            </div>
+            <div style={{ padding: '24px 28px', borderBottom: '1px solid #e2e8f0', background: '#fff', borderLeft: '3px solid transparent' }}>
+              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px' }}>Ground Infrastructure</p>
+              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.7' }}>Mission support systems, communications infrastructure, and operational capabilities connecting Earth to orbit.</p>
             </div>
             <div style={{ padding: '24px 28px', background: '#fff', borderLeft: '3px solid transparent' }}>
-              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px' }}>Hardware track</p>
-              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.7' }}>Engineer compact, modular nanosatellite platforms capable of supporting multiple missions through shared onboard infrastructure and programmable payload systems.</p>
+              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px' }}>Multipurpose Nanosatellite Network</p>
+              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: '1.7' }}>Software-enabled satellite systems designed to support multiple applications through a unified orbital platform.</p>
             </div>
           </div>
         </div>
@@ -195,7 +187,7 @@ export default function About() {
       <section className="py-20 max-w-[720px] mx-auto px-8">
         <div ref={teamRef} className="reveal">
           <Label>Team</Label>
-          <h2 className="text-2xl mb-10" style={h2}>The people building it</h2>
+          <h2 className="text-2xl mb-10" style={h2}>The team building it</h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
             {team.map((m, i) => (
@@ -242,8 +234,8 @@ export default function About() {
       {/* ── Philosophy ───────────────────────────────── */}
       <section className="py-20 max-w-[720px] mx-auto px-8">
         <div ref={beliefRef} className="reveal">
-          <Label>Philosophy</Label>
-          <h2 className="text-2xl mb-10" style={h2}>What IOLA believes</h2>
+          <Label>What We Believe</Label>
+          <h2 className="text-2xl mb-10" style={h2}>What we believe</h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
             {beliefs.map((b, i) => (
