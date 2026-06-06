@@ -39,6 +39,7 @@ const updates = [
     body: 'The first layer of the IOLA architecture is now operational. The platform continuously ingests orbital datasets, propagates active spacecraft, synchronizes orbital states, and provides a real-time operational view of Earth orbit.',
     detail: 'Today the system tracks more than 15,000 active satellites and orbital objects across LEO, MEO, and GEO. This foundation enables every future capability built by IOLA, including orbital intelligence, autonomous coordination, mission planning, and spacecraft operations.',
     bullets: null as string[] | null,
+    image: undefined as string | undefined,
   },
   {
     date: 'June 2026',
@@ -54,6 +55,7 @@ const updates = [
       'Coverage estimation',
       'Operational mission analysis',
     ] as string[] | null,
+    image: undefined as string | undefined,
   },
   {
     date: 'In Development',
@@ -70,6 +72,7 @@ const updates = [
       'Mission prioritization',
       'Fleet-level operational intelligence',
     ] as string[] | null,
+    image: undefined as string | undefined,
   },
   {
     date: 'Next Milestone',
@@ -85,6 +88,7 @@ const updates = [
       'Ground operations planning',
       'Launch readiness preparation',
     ] as string[] | null,
+    image: undefined as string | undefined,
   },
   {
     date: 'Long-Term Vision',
@@ -93,6 +97,7 @@ const updates = [
     body: "Most satellites today operate independently. IOLA's long-term vision is autonomous orbital infrastructure: networks of spacecraft, software, and ground systems operating together as a coordinated platform.",
     detail: 'The goal is not simply to launch satellites. The goal is to build the infrastructure layer that future space economies depend on.' as string | null,
     bullets: null as string[] | null,
+    image: '/space-economy-infrastructure-image.png' as string | undefined,
   },
 ]
 
@@ -203,6 +208,17 @@ export default function Updates() {
                     <p style={{ fontSize: '13.5px', color: '#475569', lineHeight: '1.8', marginTop: '12px' }}>
                       {u.detail}
                     </p>
+                  )}
+
+                  {/* Image */}
+                  {u.image && (
+                    <div style={{ marginTop: '20px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2e8f0' }}>
+                      <img
+                        src={u.image}
+                        alt={u.title}
+                        style={{ width: '100%', height: 'auto', display: 'block' }}
+                      />
+                    </div>
                   )}
                 </div>
               </div>
