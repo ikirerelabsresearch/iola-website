@@ -22,7 +22,7 @@ export default function Nav() {
             <img src="/iola-logo-light.png" alt="Ikirere Orbital Labs" className="h-10 w-10 object-contain" />
             <div className="hidden sm:block">
               <p className="text-[13px] font-semibold tracking-wide text-text leading-none" style={{ letterSpacing: '0.04em' }}>IKIRERE</p>
-              <p className="text-[10px] text-muted tracking-widest leading-none mt-0.5" style={{ letterSpacing: '0.12em' }}>ORBITAL LABS AFRICA</p>
+              <p className="text-[10px] text-muted tracking-widest leading-none mt-0.5" style={{ letterSpacing: '0.12em' }}>ORBITAL LABS</p>
             </div>
           </NavLink>
 

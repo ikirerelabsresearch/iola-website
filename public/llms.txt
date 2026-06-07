@@ -1,8 +1,8 @@
-# Ikirere Orbital Labs Africa (IOLA)
+# Ikirere Orbital Labs (IOLA)
 
 ## What we are
 
-Ikirere Orbital Labs Africa (IOLA) is an early-stage aerospace research company building autonomous orbital infrastructure and programmable multipurpose nanosatellite systems. We are headquartered in Kigali, Rwanda, and operate as a global deep-tech research program.
+Ikirere Orbital Labs (IOLA) is an early-stage aerospace research company building autonomous orbital infrastructure and programmable multipurpose nanosatellite systems. We are headquartered in Kigali, Rwanda, and operate as a global deep-tech research program.
 
 ## Mission
 
