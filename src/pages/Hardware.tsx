@@ -3,12 +3,14 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import {
-  aluMat, bodyMat, darkMat, steelMat, highlightMat,
+  aluMat, darkMat, steelMat, highlightMat,
   AM, DeployablePanel, usePart,
+  BODY_X, BODY_Y, BODY_Z,
 } from '../components/CubeSatModel'
 
-// ── Component catalogue ────────────────────────────────────────────────────────
-// Every clickable part: id, display name, category, one-line status, full description, specs
+// ── Component catalogue — sourced from IOLA-H1-RA-0001 v0.5 FRE ──────────────
+// All CBE values from Section 13.3 mass budget and subsystem design (Section 10)
+// [CBE] = Current Best Estimate pending vendor data per document notation
 const COMPONENTS: Record<string, {
   name: string
   category: string
@@ -17,147 +19,183 @@ const COMPONENTS: Record<string, {
   specs: { label: string; value: string }[]
 }> = {
   body: {
-    name: 'Structural Bus',
+    name: 'Primary Structure — 12U XL Flat Bus',
     category: 'Structure',
-    status: 'Primary',
-    description: 'The primary structural chassis of the 3U CubeSat. Machined aluminium 6061-T6 with hard-anodised finish. Provides the mechanical backbone for all subsystem mounting, thermal conduction pathways, and structural load distribution during launch.',
+    status: 'Phase A',
+    description: 'Aluminium alloy primary structure in a flat, shallow bus geometry — the "flying pizza box" described in the Horizon-1 reference architecture. Internal rails compatible with standard CubeSat integration practice. Stiff enough for launch loads and deployment shock; stowed first-mode frequency above 90 Hz (deployer-specific, to be confirmed in Phase A). Flat deployed geometry maximises surface area for solar, thermal, and payload apertures.',
     specs: [
-      { label: 'Form factor',  value: '3U CubeSat (10×10×34cm)' },
-      { label: 'Material',     value: 'Al 6061-T6 hard-anodised' },
-      { label: 'Mass (bus)',   value: '~380g' },
-      { label: 'Launch load',  value: '30g quasi-static' },
+      { label: 'Form factor',     value: '12U XL flat-sat' },
+      { label: 'Stowed envelope', value: '226.3 × 226.3 × 366 mm [CBE]' },
+      { label: 'Gross volume',    value: '~18.7 L stowed' },
+      { label: 'Usable volume',   value: '~15–16 L (after rails, margins)' },
+      { label: 'Material',        value: 'Aluminium alloy, primary structure' },
+      { label: 'Mass (CBE)',      value: '2.6 kg CBE / 3.1 kg with 20% MGA' },
+      { label: 'Bus geometry',    value: 'Flat, not tower; deployed pizza-box shape' },
     ],
   },
   panelL: {
-    name: 'Solar Array — Port',
+    name: 'Solar Wing — Port',
     category: 'Power',
-    status: 'Deployable',
-    description: 'Deployable GaAs triple-junction solar array, port side. Stowed against the body during launch and deployed via spring-loaded hinge mechanisms on orbit insertion. Generates primary power for onboard systems.',
+    status: 'Phase A',
+    description: 'Deployable long-edge solar wing, port side. Each wing is simultaneously a power system, structural member, and deployment mechanism — a flight mechanism, not a sheet of solar cells. Layer stack: high-efficiency cells on illuminated side; cover glass; interconnects and flex wiring; composite or aluminium-honeycomb substrate; root bracket and hinge interface; hold-down and release mechanism; deployment stop and latch; harness strain relief. Two wings preferred for balance and to avoid dependence on a single appendage.',
     specs: [
-      { label: 'Cell type',    value: 'GaAs triple-junction' },
-      { label: 'Peak power',   value: '~8.5W per panel' },
-      { label: 'Efficiency',   value: '28–30%' },
-      { label: 'Deployment',   value: 'Spring-loaded, one-shot' },
+      { label: 'Nominal power',   value: '~45 W per wing BOL [CBE vendor ref]' },
+      { label: 'Deployed span',   value: '~908 mm per wing [CBE vendor ref]' },
+      { label: 'Configuration',   value: '~3 panels per wing, rigid/semi-rigid' },
+      { label: 'Combined BOL',    value: '~90 W wings + ~12 W body strips = ~102 W nominal' },
+      { label: 'Orbit-avg power', value: '~40 W (34–46 W range) [CBE]' },
+      { label: 'Mass (CBE)',      value: '2.3 kg CBE / 2.8 kg with 20% MGA (both wings)' },
+      { label: 'Deployment',      value: 'Deployable hinge line, spring-loaded, one-shot' },
     ],
   },
   panelR: {
-    name: 'Solar Array — Starboard',
+    name: 'Solar Wing — Starboard',
     category: 'Power',
-    status: 'Deployable',
-    description: 'Deployable GaAs triple-junction solar array, starboard side. Mirror configuration to the port array. Combined output with port panel provides sufficient power for mission operations in nominal sun-pointing attitude.',
+    status: 'Phase A',
+    description: 'Deployable long-edge solar wing, starboard side. Mirror configuration to the port wing. Wings are sized by the orbit-energy ledger, not aesthetics. The spacecraft generates approximately 63 Wh per orbit (54–73 Wh range), with ~31 Wh discretionary pool after continuous loads of ~20 W. The flat-bus geometry raises aerodynamic disturbance torque and introduces wing flexible-mode interaction with the control loop — a named Phase A ADCS analysis item.',
     specs: [
-      { label: 'Cell type',    value: 'GaAs triple-junction' },
-      { label: 'Peak power',   value: '~8.5W per panel' },
-      { label: 'Combined BOL', value: '~17W both arrays' },
-      { label: 'Voltage',      value: '4.2V nominal' },
+      { label: 'Nominal power',   value: '~45 W per wing BOL [CBE vendor ref]' },
+      { label: 'Deployed span',   value: '~908 mm per wing [CBE vendor ref]' },
+      { label: 'Orbit energy',    value: '~63 Wh/orbit baseline [CBE]' },
+      { label: 'Discret. pool',   value: '~31 Wh/orbit after housekeeping [CBE]' },
+      { label: 'EO scene cost',   value: '0.4 Wh per 90 s collection' },
+      { label: 'SAR event cost',  value: '3.3 Wh per 60 s burst (200 W DC)' },
+      { label: 'DoD per burst',   value: '~2–3% per SAR event at ≤1.7C [CBE]' },
     ],
   },
   patch: {
-    name: 'UHF Patch Antenna',
+    name: 'TT&C and Payload Downlink',
     category: 'Communications',
-    status: 'Active',
-    description: 'Ultra-high frequency patch antenna on the +Z face. Used for low-rate telemetry downlink, command uplink, and ground contact during initial acquisition. Operates in the 430–440 MHz amateur satellite band with omnidirectional coverage.',
+    status: 'Phase A',
+    description: 'Separate command-safe TT&C radio plus high-rate payload downlink radio. The document\'s standing rule: payload experiments must never compromise command safety — command-safe TT&C is independent from the payload downlink layer. X-band transmitters at this class advertise up to ~225 Mbps downlink (vendor ceiling reference, link-budget-unverified for the ground segment; a Phase A item). ITU filing and national licensing required; standard process with 12–24 month lead time.',
     specs: [
-      { label: 'Frequency',    value: '435 MHz (UHF)' },
-      { label: 'Data rate',    value: '9.6–38.4 kbps' },
-      { label: 'TX power',     value: '0.5W nominal' },
-      { label: 'Pattern',      value: 'Near-omnidirectional' },
+      { label: 'TT&C band',       value: 'S-band or UHF (command-safe layer)' },
+      { label: 'Downlink band',   value: 'X-band, payload data' },
+      { label: 'Ref. rate',       value: '~225 Mbps ceiling [CBE vendor ref]' },
+      { label: 'Downlink cost',   value: '3.3 Wh per 8 min pass at 25 W' },
+      { label: 'Licensing',       value: 'ITU filing + national auth; 12–24 mo lead' },
+      { label: 'Mass (TT&C+Xb)',  value: '1.2 kg CBE / 1.4 kg with 15% MGA' },
+      { label: 'Design rule',     value: 'TT&C never shared with experiment path' },
     ],
   },
   dome: {
-    name: 'Star Tracker',
+    name: 'ADCS — Star Tracker & GNSS',
     category: 'ADCS',
-    status: 'Navigation',
-    description: 'Miniaturised star tracker for high-accuracy attitude determination. Provides three-axis attitude knowledge by matching observed star patterns against an onboard star catalogue. Primary attitude sensor for fine pointing and nadir-pointing operations.',
+    status: 'Phase A',
+    description: 'Attitude Determination and Control System comprising star tracker, sun sensors, magnetometer, gyroscopes, reaction wheels, magnetorquers, and a GNSS receiver added in v0.5. The GNSS receiver is required for precision orbit determination (POD) to support SAR image focusing. EO pointing requirement: control ≤0.1°, knowledge ≤0.03° [CBE placeholders, to be derived in Phase A]. The flat-bus geometry raises aerodynamic disturbance torque and flexible-mode interaction — ADCS sizing must cover disturbance torque and structural-mode filtering, not inertia alone (WP-A6).',
     specs: [
-      { label: 'Accuracy',     value: '<0.01° cross-boresight' },
-      { label: 'Update rate',  value: '4 Hz' },
-      { label: 'FOV',          value: '20° × 20°' },
-      { label: 'Power',        value: '1.5W operational' },
+      { label: 'Sensors',         value: 'Star tracker, sun sensors, magnetometer, gyros' },
+      { label: 'Actuators',       value: 'Reaction wheels + magnetorquers' },
+      { label: 'GNSS',            value: 'Receiver added v0.5 for SAR POD' },
+      { label: 'EO pointing ctrl',value: '≤0.1° control, ≤0.03° knowledge [CBE]' },
+      { label: 'SAR knowledge',   value: 'Arcminute class + GNSS POD [CBE]' },
+      { label: 'Mass (CBE)',      value: '2.3 kg CBE / 2.5 kg with 10% MGA' },
+      { label: 'Control modes',   value: '3-axis stabilised; autonomous detumble; safe-mode recovery' },
     ],
   },
   ant0: {
-    name: 'VHF Whip Antenna — 1',
-    category: 'Communications',
-    status: 'Active',
-    description: 'Deployable VHF monopole whip antenna. Used for beacon transmission and emergency communications. Stowed against the body during launch in a spring-loaded configuration, deploys autonomously after separation from the launch vehicle.',
+    name: 'EPS — Battery System',
+    category: 'Power',
+    status: 'Phase A',
+    description: 'Space-rated lithium-ion battery pack. Sized for payload bursts and eclipse survival. Holds up demonstration-payload bursts at ≤1.7C, ≤5% DoD per event [CBE]. Battery management electronics with state-of-charge telemetry. Thermal protection integrated into the battery bay. The document mandate: do not build custom cells — use flight-proven lithium-ion packs. Reference class: 77–99 Wh packs; 150–200 Wh installed total sized by eclipse load plus worst-case event stack plus 30% capacity margin at EOL.',
     specs: [
-      { label: 'Frequency',    value: '145 MHz (VHF)' },
-      { label: 'Length',       value: '~50cm deployed' },
-      { label: 'Deployment',   value: 'Spring-loaded, passive' },
-      { label: 'Function',     value: 'Beacon + emergency comms' },
+      { label: 'Chemistry',       value: 'Space-rated Li-ion, flight-proven packs' },
+      { label: 'Capacity target', value: '150–200 Wh installed [CBE]' },
+      { label: 'Ref. pack class', value: '77–99 Wh per pack' },
+      { label: 'Max C-rate',      value: '≤1.7C per burst event [CBE]' },
+      { label: 'DoD per event',   value: '≤5% per SAR/payload burst [CBE]' },
+      { label: 'EOL margin',      value: '30% capacity reserve at EOL' },
+      { label: 'Mass (CBE)',      value: '1.5 kg CBE / 1.7 kg with 10% MGA' },
     ],
   },
   ant1: {
-    name: 'VHF Whip Antenna — 2',
-    category: 'Communications',
-    status: 'Active',
-    description: 'Secondary deployable VHF monopole whip antenna. Provides cross-polarisation diversity with antenna 1, improving ground contact reliability and link margin during high-elevation passes.',
+    name: 'C&DH — Flight Computer',
+    category: 'Avionics',
+    status: 'Phase A',
+    description: 'Command and Data Handling system comprising main flight computer, separate payload processor, and non-volatile onboard storage. Core functions: boot and watchdog; telemetry collection; payload scheduling; onboard storage management; housekeeping commands; fault detection, isolation, and recovery (FDIR). Software design principle from the document: the spacecraft should recover from its own mistakes. Storage target: ≥64 GB non-volatile with headroom for anomaly logs and retry queues [CBE].',
     specs: [
-      { label: 'Frequency',    value: '145 MHz (VHF)' },
-      { label: 'Polarisation', value: 'Cross-pol to Ant-1' },
-      { label: 'Gain',         value: '2.15 dBi' },
-      { label: 'Link margin',  value: '+4 dB diversity gain' },
+      { label: 'Architecture',    value: 'Main flight computer + payload processor' },
+      { label: 'Storage',         value: '≥64 GB non-volatile [CBE]' },
+      { label: 'Power (C&DH)',    value: '~4 W continuous [CBE]' },
+      { label: 'Mass (CBE)',      value: '0.8 kg CBE / 0.9 kg with 15% MGA' },
+      { label: 'FDIR',            value: 'Autonomous fault detection, isolation, recovery' },
+      { label: 'Autonomy',        value: 'Safe-mode, routine ops, limited payload autonomy' },
+      { label: 'Data bottleneck', value: 'Downlink, not sensor; tasked never streaming' },
     ],
   },
   thr0: {
-    name: 'Cold Gas Thruster — 1',
-    category: 'Propulsion',
-    status: 'Phase 3',
-    description: 'Miniaturised cold gas thruster for orbital manoeuvring and fine attitude control. Uses nitrogen or CO₂ as propellant. Enables controlled orbit raising, station-keeping, and de-orbit manoeuvres required for responsible end-of-life disposal.',
+    name: 'Payload Bay — Multispectral EO',
+    category: 'Payload',
+    status: 'Baseline — All Units',
+    description: 'Multispectral Earth observation imager. Baseline payload on every Horizon-1 flight unit. Reference band set: Blue, Green, Red, Red Edge, Near Infrared — the minimum credible agriculture stack. Purpose: identify crop state over time, detect vegetation change, support drought, flood, and land-use monitoring. COTS instrument class; no physics or engineering barriers; estimated TRL 8–9. Pointing requirement derived in Phase A (placeholder: control ≤0.1°, knowledge ≤0.03°, jitter TBD [CBE]).',
     specs: [
-      { label: 'Thrust',       value: '10–50 mN' },
-      { label: 'Isp',          value: '~60s (N₂)' },
-      { label: 'Propellant',   value: 'Cold gas N₂' },
-      { label: 'ΔV budget',    value: '~15 m/s total' },
+      { label: 'Band set',        value: 'Blue, Green, Red, Red Edge, NIR' },
+      { label: 'Application',     value: 'Agriculture, vegetation, land monitoring' },
+      { label: 'Estimated TRL',   value: '8–9 (COTS instrument class)' },
+      { label: 'Pointing ctrl',   value: '≤0.1° control, ≤0.03° knowledge [CBE]' },
+      { label: 'Energy per scene',value: '0.4 Wh per 90 s collection' },
+      { label: 'Mass (CBE)',      value: '1.3 kg CBE / 1.5 kg with 15% MGA' },
+      { label: 'Status',          value: 'On every flight unit; no descope trigger' },
     ],
   },
   thr1: {
-    name: 'Cold Gas Thruster — 2',
-    category: 'Propulsion',
-    status: 'Phase 3',
-    description: 'Secondary cold gas thruster, symmetric pair with thruster 1. Together the pair provides pure-couple torque capability for yaw control without translational disturbance, enabling precise attitude manoeuvres.',
+    name: 'Payload Bay — Demonstration (Option S or D)',
+    category: 'Payload',
+    status: 'Phase A Selection',
+    description: 'One demonstration payload, selected at the Phase A gate. Option S: demonstration-grade X-band SAR with a ≥1.0 m² deployable aperture (reflectarray or membrane-array), ~40–80 W average RF, expected NESZ −8 to −11 dB. Option D: 3GPP NTN narrowband messaging (Release 17/18 NB-IoT), patch array under 0.25 m², 10–30 W transmit windows, SDR-based. Current mass closure: Config S ~24.2 kg; Config D ~21.2 kg against a 12U XL ceiling of ~24–26 kg. Unselected option funded as a Horizon-2 engineering study.',
     specs: [
-      { label: 'Configuration','value': 'Symmetric pair' },
-      { label: 'Control mode', value: 'Pure-couple yaw' },
-      { label: 'Valve type',   value: 'Solenoid, normally-closed' },
-      { label: 'Response',     value: '<5ms opening time' },
+      { label: 'Option S: aperture','value': '≥1.0 m² deployed (physics floor [PHY])' },
+      { label: 'Option S: NESZ',  value: '~−8 to −11 dB expected [CBE]; −12 dB stretch' },
+      { label: 'Option S: TRL',   value: '~4 estimated (highest risk item)' },
+      { label: 'Option D: antenna','value': '<0.25 m² patch array, <2 kg' },
+      { label: 'Option D: TRL',   value: '~6–7 estimated' },
+      { label: 'Selection timing', value: 'Phase A gate decision' },
+      { label: 'MGA applied',     value: '30% mass growth allowance (demo payloads)' },
     ],
   },
   thr2: {
-    name: 'De-orbit Thruster',
-    category: 'Propulsion',
-    status: 'Phase 3',
-    description: 'Dedicated de-orbit thruster aligned with the -Z axis for retrograde burns. Ensures compliance with the 25-year de-orbit rule for LEO operations. The IkirereMesh coordination system plans and schedules de-orbit manoeuvres autonomously.',
+    name: 'Thermal Control System',
+    category: 'Thermal',
+    status: 'Phase A',
+    description: 'Thermal control comprising MLI, conductive paths, radiators, heaters, thermal straps, and phase-change or thermal-capacitor provision for burst payloads. Primary challenge: SAR burst loads of 150–250 W DC dissipated for ≤120 s per collection (quantified in v0.5). Thermal design principle from the document: treat heat as a scheduling and storage problem. Reserve a dedicated radiator face — never share radiator real estate with solar or payload apertures. Inter-collection recovery time is an output of Phase A thermal analysis (WP-A7).',
     specs: [
-      { label: 'Alignment',    value: '-Z (retrograde)' },
-      { label: 'Purpose',      value: 'Compliance de-orbit' },
-      { label: 'Orbit life',   value: '<25yr post-mission' },
-      { label: 'Automation',   value: 'IkirereMesh scheduled' },
+      { label: 'SAR burst load',  value: '150–250 W DC for ≤120 s per collection' },
+      { label: 'SAR energy/burst','value': '2.5–4.2 Wh per 60 s collection [CBE]' },
+      { label: 'Steady bus load', value: '15–30 W bus baseline; 30–50 W imaging' },
+      { label: 'Radiator rule',   value: 'Dedicated face; never shared with solar/payload' },
+      { label: 'Peak management', value: 'Thermal capacitance + scheduling discipline' },
+      { label: 'Mass (CBE)',      value: '0.7 kg CBE / 0.8 kg with 20% MGA' },
+      { label: 'Phase A WP',      value: 'WP-A7: burst thermal analysis + recovery time' },
     ],
   },
   sep0: {
-    name: '1U Interface Ring — Lower',
+    name: 'Structure — Deployment & Mechanisms',
     category: 'Structure',
-    status: 'Structural',
-    description: 'Lower 1U/2U interface separation ring. Provides the mechanical boundary between the lower and middle units of the 3U stack. Includes alignment features for payload bay integration and PCB stack mounting rails.',
+    status: 'Phase A',
+    description: 'All deployment mechanisms including solar wing hinges, hold-down and release mechanisms, deployment stops and latches, harness strain relief, and payload aperture deployment geometry. Mechanism count is the dominant infant-mortality driver in this vehicle class. The document\'s standing rule: every deployable adds failure risk. Deployment verification is a Phase D/E gate item. Flat-sat geometry requires discipline: the deployed state only matters if the deployment sequence is reliable.',
     specs: [
-      { label: 'Location',     value: 'Z = −113mm' },
-      { label: 'Material',     value: 'Al 6061-T6' },
-      { label: 'Interface',    value: 'PC/104 compatible' },
-      { label: 'Function',     value: 'Payload bay boundary' },
+      { label: 'Solar wings',     value: '2 wings × ~3 panels; ~908 mm deployed span each [CBE]' },
+      { label: 'Hold-down',       value: 'Hold-down and release mechanism per wing' },
+      { label: 'Hinge type',      value: 'Deployable hinge line; composite or Al-honeycomb substrate' },
+      { label: 'Harness',         value: 'Flex-harness routing with strain relief' },
+      { label: 'Mass (CBE)',      value: '2.3 kg CBE / 2.8 kg with 20% MGA (wings + deploy)' },
+      { label: 'Risk rank',       value: 'Mechanism count = dominant infant-mortality risk' },
+      { label: 'Verification',    value: 'Phase D/E gate item per document' },
     ],
   },
   sep1: {
-    name: '1U Interface Ring — Upper',
-    category: 'Structure',
-    status: 'Structural',
-    description: 'Upper 2U/3U interface separation ring. Separates the avionics bay from the communication and ADCS subsystem bay. Provides thermal isolation between power-intensive subsystems and temperature-sensitive electronics.',
+    name: 'Disposal — Passive Atmospheric Decay',
+    category: 'Disposal',
+    status: 'Baseline FU1',
+    description: 'No propulsion on Flight Unit 1. Disposal is passive atmospheric decay from the 500–550 km SSO baseline. The flat-sat geometry\'s high area-to-mass ratio assists decay. Preliminary decay estimate [CBE]: at ~22 kg and tumble-averaged cross-section of ~0.25–0.45 m², ballistic coefficient is ~22–40 kg/m². Estimated decay lifetime from 550 km: ~4–10 years depending on solar activity; from 500 km, shorter. Satisfies the 25-year guideline with large margin. Compliance verified using DRAMA or DAS in Phase A (WP-A9).',
     specs: [
-      { label: 'Location',     value: 'Z = +113mm' },
-      { label: 'Material',     value: 'Al 6061-T6' },
-      { label: 'Interface',    value: 'Avionics / ADCS boundary' },
-      { label: 'Function',     value: 'Thermal + structural separation' },
+      { label: 'Propulsion FU1',  value: 'None (passive disposal baseline)' },
+      { label: 'Orbit',           value: '500–550 km SSO [CBE]' },
+      { label: 'Est. spacecraft mass','value': '~22 kg [CBE]' },
+      { label: 'Cross-section',   value: '~0.25–0.45 m² tumble-averaged [CBE]' },
+      { label: 'Ballistic coeff.',value: '~22–40 kg/m² [CBE]' },
+      { label: 'Decay lifetime',  value: '~4–10 yr from 550 km (solar-activity dependent) [CBE]' },
+      { label: 'Compliance',      value: '25-yr rule satisfied with margin; WP-A9 verification' },
     ],
   },
 }
@@ -167,8 +205,11 @@ const CAT_COLOR: Record<string, string> = {
   Structure:      '#64748b',
   Power:          '#C8860A',
   Communications: '#1E5FA8',
+  Avionics:       '#475569',
   ADCS:           '#0A2463',
-  Propulsion:     '#22c55e',
+  Payload:        '#7c3aed',
+  Thermal:        '#dc2626',
+  Disposal:       '#22c55e',
 }
 
 // Materials, AM, AG, PanelSegment, DeployablePanel, usePart — all from CubeSatModel
@@ -300,76 +341,117 @@ function Satellite({
     group.current.rotation.y += delta * 0.14
   })
 
-  const BX = 0.10, BZ = 0.34, BY = 0.10
+  // Real Horizon-1 12U XL dimensions from Section 8.4
+  const BX = BODY_X   // 0.2263m
+  const BY = BODY_Y   // 0.2263m
+  const BZ = BODY_Z   // 0.366m
 
-  const posA0   = usePart('ant0',   [0.036,  BZ/2+0.046,  0.036], exploded)
-  const posA1   = usePart('ant1',   [-0.036, BZ/2+0.046,  0.036], exploded)
-  const posPatch= usePart('patch',  [-0.018, BZ/2+0.003,  0.010], exploded)
-  const posDome = usePart('dome',   [0.015,  BZ/2+0.005, -0.012], exploded)
-  const posT0   = usePart('thr0',   [0.022,  -BZ/2-0.009,  0.018], exploded)
-  const posT1   = usePart('thr1',   [-0.022, -BZ/2-0.009,  0.018], exploded)
-  const posT2   = usePart('thr2',   [0,      -BZ/2-0.009, -0.022], exploded)
-  const posS0   = usePart('sep0',   [0, -BZ/6, 0], exploded)
-  const posS1   = usePart('sep1',   [0,  BZ/6, 0], exploded)
+  // Component positions matched to flat-sat geometry
+  // X axis: wing direction, Y axis: face normal, Z axis: depth (366mm)
+  const posA0   = usePart('ant0',  [ BX*0.3,  BY/2+0.04,  BZ*0.3], exploded)
+  const posA1   = usePart('ant1',  [-BX*0.3,  BY/2+0.04,  BZ*0.3], exploded)
+  const posPatch= usePart('patch', [0,        -BY/2-0.01,  BZ*0.1], exploded)
+  const posDome = usePart('dome',  [ BX*0.2,  -BY/2-0.01, -BZ*0.2], exploded)
+  const posT0   = usePart('thr0',  [ BX*0.2,   BY/2+0.01,  BZ*0.1], exploded)
+  const posT1   = usePart('thr1',  [-BX*0.2,   BY/2+0.01,  BZ*0.1], exploded)
+  const posT2   = usePart('thr2',  [0,         0,           0     ], exploded)
+  const posS0   = usePart('sep0',  [0,         0,          -BZ/3  ], exploded)
+  const posS1   = usePart('sep1',  [0,         0,           BZ/3  ], exploded)
 
   const click = (id: string) => (e: any) => {
     e.stopPropagation()
     onSelect(selected === id ? null : id)
   }
 
+  // MLI-covered materials for the flat-sat
+  const mliMat = new THREE.MeshStandardMaterial({ color: '#c8860a', roughness: 0.08, metalness: 0.85 })
+  const radiatorMat = new THREE.MeshStandardMaterial({ color: '#e8e8e8', roughness: 0.72, metalness: 0.0 })
+  const solarBodyMat = new THREE.MeshStandardMaterial({ color: '#1a2a5e', roughness: 0.12, metalness: 0.0 })
+
   return (
     <group
       ref={group}
-      rotation={[-0.06, 0.4, 0]}
+      rotation={[0.3, 0.5, 0.05]}
       onPointerDown={() => { isDragging.current = true }}
       onPointerUp={() => { setTimeout(() => { isDragging.current = false }, 80) }}
       onPointerMissed={() => onSelect(null)}
     >
-      {/* Body */}
-      <mesh material={getMatFor('body', selected, bodyMat)} castShadow receiveShadow onClick={click('body')}>
-        <boxGeometry args={[BX, BZ, BY]} />
+      {/* Primary flat bus structure — MLI gold thermal blanket on body */}
+      <mesh material={getMatFor('body', selected, mliMat)} castShadow receiveShadow onClick={click('body')}>
+        <boxGeometry args={[BX, BY, BZ]} />
       </mesh>
 
-      {/* Separation rings */}
-      <AM position={posS0} material={getMatFor('sep0', selected, aluMat)} onClick={click('sep0')} castShadow>
-        <boxGeometry args={[BX+0.001, 0.0018, BY+0.001]} />
+      {/* Radiator face: -Z dedicated thermal face (white painted Al) */}
+      <mesh position={[0, 0, -BZ/2 - 0.001]} material={radiatorMat}>
+        <boxGeometry args={[BX - 0.004, BY - 0.004, 0.002]} />
+      </mesh>
+
+      {/* Nadir face: EO instrument window (dark optical) */}
+      <mesh position={[0, -BY/2 - 0.001, BZ*0.1]} material={getMatFor('patch', selected, darkMat)} onClick={click('patch')}>
+        <boxGeometry args={[0.080, 0.003, 0.090]} />
+      </mesh>
+
+      {/* Zenith face: body-mounted solar strips (~12W) */}
+      <mesh position={[0, BY/2 + 0.001, 0]} material={solarBodyMat}>
+        <boxGeometry args={[BX - 0.008, 0.002, BZ - 0.008]} />
+      </mesh>
+
+      {/* Corner rails: structural aluminium */}
+      {([
+        [ BX/2 - 0.009, 0,  BZ/2 - 0.009] as [number,number,number],
+        [-BX/2 + 0.009, 0,  BZ/2 - 0.009] as [number,number,number],
+        [ BX/2 - 0.009, 0, -BZ/2 + 0.009] as [number,number,number],
+        [-BX/2 + 0.009, 0, -BZ/2 + 0.009] as [number,number,number],
+      ]).map((pos, i) => (
+        <mesh key={i} position={pos} material={aluMat}>
+          <boxGeometry args={[0.012, BY + 0.002, 0.012]} />
+        </mesh>
+      ))}
+
+      {/* Structural separation joints */}
+      <AM position={posS0} material={getMatFor('sep0', selected, aluMat)} onClick={click('sep0')}>
+        <boxGeometry args={[BX + 0.001, BY + 0.001, 0.003]} />
       </AM>
-      <AM position={posS1} material={getMatFor('sep1', selected, aluMat)} onClick={click('sep1')} castShadow>
-        <boxGeometry args={[BX+0.001, 0.0018, BY+0.001]} />
+      <AM position={posS1} material={getMatFor('sep1', selected, aluMat)} onClick={click('sep1')}>
+        <boxGeometry args={[BX + 0.001, BY + 0.001, 0.003]} />
       </AM>
 
-      {/* Deployable solar panels — hinge-rotated spring animation */}
+      {/* Deployable solar wings from ±X long edges */}
       <DeployablePanel side={1}  deployed={deployed} exploded={exploded} selected={selected} onSelect={onSelect} />
       <DeployablePanel side={-1} deployed={deployed} exploded={exploded} selected={selected} onSelect={onSelect} />
 
-      {/* Antennas */}
-      <AM position={posA0} material={getMatFor('ant0', selected, darkMat)} onClick={click('ant0')}>
-        <cylinderGeometry args={[0.0009, 0.0009, 0.092, 6]} />
+      {/* TT&C whip antennas on zenith face */}
+      <AM position={posA0} material={getMatFor('ant0', selected, steelMat)} onClick={click('ant0')}>
+        <cylinderGeometry args={[0.0010, 0.0010, 0.110, 6]} />
       </AM>
-      <AM position={posA1} material={getMatFor('ant1', selected, darkMat)} onClick={click('ant1')}>
-        <cylinderGeometry args={[0.0009, 0.0009, 0.092, 6]} />
+      <AM position={posA1} material={getMatFor('ant1', selected, steelMat)} onClick={click('ant1')}>
+        <cylinderGeometry args={[0.0010, 0.0010, 0.110, 6]} />
       </AM>
 
-      {/* Top components */}
-      <AM position={posPatch} material={getMatFor('patch', selected, aluMat)} castShadow onClick={click('patch')}>
-        <boxGeometry args={[0.028, 0.005, 0.028]} />
-      </AM>
+      {/* X-band downlink patch on +Z face */}
+      <mesh position={[0, 0, BZ/2 + 0.003]} material={darkMat} onClick={click('ant1')}>
+        <boxGeometry args={[0.055, BY * 0.7, 0.004]} />
+      </mesh>
+
+      {/* EO lens aperture (Payload A) */}
       <AM position={posDome} material={getMatFor('dome', selected, darkMat)} onClick={click('dome')}>
-        <cylinderGeometry args={[0.010, 0.010, 0.010, 10]} />
+        <cylinderGeometry args={[0.018, 0.022, 0.024, 12]} />
       </AM>
 
-      {/* Thrusters */}
-      <AM position={posT0} material={getMatFor('thr0', selected, steelMat)} castShadow onClick={click('thr0')}>
-        <coneGeometry args={[0.012, 0.018, 10]} />
+      {/* ADCS reaction wheels — visible as discs */}
+      <AM position={posT0} material={getMatFor('thr0', selected, steelMat)} onClick={click('thr0')}>
+        <cylinderGeometry args={[0.028, 0.028, 0.012, 16]} />
       </AM>
-      <AM position={posT1} material={getMatFor('thr1', selected, steelMat)} castShadow onClick={click('thr1')}>
-        <coneGeometry args={[0.012, 0.018, 10]} />
-      </AM>
-      <AM position={posT2} material={getMatFor('thr2', selected, steelMat)} castShadow onClick={click('thr2')}>
-        <coneGeometry args={[0.012, 0.018, 10]} />
+      <AM position={posT1} material={getMatFor('thr1', selected, steelMat)} onClick={click('thr1')}>
+        <cylinderGeometry args={[0.028, 0.028, 0.012, 16]} />
       </AM>
 
-      {/* 3D floating labels when exploded — panels handled by DeployablePanel */}
+      {/* Battery pack (EPS) */}
+      <AM position={posT2} material={getMatFor('thr2', selected, new THREE.MeshStandardMaterial({ color: '#2a3a5a', roughness: 0.4, metalness: 0.2 }))} onClick={click('thr2')}>
+        <boxGeometry args={[BX * 0.55, BY * 0.60, BZ * 0.30]} />
+      </AM>
+
+      {/* 3D floating callout labels when exploded */}
       {(['ant0','ant1','patch','dome','thr0','thr1','thr2','sep0','sep1'] as const).map(id => {
         const posMap: Record<string, any> = {
           ant0: posA0, ant1: posA1,
@@ -398,7 +480,7 @@ function CameraReset({ trigger }: { trigger: number }) {
   useEffect(() => {
     if (trigger === 0) return
     // Smoothly lerp back to default position
-    const target = new THREE.Vector3(0.55, 0.14, 0.95)
+    const target = new THREE.Vector3(0.80, 0.60, 1.80)
     const start  = camera.position.clone()
     let t = 0
     const anim = () => {
@@ -645,10 +727,10 @@ export default function Hardware() {
         pointerEvents: 'none',
       }}>
         <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#94a3b8', margin: 0 }}>
-          Hardware
+          Hardware · IOLA-H1-RA-0001 v0.5
         </p>
         <p style={{ fontSize: '18px', fontWeight: 600, letterSpacing: '-0.02em', color: '#111827', margin: '2px 0 0' }}>
-          IOLA 3U CubeSat
+          Horizon-1 · 12U XL Flat-Sat
         </p>
       </div>
 
@@ -661,7 +743,7 @@ export default function Hardware() {
           {Object.keys(COMPONENTS).length} components
         </p>
         <p style={{ fontSize: '11px', color: '#64748b', margin: '2px 0 0', letterSpacing: '0.02em' }}>
-          Phase 3 hardware
+          Phase 0 / Phase A Architecture Study
         </p>
       </div>
 
@@ -669,7 +751,7 @@ export default function Hardware() {
       <Canvas
         shadows
         dpr={[1, 1.5]}
-        camera={{ position: [0.55, 0.14, 0.95], fov: 44, near: 0.01, far: 30 }}
+        camera={{ position: [0.80, 0.60, 1.80], fov: 50, near: 0.01, far: 30 }}
         onDoubleClick={handleDoubleClick}
         gl={{
           antialias: true,

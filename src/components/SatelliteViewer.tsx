@@ -75,7 +75,7 @@ export default function SatelliteViewer({ transparent = false }: { transparent?:
       <SatelliteErrorBoundary fallback={transparent ? null : fallbackUI}>
         <Canvas
           shadows dpr={[1, 1.5]}
-          camera={{ position: [0.55, 0.14, 0.95], fov: 44, near: 0.01, far: 30 }}
+          camera={{ position: [0.70, 0.55, 1.65], fov: 52, near: 0.01, far: 30 }}
           gl={{
             antialias: true, powerPreference: 'default',
             failIfMajorPerformanceCaveat: false,
