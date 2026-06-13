@@ -7,9 +7,8 @@ export default function Footer() {
         <div className="flex flex-wrap gap-10 items-start justify-between mb-10">
           <div className="flex flex-col gap-3 max-w-70">
             <img src="/iola-logo-light.png" alt="Ikirere Orbital Labs" className="h-14 w-14 object-contain" />
-            <p className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase">Africa's Access to Space</p>
             <p className="text-xs text-[#94a3b8] leading-relaxed">
-              Building the full-stack orbital infrastructure powering the next generation of autonomous nanosatellite systems for the African space age.
+              Building programmable autonomous multipurpose nanosatellites for the next generation of space systems.
             </p>
           </div>
 
@@ -50,7 +49,7 @@ export default function Footer() {
           <p className="text-xs text-[#94a3b8]">© 2026 Ikirere Orbital Labs. Kigali, Rwanda.</p>
           <div className="flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-            <p className="text-xs text-[#94a3b8]">Phase 03 active — IkirereMesh coordination</p>
+            <p className="text-xs text-[#94a3b8]">Research & Development Active</p>
           </div>
         </div>
       </div>

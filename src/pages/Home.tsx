@@ -116,45 +116,57 @@ const h2Style = { fontVariationSettings: "'wght' 580", letterSpacing: '-0.025em'
 // ── Data ──────────────────────────────────────────────────────────────────────
 const shifts = {
   before: [
-    'One satellite, one mission. A weather satellite does weather. A comms satellite does comms. The category defines the capability.',
-    'Designed and launched by large contractors. Years of lead time. Hundreds of millions per mission.',
-    'No coordination layer across operators. Each constellation manages itself in isolation.',
-    'Africa depends almost entirely on external satellite infrastructure it did not build and does not control.',
+    'One satellite. One mission.',
+    'Large development costs and long deployment timelines.',
+    'Specialized systems designed for narrow operational objectives.',
+    'Limited flexibility once deployed.',
   ],
   after: [
-    'One satellite, multiple missions. The same satellite carries different payloads for different operators at different times.',
-    'Small enough for a university lab. Affordable enough for a research grant. Fast enough to iterate.',
-    'A shared coordination and safety layer that treats satellites as a networked system — not isolated units.',
-    'Sovereign orbital infrastructure, designed in Africa, operated by African institutions, serving African priorities.',
+    'Programmable spacecraft capable of supporting multiple mission profiles.',
+    'Autonomous onboard decision-making systems.',
+    'Smaller, faster, and more adaptable satellite architectures.',
+    'Greater access to space for researchers, institutions, and emerging space ecosystems.',
   ],
 }
 
 const stages = [
   {
-    n: '01', title: 'Orbital Intelligence', active: true,
-    desc: 'Building the coordination, safety, and simulation systems required to operate nanosatellite networks at scale. The architecture that makes everything else possible.',
+    n: '01', title: 'Research & Simulation', active: true,
+    desc: 'Building and validating the environments required to model spacecraft behavior, orbital dynamics, autonomy systems, and mission operations before hardware development begins.',
   },
   {
-    n: '02', title: 'Onboard Systems', active: false,
-    desc: 'Embedding the coordination and safety architecture directly into the satellite. Intelligence at the edge — no ground station dependency for routine decisions.',
+    n: '02', title: 'Autonomy & Coordination', active: false,
+    desc: 'Researching autonomous decision-making systems and spacecraft coordination architectures that could support future multipurpose nanosatellite fleets.',
   },
   {
-    n: '03', title: 'Multipurpose Platforms', active: false,
-    desc: 'A programmable nanosatellite platform for African research institutions. One vehicle, multiple missions, accessible without a dedicated launch program.',
+    n: '03', title: 'Multipurpose Nanosatellite Platform', active: false,
+    desc: 'Applying validated research to the development of programmable autonomous nanosatellite systems capable of supporting multiple missions from a single platform.',
   },
 ]
 
 const traction = [
-  { icon: <img src="/deep-learning-indaba.png" alt="Deep Learning Indaba" style={logoStyle} />, desc: "Africa's leading machine learning research community. First public presentation of the orbital coordination thesis." },
-  { icon: <img src="/google-1-1.svg"           alt="Google"              style={logoStyle} />, desc: 'Cloud and infrastructure ecosystem support through the Deep Learning Indaba network.' },
-  { icon: <img src="/nvidia.svg"               alt="NVIDIA"              style={logoStyle} />, desc: 'Access to accelerated computing and AI infrastructure through the Deep Learning Indaba ecosystem.' },
-  { icon: <img src="/station-f.jpg"            alt="Station F"           style={logoStyle} />, desc: 'European deep-tech ecosystem access across aerospace, infrastructure, and frontier technology networks.' },
+  { icon: <img src="/deep-learning-indaba.png" alt="Deep Learning Indaba" style={logoStyle} />, desc: 'Deep Learning Indaba' },
+  { icon: <img src="/google-1-1.svg"           alt="Google"              style={logoStyle} />, desc: 'Google' },
+  { icon: <img src="/nvidia.svg"               alt="NVIDIA"              style={logoStyle} />, desc: 'NVIDIA' },
+  { icon: <img src="/station-f.jpg"            alt="Station F"           style={logoStyle} />, desc: 'Station F' },
 ]
 
 const pillars = [
-  { label: 'Multipurpose',          value: '1 Satellite → Multiple missions' },
-  { label: 'Orbital Intelligence',  value: 'Autonomous coordination infrastructure for next-generation nanosatellite fleets' },
-  { label: 'Software + Hardware',   value: 'Full-stack orbital architecture' },
+  {
+    label: 'Multipurpose',
+    heading: 'One spacecraft. Multiple missions.',
+    body: 'Future nanosatellites should not be limited to a single task. We are exploring architectures that allow a single platform to support communications, Earth observation, environmental monitoring, logistics, and future applications.',
+  },
+  {
+    label: 'Autonomous',
+    heading: 'Intelligence at the edge.',
+    body: 'Future satellite systems must operate with greater independence, adaptability, and resilience. Autonomy enables spacecraft to make routine operational decisions without constant human intervention.',
+  },
+  {
+    label: 'Accessible',
+    heading: 'Lowering the barrier to space.',
+    body: 'Our long-term goal is to make advanced satellite capabilities more accessible to researchers, institutions, and organizations that traditionally could not participate in space programs.',
+  },
 ]
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -214,19 +226,17 @@ export default function Home() {
                 color: '#111827',
               }}
             >
-              Building Africa's<br />
-              <span style={{ color: '#0A2463' }}>Orbital Infrastructure</span>
+              Building Programmable Autonomous<br />
+              <span style={{ color: '#0A2463' }}>Multipurpose Nanosatellites</span>
             </h1>
 
             <p className="mb-10" style={{ fontSize: '1.05rem', color: '#64748b', lineHeight: '1.65' }}>
-              Building the full-stack orbital infrastructure powering the next generation of programmable multipurpose nanosatellites.
+              Satellites today are typically built for a single mission. We are developing the next generation of programmable autonomous nanosatellites capable of performing multiple missions from a single spacecraft, reducing the cost and complexity of accessing space.
             </p>
 
             <div className="flex gap-3 flex-wrap">
-              <a
-                href="https://orbit.ikirere.com"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/research"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
                   background: '#0A2463', color: '#fff',
@@ -238,9 +248,9 @@ export default function Home() {
                 onMouseEnter={e => (e.currentTarget.style.background = '#0d2d7a')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#0A2463')}
               >
-                See it in orbit
+                See Our Research
                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7h9M7.5 3l4 4-4 4"/></svg>
-              </a>
+              </Link>
               <Link
                 to="/about"
                 style={{
@@ -277,7 +287,8 @@ export default function Home() {
               className={i > 0 ? 'border-l border-border' : ''}
               style={{ padding: i === 0 ? '0 32px 0 0' : '0 32px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1E5FA8', marginBottom: '8px' }}>{p.label}</p>
-              <p style={{ fontSize: '15px', fontWeight: 400, color: '#475569', letterSpacing: '-0.01em', lineHeight: 1.5 }}>{p.value}</p>
+              <p style={{ fontSize: '14px', fontWeight: 600, color: '#111827', letterSpacing: '-0.01em', lineHeight: 1.4, marginBottom: '8px' }}>{p.heading}</p>
+              <p style={{ fontSize: '13px', fontWeight: 400, color: '#64748b', lineHeight: 1.6 }}>{p.body}</p>
             </div>
           ))}
         </div>
@@ -288,10 +299,10 @@ export default function Home() {
         <div ref={shiftRef} className="reveal">
           <Label>The Transition</Label>
           <h2 className="text-3xl mb-3" style={h2Style}>
-            Satellites are approaching their computing moment.
+            Satellites Are Approaching Their Computing Moment
           </h2>
           <p style={{ color: '#64748b', maxWidth: '580px', fontSize: '0.95rem', marginBottom: '40px', lineHeight: '1.7' }}>
-            Computers once filled entire rooms, cost millions, and served a single purpose. Then microprocessors changed everything, systems became smaller, programmable, networked, and massively more capable. Satellite infrastructure is now approaching the same transition.
+            Computers once filled entire rooms, cost millions of dollars, and were built for highly specialized tasks. Over time they became smaller, more powerful, programmable, and accessible to everyone. We believe satellite systems are approaching a similar transition.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 overflow-hidden"
@@ -299,7 +310,7 @@ export default function Home() {
             {/* Before */}
             <div style={{ padding: '36px 40px', background: '#fff', borderRight: '1px solid #e2e8f0' }}>
               <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '20px' }}>
-                Satellites today
+                Satellites Today
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 {shifts.before.map((text, i) => (
@@ -313,7 +324,7 @@ export default function Home() {
             {/* After */}
             <div style={{ padding: '36px 40px', background: '#f0f4f9', borderLeft: '3px solid #0A2463' }}>
               <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#1E5FA8', marginBottom: '20px' }}>
-                IOLA's direction
+                Where We Believe The Industry Is Going
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 {shifts.after.map((text, i) => (
@@ -333,8 +344,11 @@ export default function Home() {
       {/* ── What We're Building ───────────────────────── */}
       <section className="py-24 max-w-[1100px] mx-auto px-8">
         <div ref={stageRef} className="reveal">
-          <Label>The Architecture</Label>
-          <h2 className="text-3xl mb-12" style={h2Style}>Three stages. Built in sequence.</h2>
+          <Label>Our Approach</Label>
+          <h2 className="text-3xl mb-3" style={h2Style}>Building In Sequence</h2>
+          <p style={{ color: '#64748b', maxWidth: '580px', fontSize: '0.95rem', marginBottom: '40px', lineHeight: '1.7' }}>
+            Developing advanced spacecraft requires rigorous validation before hardware ever reaches orbit. Our development process follows a staged approach designed to reduce risk, validate assumptions, and progressively increase system capability.
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 overflow-hidden"
             style={{ border: '1px solid #e2e8f0', borderRadius: '10px', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
@@ -377,10 +391,10 @@ export default function Home() {
       {/* ── Live System ───────────────────────────────── */}
       <section className="py-24 px-8" style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
         <div className="max-w-[1100px] mx-auto">
-          <Label>The Simulation</Label>
-          <h2 className="text-3xl mb-3" style={h2Style}>The architecture, running live.</h2>
+          <Label>Research</Label>
+          <h2 className="text-3xl mb-3" style={h2Style}>Research Drives Everything</h2>
           <p style={{ fontSize: '0.95rem', color: '#64748b', maxWidth: '520px', marginBottom: '32px', lineHeight: '1.7' }}>
-            15,432 real satellites. Real orbital dynamics. The coordination system operating against actual data — before any hardware has flown.
+            Space systems are expensive to iterate in orbit. For that reason, we begin with research. Our work currently spans orbital simulation, orbital safety, spacecraft autonomy, reinforcement learning, mission coordination, and nanosatellite architecture development. Every capability is studied, modeled, tested, and validated before it becomes part of a future flight system.
           </p>
 
           <div style={{
@@ -407,7 +421,7 @@ export default function Home() {
                 style={{ fontSize: '13px', color: '#fff', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '5px', pointerEvents: 'all', transition: 'gap 0.2s' }}
                 onMouseEnter={e => (e.currentTarget.style.gap = '9px')}
                 onMouseLeave={e => (e.currentTarget.style.gap = '5px')}>
-                Open Orbit
+                Explore Research
                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 7h9M7.5 3l4 4-4 4"/></svg>
               </a>
             </div>
@@ -419,7 +433,10 @@ export default function Home() {
       <section className="py-24 max-w-[1100px] mx-auto px-8">
         <div ref={tractRef} className="reveal">
           <Label>Partners & Recognition</Label>
-          <h2 className="text-3xl mb-12" style={h2Style}>Backed by the Ecosystem.</h2>
+          <h2 className="text-3xl mb-4" style={h2Style}>Building Alongside A Global Ecosystem</h2>
+          <p style={{ color: '#64748b', maxWidth: '520px', fontSize: '0.95rem', marginBottom: '40px', lineHeight: '1.7' }}>
+            These organizations represent communities, ecosystems, and networks that have supported various stages of our development journey.
+          </p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 overflow-hidden"
             style={{ border: '1px solid #e2e8f0', borderRadius: '10px', boxShadow: '0 1px 3px rgba(10,36,99,0.04)' }}>
@@ -452,10 +469,10 @@ export default function Home() {
             <div style={{ maxWidth: '520px' }}>
               <Label>Work With Us</Label>
               <h2 className="text-3xl mb-4" style={h2Style}>
-                The work is long-term.<br />That's deliberate.
+                The Work Is Long-Term.<br />That's Deliberate.
               </h2>
               <p style={{ fontSize: '0.95rem', color: '#64748b', lineHeight: '1.7' }}>
-                We are building orbital infrastructure with a five-year technical roadmap. We need orbital mechanics researchers, systems engineers, RL practitioners, and firmware developers who understand that the most important infrastructure is built slowly and correctly.
+                Building advanced space systems requires patience, technical rigor, and long-term thinking. We are interested in researchers, engineers, and builders who want to contribute to the future of autonomous spacecraft, nanosatellite systems, and space technology.
               </p>
             </div>
             <Link

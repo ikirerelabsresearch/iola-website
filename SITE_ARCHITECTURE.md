@@ -461,7 +461,7 @@ Specs: Location: Z = +113mm · Material: Al 6061-T6 · Interface: Avionics / ADC
 **H2:** Apply directly.
 
 **Instruction:**
-> Send an email to jason@ikirere.com with the subject: IOLA — [Your Area]
+> Send an email to research@ikirere.com with the subject: IOLA — [Your Area]
 
 **Include:**
 - what you've built
@@ -471,7 +471,7 @@ Specs: Location: Z = +113mm · Material: Al 6061-T6 · Interface: Avionics / ADC
 **Closing:**
 > We care far more about demonstrated technical curiosity and systems thinking than formal credentials. Every serious technical inquiry is reviewed directly by the founding team.
 
-**CTA button:** Send an Email → mailto:jason@ikirere.com?subject=IOLA —
+**CTA button:** Send an Email → mailto:research@ikirere.com?subject=IOLA —
 
 ---
 
@@ -571,7 +571,7 @@ Specs: Location: Z = +113mm · Material: Al 6061-T6 · Interface: Avionics / ADC
 
 | Type | Content |
 |------|---------|
-| EMAIL | jason@ikirere.com |
+| EMAIL | research@ikirere.com |
 | LINKEDIN | Ikirere Orbital Labs ↗ → https://linkedin.com/company/ikirere-orbital-labs-africa |
 | LIVE SIMULATION | orbit.ikirere.com ↗ → https://orbit.ikirere.com |
 
