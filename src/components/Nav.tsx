@@ -19,10 +19,10 @@ export default function Nav() {
         <div className="max-w-[1100px] mx-auto px-8 h-16 flex items-center justify-between">
 
           <NavLink to="/" onClick={() => setOpen(false)} className="flex items-center gap-3 group">
-            <img src="/iola-logo-light.png" alt="Ikirere Orbital Labs Africa" className="h-10 w-10 object-contain" />
+            <img src="/iola-logo-light.png" alt="Ikirere Orbital Labs" className="h-10 w-10 object-contain" />
             <div className="hidden sm:block">
               <p className="text-[13px] font-semibold tracking-wide text-text leading-none" style={{ letterSpacing: '0.04em' }}>IKIRERE</p>
-              <p className="text-[10px] text-muted tracking-widest leading-none mt-0.5" style={{ letterSpacing: '0.12em' }}>ORBITAL LABS AFRICA</p>
+              <p className="text-[10px] text-muted tracking-widest leading-none mt-0.5" style={{ letterSpacing: '0.12em' }}>ORBITAL LABS</p>
             </div>
           </NavLink>
 

@@ -27,7 +27,7 @@ export default function Contact() {
           style={{ color: '#0A2463', fontSize: '15px', fontWeight: 500, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', transition: 'opacity 0.15s' }}
           onMouseEnter={e => (e.currentTarget.style.opacity = '0.75')}
           onMouseLeave={e => (e.currentTarget.style.opacity = '1')}>
-          Ikirere Orbital Labs Africa
+          Ikirere Orbital Labs
           <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 10L10 2M10 2H5M10 2v5"/></svg>
         </a>
       ),

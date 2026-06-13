@@ -200,7 +200,7 @@ export default function Home() {
             <div className="flex items-center gap-3 mb-8">
               <div className="w-6 h-px" style={{ background: 'linear-gradient(to right, transparent, #1E5FA8)' }} />
               <p style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#1E5FA8' }}>
-                Ikirere Orbital Labs Africa
+                Ikirere Orbital Labs
               </p>
             </div>
 
