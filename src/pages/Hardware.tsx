@@ -502,21 +502,19 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
 
   return (
     <div style={{
-      position: 'absolute',
-      top: '72px',
-      bottom: '80px',
-      left: '16px',
-      width: '300px',
-      background: 'rgba(255,255,255,0.96)',
+      position: 'fixed',
+      top: '64px',
+      bottom: '0',
+      left: '0',
+      width: '320px',
+      background: 'rgba(255,255,255,0.97)',
       backdropFilter: 'blur(12px)',
-      border: '1px solid #e2e8f0',
-      borderRadius: '10px',
-      boxShadow: '0 8px 32px rgba(10,36,99,0.12)',
-      overflow: 'hidden',
+      borderRight: '1px solid #e2e8f0',
+      boxShadow: '4px 0 24px rgba(10,36,99,0.08)',
       display: 'flex',
       flexDirection: 'column',
-      animation: 'panelIn 0.25s cubic-bezier(0.2,0,0,1) both',
-      zIndex: 10,
+      animation: 'panelIn 0.2s ease both',
+      zIndex: 50,
     }}>
       {/* Header bar */}
       <div style={{ padding: '14px 16px 12px', borderBottom: '1px solid #e2e8f0' }}>
