@@ -503,7 +503,7 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
   return (
     <div style={{
       position: 'absolute',
-      top: '16px',
+      top: '72px',
       bottom: '80px',
       left: '16px',
       width: '300px',
