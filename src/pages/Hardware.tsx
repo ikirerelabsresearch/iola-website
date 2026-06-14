@@ -341,22 +341,22 @@ function Satellite({
     group.current.rotation.y += delta * 0.14
   })
 
-  // Real Horizon-1 12U XL dimensions from Section 8.4
-  const BX = BODY_X   // 0.2263m
-  const BY = BODY_Y   // 0.2263m
-  const BZ = BODY_Z   // 0.366m
+  // Horizon-1: 400×400×100mm "flying pizza box"
+  const BX = BODY_X   // 0.400m
+  const BY = BODY_Y   // 0.100m — thin pizza-box edge
+  const BZ = BODY_Z   // 0.400m
 
   // Component positions matched to flat-sat geometry
-  // X axis: wing direction, Y axis: face normal, Z axis: depth (366mm)
-  const posA0   = usePart('ant0',  [ BX*0.3,  BY/2+0.04,  BZ*0.3], exploded)
-  const posA1   = usePart('ant1',  [-BX*0.3,  BY/2+0.04,  BZ*0.3], exploded)
-  const posPatch= usePart('patch', [0,        -BY/2-0.01,  BZ*0.1], exploded)
-  const posDome = usePart('dome',  [ BX*0.2,  -BY/2-0.01, -BZ*0.2], exploded)
-  const posT0   = usePart('thr0',  [ BX*0.2,   BY/2+0.01,  BZ*0.1], exploded)
-  const posT1   = usePart('thr1',  [-BX*0.2,   BY/2+0.01,  BZ*0.1], exploded)
-  const posT2   = usePart('thr2',  [0,         0,           0     ], exploded)
-  const posS0   = usePart('sep0',  [0,         0,          -BZ/3  ], exploded)
-  const posS1   = usePart('sep1',  [0,         0,           BZ/3  ], exploded)
+  // X axis: wing direction, Y axis: face normal (thin), Z axis: depth (400mm)
+  const posA0   = usePart('ant0',  [ BX*0.28,  BY/2+0.055,  BZ*0.25], exploded)
+  const posA1   = usePart('ant1',  [-BX*0.28,  BY/2+0.055,  BZ*0.25], exploded)
+  const posPatch= usePart('patch', [ BX*0.05, -BY/2-0.012,  BZ*0.08], exploded)
+  const posDome = usePart('dome',  [-BX*0.18, -BY/2-0.012, -BZ*0.15], exploded)
+  const posT0   = usePart('thr0',  [ BX*0.18,  BY/2+0.010,  BZ*0.10], exploded)
+  const posT1   = usePart('thr1',  [-BX*0.18,  BY/2+0.010,  BZ*0.10], exploded)
+  const posT2   = usePart('thr2',  [0,         0,            0      ], exploded)
+  const posS0   = usePart('sep0',  [0,         0,           -BZ/3   ], exploded)
+  const posS1   = usePart('sep1',  [0,         0,            BZ/3   ], exploded)
 
   const click = (id: string) => (e: any) => {
     e.stopPropagation()
@@ -371,12 +371,12 @@ function Satellite({
   return (
     <group
       ref={group}
-      rotation={[0.3, 0.5, 0.05]}
+      rotation={[0.28, 0.55, 0.06]}
       onPointerDown={() => { isDragging.current = true }}
       onPointerUp={() => { setTimeout(() => { isDragging.current = false }, 80) }}
       onPointerMissed={() => onSelect(null)}
     >
-      {/* Primary flat bus structure — MLI gold thermal blanket on body */}
+      {/* Primary flat bus — 400×400×100mm MLI-wrapped body */}
       <mesh material={getMatFor('body', selected, mliMat)} castShadow receiveShadow onClick={click('body')}>
         <boxGeometry args={[BX, BY, BZ]} />
       </mesh>
@@ -480,7 +480,7 @@ function CameraReset({ trigger }: { trigger: number }) {
   useEffect(() => {
     if (trigger === 0) return
     // Smoothly lerp back to default position
-    const target = new THREE.Vector3(0.80, 0.60, 1.80)
+    const target = new THREE.Vector3(0.90, 0.70, 2.00)
     const start  = camera.position.clone()
     let t = 0
     const anim = () => {
@@ -502,8 +502,10 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
 
   return (
     <div style={{
-      position: 'absolute', top: '50%', left: '24px',
-      transform: 'translateY(-50%)',
+      position: 'absolute',
+      top: '16px',
+      bottom: '80px',
+      left: '24px',
       width: '300px',
       background: 'rgba(255,255,255,0.96)',
       backdropFilter: 'blur(12px)',
@@ -511,6 +513,8 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
       borderRadius: '10px',
       boxShadow: '0 8px 32px rgba(10,36,99,0.12)',
       overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
       animation: 'panelIn 0.25s cubic-bezier(0.2,0,0,1) both',
       zIndex: 10,
     }}>
@@ -542,24 +546,27 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
         </p>
       </div>
 
-      {/* Description */}
-      <div style={{ padding: '14px 16px', borderBottom: '1px solid #f1f5f9' }}>
-        <p style={{ fontSize: '12.5px', color: '#475569', lineHeight: '1.7', margin: 0 }}>
-          {comp.description}
-        </p>
-      </div>
+      {/* Scrollable body — description + specs */}
+      <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+        {/* Description */}
+        <div style={{ padding: '14px 16px', borderBottom: '1px solid #f1f5f9' }}>
+          <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.65', margin: 0 }}>
+            {comp.description}
+          </p>
+        </div>
 
-      {/* Specs table */}
-      <div style={{ padding: '10px 16px 14px' }}>
-        <p style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px', marginTop: 0 }}>
-          Specifications
-        </p>
-        {comp.specs.map(s => (
-          <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', borderBottom: '1px solid #f8fafc' }}>
-            <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 500 }}>{s.label}</span>
-            <span style={{ fontSize: '11px', color: '#111827', fontWeight: 600, textAlign: 'right', maxWidth: '170px' }}>{s.value}</span>
-          </div>
-        ))}
+        {/* Specs table */}
+        <div style={{ padding: '10px 16px 16px' }}>
+          <p style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: '8px', marginTop: 0 }}>
+            Specifications
+          </p>
+          {comp.specs.map(s => (
+            <div key={s.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '5px 0', borderBottom: '1px solid #f8fafc', gap: '8px' }}>
+              <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 500, flexShrink: 0 }}>{s.label}</span>
+              <span style={{ fontSize: '11px', color: '#111827', fontWeight: 600, textAlign: 'right' }}>{s.value}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -751,7 +758,7 @@ export default function Hardware() {
       <Canvas
         shadows
         dpr={[1, 1.5]}
-        camera={{ position: [0.80, 0.60, 1.80], fov: 50, near: 0.01, far: 30 }}
+        camera={{ position: [0.90, 0.70, 2.00], fov: 50, near: 0.01, far: 30 }}
         onDoubleClick={handleDoubleClick}
         gl={{
           antialias: true,
