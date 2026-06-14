@@ -503,11 +503,10 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
   return (
     <div style={{
       position: 'fixed',
-      top: '0',
+      top: '64px',
       bottom: '0',
       left: '0',
       width: '320px',
-      // paddingTop: '64px',
       background: 'rgba(255,255,255,0.97)',
       backdropFilter: 'blur(12px)',
       borderRight: '1px solid #e2e8f0',
@@ -515,7 +514,7 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
       display: 'flex',
       flexDirection: 'column',
       animation: 'panelIn 0.2s ease both',
-      zIndex: 50,
+      zIndex: 40,
     }}>
       {/* Header bar */}
       <div style={{ padding: '14px 16px 12px', borderBottom: '1px solid #e2e8f0' }}>
