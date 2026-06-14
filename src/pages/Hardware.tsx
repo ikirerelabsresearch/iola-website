@@ -824,8 +824,8 @@ export default function Hardware() {
       {/* Panel slide-in animation */}
       <style>{`
         @keyframes panelIn {
-          from { opacity: 0; transform: translateY(-50%) translateX(-16px); }
-          to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+          from { opacity: 0; transform: translateX(-24px); }
+          to   { opacity: 1; transform: translateX(0); }
         }
       `}</style>
     </div>
