@@ -503,10 +503,11 @@ function DetailPanel({ id, onClose }: { id: string; onClose: () => void }) {
   return (
     <div style={{
       position: 'fixed',
-      top: '64px',
+      top: '0',
       bottom: '0',
       left: '0',
       width: '320px',
+      // paddingTop: '64px',
       background: 'rgba(255,255,255,0.97)',
       backdropFilter: 'blur(12px)',
       borderRight: '1px solid #e2e8f0',
