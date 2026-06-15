@@ -3,8 +3,8 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import {
-  aluMat, darkMat, steelMat, highlightMat,
-  AM, DeployablePanel, usePart,
+  aluMat, darkMat, steelMat, highlightMat, solarMat, solarGridMat,
+  AM, AG, DeployablePanel, usePart,
   BODY_X, BODY_Y, BODY_Z,
 } from '../components/CubeSatModel'
 
@@ -60,16 +60,17 @@ const COMPONENTS: Record<string, {
     ],
   },
   patch: {
-    name: 'Communications System',
-    category: 'Communications',
+    name: 'Flight Computer',
+    category: 'Avionics',
     status: 'Design',
-    description: 'The communications system enables spacecraft command, telemetry, and payload data transmission. Critical spacecraft operations remain isolated from payload communications, improving operational reliability and mission safety.',
+    description: 'The flight computer serves as the central command and data management system for the spacecraft. It oversees mission operations, telemetry processing, onboard storage, and autonomous fault management.',
     specs: [
-      { label: 'Command & Telemetry', value: 'S-Band / UHF' },
-      { label: 'Payload Downlink',    value: 'X-Band' },
-      { label: 'Peak Downlink Rate',  value: 'Up to 225 Mbps' },
-      { label: 'Pass Energy',         value: '~3.3 Wh per 8-minute pass' },
-      { label: 'Architecture',        value: 'Independent command and payload channels' },
+      { label: 'Architecture',     value: 'Dual-Processor System' },
+      { label: 'Storage Capacity', value: '≥64 GB' },
+      { label: 'Power Draw',       value: '~4 W continuous' },
+      { label: 'Mass',             value: '0.8 kg' },
+      { label: 'Fault Management', value: 'Autonomous Detection & Recovery' },
+      { label: 'Functions',        value: 'Operations, Scheduling, Data Management' },
     ],
   },
   dome: {
@@ -87,73 +88,73 @@ const COMPONENTS: Record<string, {
     ],
   },
   ant0: {
+    name: 'TT&C Antenna',
+    category: 'Communications',
+    status: 'Design',
+    description: 'Body-mounted S-Band/UHF whip antennas on the zenith face provide the spacecraft\'s primary command, telemetry, and tracking link. Redundant antennas ensure continuous ground contact across all spacecraft attitudes.',
+    specs: [
+      { label: 'Frequency Band',   value: 'S-Band / UHF' },
+      { label: 'Function',         value: 'Command, Telemetry & Tracking' },
+      { label: 'Mounting',         value: 'Zenith face — body mounted' },
+      { label: 'Redundancy',       value: 'Dual whip antenna configuration' },
+      { label: 'Link Type',        value: 'TT&C uplink and downlink' },
+      { label: 'Architecture',     value: 'Independent from payload channel' },
+    ],
+  },
+  ant1: {
+    name: 'X-Band Downlink System',
+    category: 'Communications',
+    status: 'Design',
+    description: 'The X-band patch antenna on the +Z face provides high-rate payload data downlink to ground stations. Combined with the TT&C antennas it forms the complete communications suite enabling up to 225 Mbps transmission per pass.',
+    specs: [
+      { label: 'Frequency Band',   value: 'X-Band (~9.6 GHz)' },
+      { label: 'Peak Downlink Rate',value: 'Up to 225 Mbps' },
+      { label: 'Antenna Type',     value: 'Patch array — +Z face' },
+      { label: 'Pass Energy',      value: '~3.3 Wh per 8-minute pass' },
+      { label: 'Function',         value: 'Payload image & data downlink' },
+      { label: 'Architecture',     value: 'Dedicated payload channel' },
+    ],
+  },
+  thr0: {
+    name: 'Multispectral Camera Cluster',
+    category: 'Payload',
+    status: 'Earth Observation',
+    description: 'Three multispectral cameras on the starboard half of the nadir face. The primary camera points straight down for standard imaging. Two oblique cameras are angled ±10° forward and aft, capturing the same ground target from different angles to enable stereo reconstruction and multi-angle analysis.',
+    specs: [
+      { label: 'Spectral Bands',   value: 'Blue, Green, Red, Red Edge, Near Infrared' },
+      { label: 'Camera Count',     value: '3 — nadir + 2 oblique' },
+      { label: 'Oblique Angles',   value: '±10° forward / aft' },
+      { label: 'Applications',     value: 'Agriculture, land monitoring, stereo imaging' },
+      { label: 'Pointing Control', value: '≤0.1°' },
+      { label: 'Face Location',    value: 'Starboard half — nadir face' },
+    ],
+  },
+  thr1: {
+    name: 'SAR Aperture',
+    category: 'Payload',
+    status: 'Synthetic Aperture Radar',
+    description: 'The port half of the nadir face carries the SAR feed and aperture interface. An X-band deployable reflectarray unfolds from this face after orbital insertion, enabling radar imaging through clouds and at night. The SAR operates in short burst collections with thermal recovery between passes.',
+    specs: [
+      { label: 'Radar Band',       value: 'X-Band (~9.6 GHz)' },
+      { label: 'Aperture',         value: '≥1.0 m² deployed reflectarray' },
+      { label: 'Mode',             value: 'Burst stripmap, ≤120 s per collection' },
+      { label: 'Capability',       value: 'All-weather, day/night imaging' },
+      { label: 'Face Location',    value: 'Port half — nadir face' },
+      { label: 'Collection Energy',value: '~3.3 Wh per 60 s burst' },
+    ],
+  },
+  thr2: {
     name: 'Battery System',
     category: 'Power',
     status: 'Design',
     description: 'The onboard battery system stores energy generated by the solar arrays and supplies power during eclipse periods and peak operational loads. Integrated monitoring systems continuously manage battery health and performance.',
     specs: [
-      { label: 'Chemistry',       value: 'Space-Rated Lithium-Ion' },
-      { label: 'Capacity',        value: '150–200 Wh' },
-      { label: 'Max Discharge',   value: '≤1.7C' },
+      { label: 'Chemistry',          value: 'Space-Rated Lithium-Ion' },
+      { label: 'Capacity',           value: '150–200 Wh' },
+      { label: 'Max Discharge',      value: '≤1.7C' },
       { label: 'Depth of Discharge', value: '≤5% per payload event' },
-      { label: 'End-of-Life Reserve', value: '30% capacity margin' },
-      { label: 'Battery Mass',    value: '1.5 kg' },
-    ],
-  },
-  ant1: {
-    name: 'Flight Computer',
-    category: 'Avionics',
-    status: 'Design',
-    description: 'The flight computer serves as the central command and data management system for the spacecraft. It oversees mission operations, telemetry processing, onboard storage, and autonomous fault management.',
-    specs: [
-      { label: 'Architecture',    value: 'Dual-Processor System' },
-      { label: 'Storage Capacity',value: '≥64 GB' },
-      { label: 'Power Draw',      value: '~4 W continuous' },
-      { label: 'Mass',            value: '0.8 kg' },
-      { label: 'Fault Management',value: 'Autonomous Detection & Recovery' },
-      { label: 'Functions',       value: 'Operations, Scheduling, Data Management' },
-    ],
-  },
-  thr0: {
-    name: 'Earth Observation Payload',
-    category: 'Payload',
-    status: 'Baseline',
-    description: 'The baseline payload is a multispectral imaging system designed for Earth observation applications. The instrument supports environmental monitoring, agricultural analysis, and land-use assessment through multiple spectral bands.',
-    specs: [
-      { label: 'Spectral Bands',   value: 'Blue, Green, Red, Red Edge, Near Infrared' },
-      { label: 'Applications',     value: 'Agriculture & Environmental Monitoring' },
-      { label: 'Instrument Class', value: 'Commercial Imaging Payload' },
-      { label: 'Pointing Control', value: '≤0.1°' },
-      { label: 'Pointing Knowledge', value: '≤0.03°' },
-      { label: 'Energy Per Scene', value: '~0.4 Wh per collection' },
-    ],
-  },
-  thr1: {
-    name: 'Demonstration Payload Bay',
-    category: 'Payload',
-    status: 'Configurable',
-    description: 'The spacecraft includes a dedicated payload bay for future technology demonstrations and mission-specific experiments. This flexible architecture allows different payload configurations to be evaluated while preserving a common spacecraft platform.',
-    specs: [
-      { label: 'Payload Type',    value: 'Mission-Dependent' },
-      { label: 'Architecture',    value: 'Modular Integration Bay' },
-      { label: 'Mission Focus',   value: 'Technology Demonstration' },
-      { label: 'Integration',     value: 'Standardized Payload Interface' },
-      { label: 'Future Capability', value: 'Communications, Imaging, Research Payloads' },
-      { label: 'Configuration',   value: 'Mission-Selectable' },
-    ],
-  },
-  thr2: {
-    name: 'Thermal Control System',
-    category: 'Thermal',
-    status: 'Design',
-    description: 'The thermal control system maintains spacecraft temperatures within operational limits throughout the mission. Passive and active thermal management techniques work together to protect onboard electronics, payloads, and power systems.',
-    specs: [
-      { label: 'Thermal Protection', value: 'Multi-Layer Insulation' },
-      { label: 'Active Control',     value: 'Heaters & Thermal Straps' },
-      { label: 'Radiator Surface',   value: 'Dedicated Thermal Rejection Area' },
-      { label: 'Nominal Bus Load',   value: '15–30 W' },
-      { label: 'Imaging Load',       value: '30–50 W' },
-      { label: 'Thermal Mass',       value: '0.7 kg' },
+      { label: 'End-of-Life Reserve',value: '30% capacity margin' },
+      { label: 'Battery Mass',       value: '1.5 kg' },
     ],
   },
   sep0: {
@@ -306,7 +307,7 @@ function PartLabel({ id, position, exploded, selected, onSelect }:
 }
 
 // ── Satellite mesh ─────────────────────────────────────────────────────────────
-function Satellite({
+export function Satellite({
   exploded,
   deployed,
   selected,
@@ -334,12 +335,12 @@ function Satellite({
 
   // Component positions matched to flat-sat geometry
   // X axis: wing direction, Y axis: face normal (thin), Z axis: depth (400mm)
-  const posA0   = usePart('ant0',  [ BX*0.28,  BY/2+0.055,  BZ*0.25], exploded)
-  const posA1   = usePart('ant1',  [-BX*0.28,  BY/2+0.055,  BZ*0.25], exploded)
-  const posPatch= usePart('patch', [ BX*0.05, -BY/2-0.012,  BZ*0.08], exploded)
-  const posDome = usePart('dome',  [-BX*0.18, -BY/2-0.012, -BZ*0.15], exploded)
-  const posT0   = usePart('thr0',  [ BX*0.18,  BY/2+0.010,  BZ*0.10], exploded)
-  const posT1   = usePart('thr1',  [-BX*0.18,  BY/2+0.010,  BZ*0.10], exploded)
+  const posA0    = usePart('ant0',  [ BX*0.28,  BY/2+0.055,  BZ*0.25], exploded)
+  const posA1    = usePart('ant1',  [-BX*0.28,  BY/2+0.055,  BZ*0.25], exploded)
+  const posPatch = usePart('patch', [ BX*0.12,   0,           BZ*0.10], exploded) // flight computer board — centre-starboard
+  const posDome  = usePart('dome',  [-BX*0.18, -BY/2-0.012, -BZ*0.15], exploded)
+  const posT0   = usePart('thr0',  [ BX*0.25, -BY/2-0.002, 0], exploded) // EO cluster — group at face centre
+  const posT1   = usePart('thr1',  [-BX*0.25, -BY/2-0.002, 0], exploded) // SAR — group at face centre
   const posT2   = usePart('thr2',  [0,         0,            0      ], exploded)
   const posS0   = usePart('sep0',  [0,         0,           -BZ/3   ], exploded)
   const posS1   = usePart('sep1',  [0,         0,            BZ/3   ], exploded)
@@ -350,9 +351,7 @@ function Satellite({
   }
 
   // MLI-covered materials for the flat-sat
-  const mliMat = new THREE.MeshStandardMaterial({ color: '#c8860a', roughness: 0.08, metalness: 0.85 })
-  const radiatorMat = new THREE.MeshStandardMaterial({ color: '#e8e8e8', roughness: 0.72, metalness: 0.0 })
-  const solarBodyMat = new THREE.MeshStandardMaterial({ color: '#1a2a5e', roughness: 0.12, metalness: 0.0 })
+  const mliMat = new THREE.MeshStandardMaterial({ color: '#c8860a', roughness: 0.42, metalness: 0.72 })
 
   return (
     <group
@@ -367,20 +366,104 @@ function Satellite({
         <boxGeometry args={[BX, BY, BZ]} />
       </mesh>
 
-      {/* Radiator face: -Z dedicated thermal face (white painted Al) */}
-      <mesh position={[0, 0, -BZ/2 - 0.001]} material={radiatorMat}>
-        <boxGeometry args={[BX - 0.004, BY - 0.004, 0.002]} />
+
+      {/* ── NADIR FACE: half-half payload layout ──────────────────────────────── */}
+      {/* Port half (−X): SAR aperture — AG group at face centre, children use relative positions */}
+      {/* Group base: [-BX*0.25, -BY/2-0.002, 0] — children subtract this from world positions */}
+      <AG position={posT1} onClick={click('thr1')}>
+        <mesh position={[0, 0.001, 0]}
+          material={getMatFor('thr1', selected, darkMat)}>
+          <boxGeometry args={[BX*0.48, 0.004, BZ*0.88]} />
+        </mesh>
+        <mesh position={[0.010, -0.008, 0]} material={darkMat}>
+          <boxGeometry args={[0.058, 0.012, 0.076]} />
+        </mesh>
+        {[-0.08, 0, 0.08].map((zOff, i) => (
+          <mesh key={i} position={[0.010, -0.003, zOff]} material={aluMat}>
+            <boxGeometry args={[BX*0.40, 0.002, 0.003]} />
+          </mesh>
+        ))}
+      </AG>
+
+      {/* Divider strip — stays on body */}
+      <mesh position={[0, -BY/2 - 0.003, 0]} material={aluMat}>
+        <boxGeometry args={[0.005, 0.008, BZ*0.92]} />
       </mesh>
 
-      {/* Nadir face: EO instrument window (dark optical) */}
-      <mesh position={[0, -BY/2 - 0.001, BZ*0.1]} material={getMatFor('patch', selected, darkMat)} onClick={click('patch')}>
-        <boxGeometry args={[0.080, 0.003, 0.090]} />
-      </mesh>
+      {/* Starboard half (+X): EO camera cluster — AG group at face centre, children relative */}
+      <AG position={posT0} onClick={click('thr0')}>
+        {/* Face plate */}
+        <mesh position={[0, 0.001, 0]} material={getMatFor('thr0', selected, darkMat)}>
+          <boxGeometry args={[BX*0.46, 0.004, BZ*0.84]} />
+        </mesh>
 
-      {/* Zenith face: body-mounted solar strips (~12W) */}
-      <mesh position={[0, BY/2 + 0.001, 0]} material={solarBodyMat}>
+        {/* Camera 1 — centre, straight nadir (no rotation) */}
+        <group position={[-0.010, -0.002, BZ*0.08]}>
+          {/* Outer housing */}
+          <mesh>
+            <cylinderGeometry args={[0.026, 0.028, 0.032, 20]} />
+            <meshStandardMaterial color="#1a1a2a" roughness={0.15} metalness={0.7} />
+          </mesh>
+          {/* Lens glass */}
+          <mesh position={[0, -0.018, 0]}>
+            <cylinderGeometry args={[0.018, 0.018, 0.006, 20]} />
+            <meshStandardMaterial color="#050510" roughness={0.02} metalness={0.95} />
+          </mesh>
+          {/* Lens glint */}
+          <mesh position={[0, -0.022, 0]}>
+            <cylinderGeometry args={[0.010, 0.010, 0.002, 16]} />
+            <meshStandardMaterial color="#1a3a6a" roughness={0.0} metalness={1.0} />
+          </mesh>
+        </group>
+
+        {/* Camera 2 — forward oblique +10° (rotates around X so lens tips toward +Z) */}
+        <group position={[-0.010, -0.002, -BZ*0.12]} rotation={[0.175, 0, 0]}>
+          <mesh>
+            <cylinderGeometry args={[0.022, 0.024, 0.028, 18]} />
+            <meshStandardMaterial color="#1a1a2a" roughness={0.15} metalness={0.7} />
+          </mesh>
+          <mesh position={[0, -0.016, 0]}>
+            <cylinderGeometry args={[0.015, 0.015, 0.005, 18]} />
+            <meshStandardMaterial color="#050510" roughness={0.02} metalness={0.95} />
+          </mesh>
+          <mesh position={[0, -0.019, 0]}>
+            <cylinderGeometry args={[0.008, 0.008, 0.002, 14]} />
+            <meshStandardMaterial color="#1a3a6a" roughness={0.0} metalness={1.0} />
+          </mesh>
+        </group>
+
+        {/* Camera 3 — aft oblique −10° (rotates around X so lens tips toward −Z) */}
+        <group position={[-0.010, -0.002, BZ*0.26]} rotation={[-0.175, 0, 0]}>
+          <mesh>
+            <cylinderGeometry args={[0.022, 0.024, 0.028, 18]} />
+            <meshStandardMaterial color="#1a1a2a" roughness={0.15} metalness={0.7} />
+          </mesh>
+          <mesh position={[0, -0.016, 0]}>
+            <cylinderGeometry args={[0.015, 0.015, 0.005, 18]} />
+            <meshStandardMaterial color="#050510" roughness={0.02} metalness={0.95} />
+          </mesh>
+          <mesh position={[0, -0.019, 0]}>
+            <cylinderGeometry args={[0.008, 0.008, 0.002, 14]} />
+            <meshStandardMaterial color="#1a3a6a" roughness={0.0} metalness={1.0} />
+          </mesh>
+        </group>
+      </AG>
+
+      {/* Zenith face: body-mounted solar cells — same GaAs finish as wings */}
+      <mesh position={[0, BY/2 + 0.001, 0]} material={solarMat} castShadow>
         <boxGeometry args={[BX - 0.008, 0.002, BZ - 0.008]} />
       </mesh>
+      {/* Solar cell grid lines — printed interconnect pattern */}
+      {[-0.12, -0.04, 0.04, 0.12].map((zOff, i) => (
+        <mesh key={`zgrid${i}`} position={[0, BY/2 + 0.0022, zOff]} material={solarGridMat}>
+          <boxGeometry args={[BX - 0.012, 0.001, 0.002]} />
+        </mesh>
+      ))}
+      {[-0.12, -0.04, 0.04, 0.12].map((xOff, i) => (
+        <mesh key={`xgrid${i}`} position={[xOff, BY/2 + 0.0022, 0]} material={solarGridMat}>
+          <boxGeometry args={[0.002, 0.001, BZ - 0.012]} />
+        </mesh>
+      ))}
 
       {/* Corner rails: structural aluminium */}
       {([
@@ -419,30 +502,30 @@ function Satellite({
         <boxGeometry args={[0.055, BY * 0.7, 0.004]} />
       </mesh>
 
-      {/* EO lens aperture (Payload A) */}
+      {/* ADCS star tracker — nadir face, offset from cameras */}
       <AM position={posDome} material={getMatFor('dome', selected, darkMat)} onClick={click('dome')}>
-        <cylinderGeometry args={[0.018, 0.022, 0.024, 12]} />
+        <cylinderGeometry args={[0.014, 0.016, 0.018, 12]} />
       </AM>
 
-      {/* ADCS reaction wheels — visible as discs */}
-      <AM position={posT0} material={getMatFor('thr0', selected, steelMat)} onClick={click('thr0')}>
-        <cylinderGeometry args={[0.028, 0.028, 0.012, 16]} />
-      </AM>
-      <AM position={posT1} material={getMatFor('thr1', selected, steelMat)} onClick={click('thr1')}>
-        <cylinderGeometry args={[0.028, 0.028, 0.012, 16]} />
-      </AM>
-
-      {/* Battery pack (EPS) */}
+      {/* Battery pack (EPS) — inside body, shown via explode only */}
       <AM position={posT2} material={getMatFor('thr2', selected, new THREE.MeshStandardMaterial({ color: '#2a3a5a', roughness: 0.4, metalness: 0.2 }))} onClick={click('thr2')}>
-        <boxGeometry args={[BX * 0.55, BY * 0.60, BZ * 0.30]} />
+        <boxGeometry args={[BX * 0.42, BY * 0.55, BZ * 0.28]} />
+      </AM>
+
+      {/* Flight computer board — centre-starboard, inside body */}
+      <AM position={posPatch} material={getMatFor('patch', selected, new THREE.MeshStandardMaterial({ color: '#1a3a2a', roughness: 0.35, metalness: 0.3 }))} onClick={click('patch')}>
+        <boxGeometry args={[BX * 0.28, BY * 0.38, BZ * 0.22]} />
       </AM>
 
       {/* 3D floating callout labels when exploded */}
-      {(['ant0','ant1','patch','dome','thr0','thr1','thr2','sep0','sep1'] as const).map(id => {
+      {(['ant0','ant1','patch','thr0','thr1','dome','thr2','sep0','sep1'] as const).map(id => {
         const posMap: Record<string, any> = {
           ant0: posA0, ant1: posA1,
-          patch: posPatch, dome: posDome,
-          thr0: posT0, thr1: posT1, thr2: posT2,
+          patch: posPatch,
+          thr0: posT0,
+          thr1: posT1,
+          dome: posDome,
+          thr2: posT2,
           sep0: posS0, sep1: posS1,
         }
         return (

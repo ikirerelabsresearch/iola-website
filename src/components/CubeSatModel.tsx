@@ -45,7 +45,7 @@ export const WING_T     = 0.006   // panel thickness
 // ── Materials ────────────────────────────────────────────────────────────────
 // MLI — Multi-Layer Insulation blanket (gold/amber metallic, main body surface)
 export const mliMat = new THREE.MeshStandardMaterial({
-  color: '#c8860a', roughness: 0.06, metalness: 0.88,
+  color: '#c8860a', roughness: 0.42, metalness: 0.72,
 })
 // Machined aluminium structure (rails, brackets, hinges)
 export const aluMat = new THREE.MeshStandardMaterial({
@@ -257,8 +257,8 @@ const EXPLODE_OFFSETS: Record<string, [number, number, number]> = {
   ant1:  [-0.12,  0.50,  0.10],   // TT&C antenna 2
   patch: [ 0.08, -0.45,  0.08],   // EO imager — down (nadir face)
   dome:  [-0.08, -0.45, -0.10],   // Star tracker — down, aft
-  thr0:  [ 0.16,  0.42,  0     ], // Reaction wheel X
-  thr1:  [-0.16,  0.42,  0     ], // Reaction wheel Y
+  thr0:  [ 0.30, -0.45,  0     ], // EO camera cluster — starboard nadir, explodes out/down
+  thr1:  [-0.30, -0.45,  0     ], // SAR aperture — port nadir, explodes out/down
   thr2:  [ 0,     0.40, -0.20  ], // Battery pack — up and aft
   sep0:  [ 0,     0,    -0.30  ], // Separation joint aft
   sep1:  [ 0,     0,     0.30  ], // Separation joint forward

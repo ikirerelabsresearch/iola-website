@@ -2,7 +2,7 @@ import { useState, useCallback, Component, type ReactNode } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-import { CubeSat } from './CubeSatModel'
+import { Satellite } from '../pages/Hardware'
 
 // ── Error boundary ────────────────────────────────────────────────────────────
 interface EBState { error: boolean }
@@ -35,7 +35,7 @@ function Scene({ transparent, exploded }: { transparent: boolean; exploded: bool
       {transparent && <pointLight position={[0.8, -0.5, 0.5]} intensity={0.4} color="#c8860a" />}
 
       {/* Fully deployed panels, auto-rotating, double-click explodes */}
-      <CubeSat exploded={exploded} deployed rotating />
+      <Satellite exploded={exploded} deployed rotating selected={null} onSelect={() => {}} />
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.22, 0]} receiveShadow>
         <planeGeometry args={[4, 4]} />
