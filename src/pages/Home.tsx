@@ -219,7 +219,7 @@ export default function Home() {
             <h1
               className="mb-6"
               style={{
-                fontSize: 'clamp(2.2rem, 4.5vw, 3.6rem)',
+                fontSize: 'clamp(1.6rem, 3.2vw, 2.6rem)',
                 fontVariationSettings: "'wght' 600",
                 letterSpacing: '-0.035em',
                 lineHeight: '1.05',
