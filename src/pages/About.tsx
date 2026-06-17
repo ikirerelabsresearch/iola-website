@@ -34,6 +34,13 @@ const team = [
     bio: 'Founder, systems architect, and researcher focused on autonomous systems, space technology, spacecraft autonomy, and long-term aerospace innovation. Leads company strategy, research direction, product development, and technical vision.',
   },
   {
+    initials: 'MM',
+    photo: '/mayank.jpeg',
+    name: 'Mayank Mutha',
+    role: 'Co-Founder & Head of Spacecraft Systems · India',
+    bio: 'Aerospace engineer focused on spacecraft systems, mission design, and nanosatellite development. Contributes across systems engineering, spacecraft architecture, hardware development, and long-term technical execution of the IOLA roadmap.',
+  },
+  {
     initials: 'AD',
     photo: '/alph.jpg',
     name: 'Alph Doamekpor',
@@ -279,20 +286,28 @@ export default function About() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(10,36,99,0.05)' }}>
             {team.map((m, i) => (
               <div key={m.name} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', padding: '28px 28px', background: '#fff', borderBottom: i < team.length - 1 ? '1px solid #e2e8f0' : 'none' }}>
-                <img
-                  src={m.photo}
-                  alt={m.name}
-                  onError={(e) => {
-                    const t = e.currentTarget
-                    t.style.display = 'none'
-                    const fb = t.nextSibling as HTMLElement
-                    if (fb) fb.style.display = 'flex'
-                  }}
-                  style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover', objectPosition: 'center top', flexShrink: 0, display: 'block', border: '2px solid #e2e8f0' }}
-                />
-                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #0A2463, #1E5FA8)', display: 'none', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 600, fontSize: '14px', flexShrink: 0, letterSpacing: '0.04em' }}>
-                  {m.initials}
-                </div>
+                {m.photo ? (
+                  <>
+                    <img
+                      src={m.photo}
+                      alt={m.name}
+                      onError={(e) => {
+                        const t = e.currentTarget
+                        t.style.display = 'none'
+                        const fb = t.nextSibling as HTMLElement
+                        if (fb) fb.style.display = 'flex'
+                      }}
+                      style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover', objectPosition: 'center top', flexShrink: 0, display: 'block', border: '2px solid #e2e8f0' }}
+                    />
+                    <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #0A2463, #1E5FA8)', display: 'none', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 600, fontSize: '14px', flexShrink: 0, letterSpacing: '0.04em' }}>
+                      {m.initials}
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'linear-gradient(135deg, #0A2463, #1E5FA8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 600, fontSize: '14px', flexShrink: 0, letterSpacing: '0.04em' }}>
+                    {m.initials}
+                  </div>
+                )}
                 <div>
                   <p style={{ fontWeight: 600, fontSize: '0.95rem', color: '#111827' }}>{m.name}</p>
                   <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px', marginBottom: '10px', letterSpacing: '0.02em' }}>{m.role}</p>
